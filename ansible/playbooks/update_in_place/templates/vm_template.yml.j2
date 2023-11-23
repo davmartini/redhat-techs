@@ -13,7 +13,9 @@ spec:
       port: 9090
       targetPort: 9090
   selector:
-    kubevirt.io/domain: {{ topic }}-{{ uuid }}{{ item }}
+    vm.kubevirt.io/name: {{ topic }}-{{ uuid }}{{ item }}
+=
+upgrade-in-place-7170
 ---
 kind: Route
 apiVersion: route.openshift.io/v1
