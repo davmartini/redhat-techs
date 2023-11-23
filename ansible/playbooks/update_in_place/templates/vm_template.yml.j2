@@ -2,7 +2,7 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{ topic }}-{{ uuid }}{{ item }}
+  name: cockpit-{{ topic }}-{{ uuid }}{{ item }}
   namespace: vms-demo
   labels:
     type: {{ topic }}
@@ -15,21 +15,57 @@ spec:
   selector:
     vm.kubevirt.io/name: {{ topic }}-{{ uuid }}{{ item }}
 ---
-kind: Route
-apiVersion: route.openshift.io/v1
+kind: Service
+apiVersion: v1
 metadata:
-  name: {{ topic }}-{{ uuid }}{{ item }}
+  name: app-{{ topic }}-{{ uuid }}{{ item }}
   namespace: vms-demo
   labels:
     type: {{ topic }}
 spec:
-  host: {{ topic }}-{{ uuid }}{{ item }}-vms-demo.apps.ocp.drkspace.fr
+  ports:
+    - name: cockpit
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    vm.kubevirt.io/name: {{ topic }}-{{ uuid }}{{ item }}
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: cockpit-{{ topic }}-{{ uuid }}{{ item }}
+  namespace: vms-demo
+  labels:
+    type: {{ topic }}
+spec:
+  host: cockpit-{{ topic }}-{{ uuid }}{{ item }}-vms-demo.apps.ocp.drkspace.fr
   to:
     kind: Service
-    name: {{ topic }}-{{ uuid }}{{ item }}
+    name: cockpit-{{ topic }}-{{ uuid }}{{ item }}
     weight: 100
   port:
     targetPort: cockpit
+  tls:
+    termination: passthrough
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: app-{{ topic }}-{{ uuid }}{{ item }}
+  namespace: vms-demo
+  labels:
+    type: {{ topic }}
+spec:
+  host: app-{{ topic }}-{{ uuid }}{{ item }}-vms-demo.apps.ocp.drkspace.fr
+  to:
+    kind: Service
+    name: app-{{ topic }}-{{ uuid }}{{ item }}
+    weight: 100
+  port:
+    targetPort: app
   tls:
     termination: passthrough
     insecureEdgeTerminationPolicy: Redirect
