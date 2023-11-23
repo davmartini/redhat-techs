@@ -15,9 +15,8 @@
 
     - name: Remove RIPU files
       ansible.builtin.file:
-        path: /var/log/ripu/ripu.*
+        path: /var/log/ripu
         state: absent
-  
   
   vars:
     cockpit_packages: 
