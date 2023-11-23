@@ -24,7 +24,7 @@ metadata:
     type: {{ topic }}
 spec:
   ports:
-    - name: cockpit
+    - name: app
       protocol: TCP
       port: 80
       targetPort: 80
@@ -66,7 +66,4 @@ spec:
     weight: 100
   port:
     targetPort: app
-  tls:
-    termination: passthrough
-    insecureEdgeTerminationPolicy: Redirect
   wildcardPolicy: None
