@@ -1,0 +1,10 @@
+apiVersion: snapshot.kubevirt.io/v1alpha1
+kind: VirtualMachineSnapshot
+metadata:
+  name:snapshot-{{ snap_uuid }}
+  namespace: vms-demo
+spec:
+  source:
+    apiGroup: kubevirt.io
+    kind: VirtualMachine
+    name: {{ item }}
