@@ -1,6 +1,6 @@
 - name: Manage Awesome website
   hosts: all
-  gather_facts: false
+  gather_facts: true
   vars:
     index_title: Awesome website
     index_content: This is awesome !
