@@ -18,6 +18,10 @@
         path: /var/log/ripu/ripu.*
         state: absent
 
+    - name: show all the hosts matching the pattern, i.e. all but the group www
+      ansible.builtin.debug:
+        msg: "{{ ansible_host }}"   
+
   vars:
     cockpit_packages: 
       - cockpit
@@ -38,12 +42,5 @@
     - role: redhat.rhel_system_roles.cockpit
       when: (ansible_distribution == "RedHat") and (ansible_distribution_major_version < "9") 
     - role: infra.leapp.analysis
-      when: (ansible_distribution == "RedHat") and (ansible_distribution_major_version < "9") 
-
-
-  tasks:
-
-    - name: show all the hosts matching the pattern, i.e. all but the group www
-      ansible.builtin.debug:
-        msg: "{{ ansible_host }}"    
+      when: (ansible_distribution == "RedHat") and (ansible_distribution_major_version < "9")   
   
