@@ -41,5 +41,9 @@
       when: (ansible_distribution == "RedHat") and (ansible_distribution_major_version < "9") 
 
 
-    
+  tasks:
+
+    - name: show all the hosts matching the pattern, i.e. all but the group www
+      ansible.builtin.debug:
+        msg: "{{ ansible_host }}"    
   
