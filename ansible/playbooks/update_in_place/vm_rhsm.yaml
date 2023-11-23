@@ -10,5 +10,7 @@
         username: "{{ lookup('env', 'RHSM_USER') }}"
         password: "{{ lookup('env', 'RHSM_PASSWORD') }}"
       rhc_state: absent
+      rhc_insights:
+        state: absent
   roles:
     - redhat.rhel_system_roles.rhc
