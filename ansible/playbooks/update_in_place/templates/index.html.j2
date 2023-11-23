@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ index_title }}</title>
+  </head>
+
+  <body style="text-align:center;background-color:{{ background_color | default('darkcyan') }};font-family:courier;color:#FFFFFF">
+
+  	<h1></h1>
+    <pre style="font-family:courier;"><strong><font size="7">
+ {%for c in index_content %}_{%endfor%} 
+&lt; {{ index_content | default ('') }} &gt;
+ {%for c in index_content %}-{%endfor%} 
+        \   ^__^            
+         \  ({{ {'dead': 'xx', 'alive': 'OO', 'sleepy': '--'}[cow_mood | default('alive')] }})\_______    
+            (__)\       )\/\
+             U  ||----w |   
+                ||     ||   
+                              
+
+
+    </font></strong></pre>
+
+  	<p>{{ index_foot }}</p>
+
+  </body>
+
+</html>

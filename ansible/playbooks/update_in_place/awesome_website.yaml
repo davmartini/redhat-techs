@@ -1,5 +1,5 @@
 - name: Manage Awesome website
-  hosts: foreman_demo_{{ vm_env_type }}
+  hosts: all
   gather_facts: false
   vars:
     index_title: Awesome website
