@@ -4,7 +4,7 @@
   vars:
     index_title: Awesome website
     index_content: This is awesome !
-    index_foot: Hosted on RHEL
+    index_foot: Hosted on "{{ ansible_distribution }}:{{ ansible_distribution_version }}" 
     int_address: '{{ ansible_ssh_host }}'
 
   tasks:
