@@ -10,13 +10,14 @@
   tasks:
 
     - when: command == 'deploy'
+      name: Deploy web App
       become: true
       block:
         - name: Httpd package is present
           ansible.builtin.yum:
             name: httpd
 
-        - name: Latest index.html file is present
+        - name: Latest index file is present
           ansible.builtin.template:
             src: ../templates/index.html.j2
             dest: /var/www/html/index.html
@@ -48,14 +49,14 @@
     - when: command == 'smoke_test'
       name: Awesome website is responding locally
       ansible.builtin.uri:
-        url: 'http://localhost:8080/'
+        url: 'http://localhost/'
       register: test_local
       ignore_errors: true
 
     - when: command == 'smoke_test'
       name: Awesome website is responding internally
       ansible.builtin.uri:
-        url: 'http://{{ int_address }}:8080/'
+        url: 'http://{{ int_address }}/'
       register: test_internal
       ignore_errors: true
 
