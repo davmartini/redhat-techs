@@ -9,18 +9,10 @@
 
   tasks:
 
-    - name: Log in (obtain access token)
-      redhat.openshift.openshift_auth:
-        host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
-        username: "{{ lookup('env', 'K8S_AUTH_USERNAME') }}"
-        password: "{{ lookup('env', 'K8S_AUTH_PASSWORD') }}"
-        validate_certs: false
-      register: openshift_auth_results
-
     - name: List VMs on OpenShift Virtualization
       kubevirt.core.kubevirt_vm_info:
         host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
-        api_key: "{{ openshift_auth_results.openshift_auth.api_key }}"
+        api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
         validate_certs: false
         namespace: vms-demo
       register: result
@@ -38,5 +30,5 @@
       redhat.openshift.openshift_auth:
         state: absent
         host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
-        api_key: "{{ openshift_auth_results.openshift_auth.api_key }}"
+        api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
         validate_certs: false
