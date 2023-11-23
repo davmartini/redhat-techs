@@ -1,4 +1,5 @@
 plugin: kubevirt.core.kubevirt
+host_format: "{name}"
 connections:
 - validate_certs: false
   namespaces:
