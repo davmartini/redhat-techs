@@ -20,7 +20,7 @@
 
     - name: show all the hosts matching the pattern, i.e. all but the group www
       ansible.builtin.debug:
-        msg: "{{ ansible_host }}"   
+        msg: "{{ ansible_hostname }}"   
 
   vars:
     cockpit_packages: 
