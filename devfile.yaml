@@ -5,7 +5,7 @@ components:
   - name: aap-tooling
     container:
       image: quay.io/david_martini/devspaces:aap
-      memoryRequest: 512M
+      memoryRequest: 256M
       memoryLimit: 6Gi
       cpuRequest: 250m
       cpuLimit: 2000m
