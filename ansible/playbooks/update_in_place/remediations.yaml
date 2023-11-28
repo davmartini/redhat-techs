@@ -1,0 +1,27 @@
+---
+- name: Leapp framework
+  hosts: all
+  gather_facts: true
+  collections:
+    - infra.leapp
+    - redhat.rhel_system_roles
+  
+  tasks:
+  - name: Configure sshd
+      ansible.builtin.lineinfile:
+        path: "/etc/ssh/sshd_config"
+        regex: "^(#)?"
+        line: " "
+        state: present
+      loop:
+        - {key: "PermitRootLogin", value: "prohibit-password"}
+        - {key: "PasswordAuthentication", value: "no"}
+      notify:
+        - Restart sshd
+    
+  handlers:
+
+    - name: "Restart sshd"
+      ansible.builtin.service:
+        name: sshd
+        state: restarted
