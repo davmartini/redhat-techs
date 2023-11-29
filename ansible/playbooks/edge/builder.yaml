@@ -1,8 +1,7 @@
 ---
 - name: Run osbuild_builder role
   become: true
-  hosts: localhost
-  connection: local
+  hosts: edge-infra
   gather_facts: false
   vars:
     builder_compose_type: edge-commit
