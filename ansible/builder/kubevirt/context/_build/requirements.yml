@@ -1,5 +1,0 @@
----
-collections:
-  - redhat.openshift
-  - community.general
-  - community.kubevirt
