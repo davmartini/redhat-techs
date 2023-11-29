@@ -51,7 +51,7 @@
               configDrive: {}
         volumes:
         - dataVolume:
-            name: "{{ topic }}-{{ uuid }}{{ item }}"
+            name: "edge-infra"
           name: datavolume
         - cloudInitConfigDrive:
             userData: |-
