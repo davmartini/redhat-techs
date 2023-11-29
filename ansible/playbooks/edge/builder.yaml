@@ -1,0 +1,30 @@
+---
+- name: Run osbuild_builder role
+  become: true
+  hosts: localhost
+  vars:
+    builder_compose_type: edge-commit
+    builder_blueprint_name: mybuild
+    builder_pub_key: ~/.ssh/id_rsa.pub
+    builder_compose_pkgs:
+      - vim-enhanced
+      - httpd
+      - ansible-core
+      - tmux
+    builder_compose_customizations:
+      user:
+        name: "testuser"
+        description: "test user"
+        password: "testpassword"
+        key: "{{ builder_pub_key }}"
+        groups: '["users", "wheel"]'
+      kernel:
+        append: "nomst=force"
+      services:
+        enabled: ["httpd", "sshd", "firewalld"]
+      firewalld.services:
+        enabled: ["ssh", "https"]
+  tasks:
+    - name: Run the role
+      ansible.builtin.import_role:
+        name: infra.osbuild.builder
