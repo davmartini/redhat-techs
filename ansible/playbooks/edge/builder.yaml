@@ -2,6 +2,7 @@
 - name: Run osbuild_builder role
   become: true
   hosts: localhost
+  gather_facts: false
   vars:
     builder_compose_type: edge-commit
     builder_blueprint_name: mybuild
