@@ -1,0 +1,72 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: cockpit-edge-infra
+  namespace: vms-demo
+  labels:
+    type: edge
+spec:
+  ports:
+    - name: cockpit
+      protocol: TCP
+      port: 9090
+      targetPort: 9090
+  selector:
+    vm.kubevirt.io/name: edge-infra
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: app-edge-infra
+  namespace: vms-demo
+  labels:
+    type: edge
+spec:
+  ports:
+    - name: app
+      protocol: TCP
+      port: 80
+      targetPort: 80
+  selector:
+    vm.kubevirt.io/name: edge-infra
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: cockpit-edge-infra
+  namespace: vms-demo
+  labels:
+    type: edge
+spec:
+  host: cockpit-edge-infra-vms-demo.apps.ocp.drkspace.fr
+  to:
+    kind: Service
+    name: cockpit-edge-infra
+    weight: 100
+  port:
+    targetPort: cockpit
+  tls:
+    termination: passthrough
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: app-edge-infra
+  namespace: vms-demo
+  labels:
+    type: edge
+spec:
+  host: app-edge-infra-vms-demo.apps.ocp.drkspace.fr
+  to:
+    kind: Service
+    name: app-edge-infra
+    weight: 100
+  port:
+    targetPort: app
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None

@@ -1,0 +1,74 @@
+---
+- name: create VM on OpenShift Virt
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  collections:
+    - redhat.openshift
+    - kubevirt.core
+
+  tasks:
+  
+
+  - name: Create a VirtualMachine with a DataVolume template
+    kubevirt.core.kubevirt_vm:
+      host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
+      api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
+      validate_certs: false
+      state: present
+      name: "edge-infra"
+      namespace: vms-demo
+      labels:
+        app: "edge"
+      instancetype:
+        name: "u1.small"
+      preference:
+        name: "rhel.9"
+      data_volume_templates:
+        - metadata:
+            name: "edge-infra"
+          spec:
+            sourceRef:
+              kind: DataSource
+              name: "rhel9"
+              namespace: openshift-virtualization-os-images
+            storage:
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 30Gi
+              storageClassName: lvms-vg1
+      spec:
+        domain:
+          devices: {}
+        accessCredentials:
+        - sshPublicKey:
+            source:
+              secret:
+                secretName: my-pub-key
+            propagationMethod:
+              configDrive: {}
+        volumes:
+        - dataVolume:
+            name: "{{ topic }}-{{ uuid }}{{ item }}"
+          name: datavolume
+        - cloudInitConfigDrive:
+            userData: |-
+              #cloud-config
+              # The default username is: cloud-user
+          name: cloudinit
+      wait: yes
+
+  - name: Generate VM files
+    template:
+      src: templates/vm_template.yml.j2
+      dest: vm_template-edge.yml
+
+  - name: Create Service and Route for Cockpit VMs
+    redhat.openshift.k8s:
+      host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
+      api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
+      validate_certs: false
+      state: present
+      src: vm_template-edge.yml
