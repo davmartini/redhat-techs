@@ -2,6 +2,10 @@
 version: 3
 
 dependencies:
+  ansible_core:
+    package_pip: ansible-core<2.15
+  ansible_core:
+    package_pip: ansible-core<2.15.4
   galaxy:
     collections:
       - edge.microshift
