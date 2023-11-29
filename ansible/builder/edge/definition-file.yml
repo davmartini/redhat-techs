@@ -6,9 +6,10 @@ dependencies:
     package_pip: ansible-core<2.15
   galaxy:
     collections:
-      - edge.microshift
       - infra.osbuild
       - community.general
+      - redhat.rhel_system_roles
+      - edge.microshift
   python:
     - bindep
     - pyyaml
@@ -17,4 +18,12 @@ dependencies:
 
 images:
   base_image:
-    name: registry.redhat.io/ansible-automation-platform-24/ee-supported-rhel8:latest
+    name: registry.redhat.io/ansible-automation-platform-24/ee-minimal-rhel8:latest
+
+additional_build_files:
+    - src: /home/cloud-user/workspace/ansible.cfg
+      dest: config
+
+additional_build_steps:
+  prepend_galaxy:
+    - COPY _build/configs/ansible.cfg /etc/ansible/ansible.cfg
