@@ -1,6 +1,6 @@
 ---
 - name: Subscribe RHEL system
-  hosts: all
+  hosts: "{{ host }}"
   gather_facts: yes
   collections:
     - redhat.redhat.rhel_system_roles
