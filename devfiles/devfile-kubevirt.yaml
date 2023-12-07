@@ -1,0 +1,12 @@
+schemaVersion: 2.2.0
+metadata:
+  name: ansible-devspaces
+components:
+  - name: aap-kubevirt
+    container:
+      image: quay.io/david_martini/ee:kubevirt
+      memoryRequest: 256M
+      memoryLimit: 6Gi
+      cpuRequest: 250m
+      cpuLimit: 2000m
+      args: ['tail', '-f', '/dev/null']
