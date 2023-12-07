@@ -1,0 +1,31 @@
+schemaVersion: 2.2.0
+metadata:
+  name: ansible-devspaces
+components:
+  - name: aap-tooling
+    container:
+      image: quay.io/david_martini/devspaces:aap
+      memoryRequest: 256M
+      memoryLimit: 6Gi
+      cpuRequest: 250m
+      cpuLimit: 2000m
+      args: ['tail', '-f', '/dev/null']
+      env:
+        - name: KUBEDOCK_ENABLED
+          value: "true"
+  - name: aap-nutanix
+    container:
+      image: quay.io/david_martini/ee:nutanix
+      memoryRequest: 256M
+      memoryLimit: 6Gi
+      cpuRequest: 250m
+      cpuLimit: 2000m
+      args: ['tail', '-f', '/dev/null']
+  - name: aap-kubevirt
+    container:
+      image: quay.io/david_martini/ee:kubevirt
+      memoryRequest: 256M
+      memoryLimit: 6Gi
+      cpuRequest: 250m
+      cpuLimit: 2000m
+      args: ['tail', '-f', '/dev/null']
