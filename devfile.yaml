@@ -21,6 +21,11 @@ components:
       cpuRequest: 250m
       cpuLimit: 2000m
       args: ['tail', '-f', '/dev/null']
-      env:
-        - name: KUBEDOCK_ENABLED
-          value: "true"
+  - name: aap-toto
+    container:
+      image: quay.io/david_martini/ee:toto
+      memoryRequest: 256M
+      memoryLimit: 6Gi
+      cpuRequest: 250m
+      cpuLimit: 2000m
+      args: ['tail', '-f', '/dev/null']
