@@ -10,3 +10,9 @@ components:
       cpuRequest: 250m
       cpuLimit: 2000m
       args: ['tail', '-f', '/dev/null']
+project:
+  - name: my-git
+    source:
+      location: 'https://github.com/davmartini/redhat-techs.git'
+      type: git
+      branch: master
