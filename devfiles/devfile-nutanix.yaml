@@ -1,6 +1,11 @@
 schemaVersion: 2.2.0
 metadata:
   name: ansible-devspaces-nutanix
+projects:
+  - name: project    
+    git:
+      remotes:
+        origin: "https://github.com/davmartini/redhat-techs.git"
 components:
   - name: aap-nutanix
     container:

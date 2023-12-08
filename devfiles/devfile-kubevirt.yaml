@@ -5,7 +5,7 @@ projects:
   - name: project    
     git:
       remotes:
-        origin: "https://github.com/che-samples/web-nodejs-sample.git"
+        origin: "https://github.com/davmartini/redhat-techs.git"
 components:
   - name: aap-kubevirt
     container:
