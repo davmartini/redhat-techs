@@ -1,6 +1,5 @@
 {
     "recommendations": [
-      "redhat.ansible",
-      "redhat.vscode-openshift-connector"
+      "redhat.ansible"
     ]
   }
