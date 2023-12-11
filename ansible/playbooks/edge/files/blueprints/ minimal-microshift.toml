@@ -1,0 +1,25 @@
+name = "minimal-microshift"
+description = ""
+version = "0.0.1"
+modules = []
+groups = []
+distro = ""
+
+[[packages]]
+name = "microshift"
+
+[customizations]
+[customizations.kernel]
+append = ""
+
+[[customizations.user]]
+name = "edge"
+password = "$6$4SUeT1E/nPxMg3Yx$xGgKid7BCgE6jwicgISEfcMs4w7Wi03g5w24Q4.UcPhAshA.XRFzbpIJWhgdCGCsK/G8sIJT1tWzDnDvkqSGR."
+key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC3OL8vJoTsbn/LBUZWgV8YYmxUZSMAWZ6UKMHC2iF9VCYmuI0opJKNBpEDFlomrENOm7HkEIafdPpFfEiDMszDhskvNWAVPiJJChjMBxFgvNWLAEHJQKvGaylVDF4yOex9ehMKOnhBVnO7FFrn33AmgiikEQRcqkz9Q1NQ7ccDZzF5eml0brxmO+2IziUrPdeVwkR7Wzw19zyxLf3f7dfGkfnfoeku1D8BWQaclN0T8AAC4IAVQ1YXp5kf4rpPdf3eCMUKItJCwW4nAKLmJDoJTMXx6LsOGsBZHwPxV0LbR9titUhGpRCBor2nYs1EnN4qCd7f+3yU0lZ+dV5HdMWXesD2czEY8CTncEhD+6c4x3RnyLNC+zqHuM4U1szsQPkOxI5zqItxVgy0HmLThpaA0knohTVYAnq+Qhw+iA6yokRv/pBRTr9fPeUv03LBB5tYEhBDCkGICY4ZRuT+NlsBHMxAjeQIIYeOh0DwldEl2QXVJc3eNt5nkQw49BoCGIU= dmartini@Davids-MacBook-Pro"
+
+[customizations.timezone]
+timezone = "Europe/Paris"
+[customizations.locale]
+keyboard = "fr"
+[customizations.services]
+enabled = ["microshift"]
