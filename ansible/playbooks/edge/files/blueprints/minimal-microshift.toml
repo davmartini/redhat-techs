@@ -1,0 +1,25 @@
+name = "minimal-microshift"
+description = ""
+version = "0.0.1"
+modules = []
+groups = []
+distro = ""
+
+[[packages]]
+name = "microshift"
+
+[customizations]
+[customizations.kernel]
+append = ""
+
+[[customizations.user]]
+name = "edge"
+password = ""
+key = ""
+
+[customizations.timezone]
+timezone = "Europe/Paris"
+[customizations.locale]
+keyboard = "fr"
+[customizations.services]
+enabled = ["microshift"]
