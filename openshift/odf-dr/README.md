@@ -20,3 +20,14 @@ https://access.redhat.com/documentation/en-us/red_hat_openshift_data_foundation/
 ## Questions 
 
 * RHACM label only one node for gateway (oc get nodes -L submariner.io/gateway). Ok if node shutdown ?
+
+
+## Notes 
+
+* Need to modify limits for RAMEN and ODFMO deployments
+
+
+## Subscription demo with RHACM
+
+1. Create a new subscription application with RHACM (BM1)
+2. 
