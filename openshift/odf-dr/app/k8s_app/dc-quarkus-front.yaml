@@ -89,6 +89,11 @@ spec:
                 secretKeyRef:
                   name: fruits-db-ocp
                   key: DB_IP
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: fruits-db-ocp
+                  key: DB_NAME
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
