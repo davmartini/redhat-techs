@@ -39,4 +39,4 @@ spec:
   ipFamilyPolicy: SingleStack
   sessionAffinity: None
   selector:
-    name: quarkus-front
+    app.kubernetes.io/name: quarkus-front
