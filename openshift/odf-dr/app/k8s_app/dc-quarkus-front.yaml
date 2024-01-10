@@ -100,7 +100,7 @@ spec:
           imagePullPolicy: IfNotPresent
           terminationMessagePolicy: File
           image: >-
-            quay.io/david_martini/openshift:crud-ocp
+            quay.io/david_martini/openshift:crud-with-ocp
           args:
             - '-jar'
             - /deployments/target/atomic-fruit-service-1.0-SNAPSHOT-runner.jar
