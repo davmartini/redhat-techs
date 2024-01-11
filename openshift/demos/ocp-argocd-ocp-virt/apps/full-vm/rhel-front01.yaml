@@ -23,10 +23,10 @@ spec:
         creationTimestamp: null
         name: rhel-front01
       spec:
-        source:
-          pvc:
-            name: rhel9
-            namespace: openshift-virtualization-os-images
+        sourceRef:
+          kind: DataSource
+          name: rhel9
+          namespace: openshift-virtualization-os-images
         storage:
           accessModes:
             - ReadWriteOnce
