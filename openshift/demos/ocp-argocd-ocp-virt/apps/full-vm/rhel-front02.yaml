@@ -32,7 +32,7 @@ spec:
             - ReadWriteOnce
           resources:
             requests:
-              storage: '12023671467'
+              storage: '30Gi'
           storageClassName: lvms-vg1
           volumeMode: Filesystem
   running: true
