@@ -4,7 +4,7 @@ metadata:
   annotations:
     kubevirt.io/latest-observed-api-version: v1
     kubevirt.io/storage-observed-api-version: v1alpha3
-    name.os.template.kubevirt.io/rhel9.0: Win2K19 or higher
+    name.os.template.kubevirt.io/rhel9.0: Win2K22 or higher
   name: win-bdd-sqlserver01
   labels:
     app: full-vm
@@ -25,7 +25,7 @@ spec:
       spec:
         source:
           pvc:
-            name: win2k19
+            name: win2k22
             namespace: openshift-virtualization-os-images
         storage:
           accessModes:
@@ -33,14 +33,14 @@ spec:
           resources:
             requests:
               storage: 40Gi
-          storageClassName: odf-lvm-vg1
+          storageClassName: lvms-vg1
           volumeMode: Filesystem
   running: true
   template:
     metadata:
       annotations:
         vm.kubevirt.io/flavor: small
-        vm.kubevirt.io/os: win2k19
+        vm.kubevirt.io/os: win2k22
         vm.kubevirt.io/workload: server
       creationTimestamp: null
       labels:
