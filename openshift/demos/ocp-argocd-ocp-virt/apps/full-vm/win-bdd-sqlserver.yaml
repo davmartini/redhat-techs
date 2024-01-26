@@ -10,10 +10,10 @@ metadata:
     app: full-vm
     flavor.template.kubevirt.io/small: 'true'
     os.template.kubevirt.io/rhel9.0: 'true'
-    vm.kubevirt.io/template: windows2k19-server-medium
+    vm.kubevirt.io/template: windows2k22-server-medium
     vm.kubevirt.io/template.namespace: openshift
     vm.kubevirt.io/template.revision: '1'
-    vm.kubevirt.io/template.version: v0.19.6
+    vm.kubevirt.io/template.version: v0.26.0
     workload.template.kubevirt.io/server: 'true'
 spec:
   dataVolumeTemplates:
@@ -23,18 +23,14 @@ spec:
         creationTimestamp: null
         name: win-bdd-sqlserver01
       spec:
-        source:
-          pvc:
-            name: win2k22
-            namespace: openshift-virtualization-os-images
+        sourceRef:
+          kind: DataSource
+          name: win2k22
+          namespace: openshift-virtualization-os-images
         storage:
-          accessModes:
-            - ReadWriteOnce
           resources:
             requests:
               storage: 60Gi
-          storageClassName: lvms-vg1
-          volumeMode: Filesystem
   running: true
   template:
     metadata:
