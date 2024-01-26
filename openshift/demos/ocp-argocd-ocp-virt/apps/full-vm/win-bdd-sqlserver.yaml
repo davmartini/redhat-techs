@@ -35,17 +35,13 @@ spec:
   template:
     metadata:
       annotations:
-        vm.kubevirt.io/flavor: small
-        vm.kubevirt.io/os: win2k22
+        vm.kubevirt.io/flavor: medium
+        vm.kubevirt.io/os: windows2k22
         vm.kubevirt.io/workload: server
       creationTimestamp: null
       labels:
-        flavor.template.kubevirt.io/small: 'true'
         kubevirt.io/domain: win-bdd-sqlserver01
-        kubevirt.io/size: small
-        os.template.kubevirt.io/rhel9.0: 'true'
-        vm.kubevirt.io/name: win-bdd-sqlserver01
-        workload.template.kubevirt.io/server: 'true'
+        kubevirt.io/size: medium
     spec:
       domain:
         cpu:
@@ -69,9 +65,10 @@ spec:
             enabled: true
         firmware:
           bootloader:
-            bios: {}
+            efi:
+              secureBoot: true
         machine:
-          type: pc-q35-rhel8.4.0
+          type: pc-q35-rhel9.2.0
         resources:
           requests:
             memory: 4Gi
