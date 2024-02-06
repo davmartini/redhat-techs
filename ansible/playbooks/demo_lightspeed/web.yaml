@@ -2,7 +2,7 @@
 - name: Web server with Lightspeed
   hosts: all
   become: true
-  gather_facts: false
+  gather_facts: true
  
   tasks:
     # Install apche on RHEL & Enable service & start service & open firewall & add index.html ../templates/index.html
