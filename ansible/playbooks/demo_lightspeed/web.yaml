@@ -1,0 +1,39 @@
+---
+- name: Web server with Lightspeed
+  hosts: all
+  become: true
+  gather_facts: false
+ 
+  tasks:
+    # Install apche on RHEL & Enable service & start service & open firewall & add index.html ../templates/index.html
+    - name: Install apche on RHEL
+      when: ansible_os_family == "RedHat"
+      ansible.builtin.package:
+        name: httpd
+        state: present
+
+    - name: Enable service
+      ansible.builtin.service:
+        name: httpd
+        enabled: true
+
+    - name: Start service
+      ansible.builtin.service:
+        name: httpd
+        state: started
+
+    - name: Open firewall
+      ansible.posix.firewalld:
+        port: 80/tcp
+        permanent: true
+        state: enabled
+        immediate: true
+
+    - name: Add index.html ../templates/index.html
+      ansible.builtin.copy:
+        src: ../templates/index.html
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: '0644'
+    
