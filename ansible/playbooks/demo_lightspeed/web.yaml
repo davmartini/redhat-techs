@@ -5,22 +5,30 @@
   gather_facts: true
  
   tasks:
-    # Install apche on RHEL & Enable service & start service & open firewall & add index.html ../templates/index.html
-    - name: Install apche on RHEL
+    # Install apache and firewalld on RHEL & Enable services & start services & open firewall & add index.html ../templates/index.html
+    - name: Install apache and firewalld on RHEL
       when: ansible_os_family == "RedHat"
       ansible.builtin.package:
-        name: httpd
+        name:
+          - httpd
+          - firewalld
         state: present
 
-    - name: Enable service
+    - name: Enable services
       ansible.builtin.service:
-        name: httpd
+        name: "{{ item }}"
         enabled: true
+      loop:
+        - httpd
+        - firewalld
 
-    - name: Start service
+    - name: Start services
       ansible.builtin.service:
-        name: httpd
+        name: "{{ item }}"
         state: started
+      loop:
+        - httpd
+        - firewalld
 
     - name: Open firewall
       ansible.posix.firewalld:
