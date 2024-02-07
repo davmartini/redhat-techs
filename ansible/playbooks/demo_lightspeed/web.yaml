@@ -5,7 +5,7 @@
   gather_facts: true
  
   tasks:
-    # Install apache and firewalld on RHEL & Enable services & start services & open firewall & add index.html ../templates/index.html
+    # Install apache and firewalld on RHEL & Enable services & start services & open firewall & add index.html from "templates" directory
     - name: Install apache and firewalld on RHEL
       when: ansible_os_family == "RedHat"
       ansible.builtin.package:
@@ -37,11 +37,12 @@
         state: enabled
         immediate: true
 
-    - name: Add index.html ../templates/index.html
+    - name: Add index.html from "templates" directory
       ansible.builtin.copy:
         src: templates/index.html
         dest: /var/www/html/index.html
         owner: root
         group: root
         mode: '0644'
+    
     
