@@ -39,7 +39,7 @@
 
     - name: Add index.html ../templates/index.html
       ansible.builtin.copy:
-        src: ../templates/index.html
+        src: templates/index.html
         dest: /var/www/html/index.html
         owner: root
         group: root
