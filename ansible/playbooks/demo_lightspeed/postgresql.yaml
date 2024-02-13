@@ -5,31 +5,14 @@
   gather_facts: true
  
   tasks:
-    # Install postgresql and firewalld on RHEL & Enable services & start services & open firewall & create “ecommerce” database with 10Go & create “user01” and “user02” users
-    - name: Install postgresql and firewalld on RHEL
+    # Install postgresql module and firewalld package on RHEL & open firewall & create “ecommerce” database with 10Go & create “user01” and “user02” users
+    - name: Install postgresql module and firewalld package on RHEL
       when: ansible_os_family == "RedHat"
       ansible.builtin.package:
         name:
           - postgresql
           - firewalld
         state: present
-
-    - name: Enable services
-      ansible.builtin.systemd:
-        name: "{{ item }}"
-        enabled: true
-        state: started
-      loop:
-        - postgresql
-        - firewalld
-
-    - name: Start services
-      ansible.builtin.systemd:
-        name: "{{ item }}"
-        state: started
-      loop:
-        - postgresql
-        - firewalld
 
     - name: Open firewall
       ansible.posix.firewalld:
@@ -57,4 +40,6 @@
       loop:
         - user01
         - user02
+    
+
     
