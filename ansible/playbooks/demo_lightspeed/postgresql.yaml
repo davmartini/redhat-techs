@@ -43,11 +43,6 @@
         state: enabled
         immediate: true
 
-    - name: Create “ecommerce” database
-      community.postgresql.postgresql_db:
-        name: ecommerce
-        state: present
-
     - name: Create “user01” and “user02” users
       community.postgresql.postgresql_user:
         name: "{{ item }}"
