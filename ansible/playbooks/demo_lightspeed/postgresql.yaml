@@ -1,0 +1,60 @@
+---
+- name: Install prosgreSQL with Lightspeed
+  hosts: all
+  become: true
+  gather_facts: true
+ 
+  tasks:
+    # Install postgresql and firewalld on RHEL & Enable services & start services & open firewall & create “ecommerce” database with 10Go & create “user01” and “user02” users
+    - name: Install postgresql and firewalld on RHEL
+      when: ansible_os_family == "RedHat"
+      ansible.builtin.package:
+        name:
+          - postgresql
+          - firewalld
+        state: present
+
+    - name: Enable services
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        enabled: true
+        state: started
+      loop:
+        - postgresql
+        - firewalld
+
+    - name: Start services
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        state: started
+      loop:
+        - postgresql
+        - firewalld
+
+    - name: Open firewall
+      ansible.posix.firewalld:
+        port: 5432/tcp
+        permanent: true
+        state: enabled
+        immediate: true
+
+    - name: Create “ecommerce” database with 10Go
+      community.postgresql.postgresql_db:
+        name: ecommerce
+        encoding: UTF-8
+        lc_collate: en_US.UTF-8
+        lc_ctype: en_US.UTF-8
+        template: template0
+        state: present
+
+    - name: Create “user01” and “user02” users
+      community.postgresql.postgresql_user:
+        name: "{{ item }}"
+        password: "{{ _password_ }}"
+        encrypted: true
+        priv: ALL
+        state: present
+      loop:
+        - user01
+        - user02
+    
