@@ -5,13 +5,13 @@
   gather_facts: true
  
   tasks:
-    # Install postgresql-server, postgresql-client and firewalld package on RHEL & Enable services & start services & open firewall & create “ecommerce” database & create “user01” and “user02” users
+    # Install postgresql-server, postgresql and firewalld package on RHEL & Enable services & start services & open firewall & create “ecommerce” database & create “user01” and “user02” users
     - name: Install postgresql-server, postgresql-client and firewalld package on RHEL
       when: ansible_os_family == "RedHat"
       ansible.builtin.package:
         name:
           - postgresql-server
-          - postgresql-client
+          - postgresql
           - firewalld
         state: present
 
