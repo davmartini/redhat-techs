@@ -5,8 +5,8 @@
   gather_facts: true
  
   tasks:
-    # Install postgresql-server, postgresql and firewalld package on RHEL & initialize postgresql server & Enable services & start services & open firewall & create “ecommerce” database & create “user01” and “user02” users
-    - name: Install postgresql-server, postgresql and firewalld package on RHEL
+    #Install postgresql-server, postgresql and firewalld on RHEL & Initialize postgresql & Enable services & start services & open firewall & create “ecommerce” database & create “user01” and “user02” users
+    - name: Install postgresql-server, postgresql and firewalld on RHEL
       when: ansible_os_family == "RedHat"
       ansible.builtin.package:
         name:
@@ -15,7 +15,7 @@
           - firewalld
         state: present
 
-    - name: Initialize postgresql server
+    - name: Initialize postgresql
       ansible.builtin.command: postgresql-setup initdb
       args:
         creates: /var/lib/pgsql/data/postgresql.conf
@@ -43,16 +43,18 @@
         state: enabled
         immediate: true
 
+    - name: Create “ecommerce” database
+      community.postgresql.postgresql_db:
+        name: ecommerce
+        state: present
+
     - name: Create “user01” and “user02” users
       community.postgresql.postgresql_user:
         name: "{{ item }}"
-        password: "toto"
+        password: "{{ _password_ }}"
         db: ecommerce
         priv: ALL
         state: present
       loop:
         - user01
         - user02
-    
-    
-    
