@@ -1,0 +1,47 @@
+---
+- name: Web Server with Ansible LightSpeed
+  hosts: all
+  become: true
+  gather_facts: true
+
+  tasks:
+    # Install apache and firewalld on RHEL & Enable sevices & start services & open firewall & add index.html from "templates" directory
+    - name: Install apache and firewalld on RHEL
+      when: ansible_distribution == "RedHat"
+      ansible.builtin.package:
+        name:
+          - httpd
+          - firewalld
+        state: present
+
+    - name: Enable sevices
+      ansible.builtin.service:
+        name: "{{ item }}"
+        enabled: true
+      loop:
+        - httpd
+        - firewalld
+
+    - name: Start services
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: started
+      loop:
+        - httpd
+        - firewalld
+
+    - name: Open firewall
+      ansible.posix.firewalld:
+        port: 80/tcp
+        permanent: true
+        state: enabled
+        immediate: true
+
+    - name: Add index.html from "templates" directory
+      ansible.builtin.copy:
+        src: templates/index.html
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: '0644'
+    
