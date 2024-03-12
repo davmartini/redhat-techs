@@ -21,6 +21,7 @@ if [ $OPERATION == "new-cluster" ]; then
   echo "Control plane availability policy: $CP_DEPLOYMENT_MODE"
   echo "Infra availability policy: $INFRA_DEPLOYMENT_MODE"
   echo "Base domain: $BASE_DOMAIN"
+  echo "Upgrade Strategy: $UPGRADE_TYPE"
 
   if [ $NETWORK_DEPLOYMENT_MODE == "mutualized" ]; then
 
@@ -32,6 +33,7 @@ if [ $OPERATION == "new-cluster" ]; then
     --ssh-key $SSH_KEY \
     --memory $MEM \
     --cores $CPU \
+    --node-upgrade-type $UPGRADE_TYPE \
     --control-plane-availability-policy $CP_DEPLOYMENT_MODE \
     --infra-availability-policy $INFRA_DEPLOYMENT_MODE
 
@@ -45,6 +47,7 @@ if [ $OPERATION == "new-cluster" ]; then
     --ssh-key $SSH_KEY \
     --memory $MEM \
     --cores $CPU \
+    --node-upgrade-type $UPGRADE_TYPE \
     --control-plane-availability-policy $CP_DEPLOYMENT_MODE \
     --infra-availability-policy $INFRA_DEPLOYMENT_MODE \
     --base-domain $BASE_DOMAIN
