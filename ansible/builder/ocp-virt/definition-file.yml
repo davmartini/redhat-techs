@@ -1,0 +1,25 @@
+---
+version: 3
+
+
+options:
+    package_manager_path: /usr/bin/microdnf
+
+dependencies:
+  galaxy:
+    collections:
+      - redhat.openshift_virtualization
+      - redhat.openshift
+      - community.general
+
+images:
+  base_image:
+    name: registry.redhat.io/ansible-automation-platform-24/ee-supported-rhel8:latest
+
+additional_build_files:
+    - src: ansible.cfg
+      dest: configs
+
+additional_build_steps:
+  prepend_galaxy:
+    - ADD _build/configs/ansible.cfg /etc/ansible/ansible.cfg
