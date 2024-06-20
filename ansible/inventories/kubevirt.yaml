@@ -1,6 +1,7 @@
-plugin: kubevirt.core.kubevirt
-host_format: "{name}"
-connections:
-- validate_certs: false
-  namespaces:
-  - vms-demo
+- name: Authenticate with token and return all VirtualMachineInstances for all accessible namespaces
+  plugin: redhat.openshift_virtualization.kubevirt
+  host_format: "{name}"
+  connections:
+    - host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
+      api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
+      validate_certs: false
