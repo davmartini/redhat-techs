@@ -1,6 +1,6 @@
 - name: Authenticate with token and return all VirtualMachineInstances for all accessible namespaces
   plugin: redhat.openshift_virtualization.kubevirt
   connections:
-    - host: https://api.ocp.drkspace.fr:6443
-      api_key: xxxxxxxxxxxxxxxx
+    - host: "https://api.ocp.drkspace.fr:6443"
+      api_key: "12345455"
       validate_certs: false
