@@ -5,12 +5,12 @@
   gather_facts: no
   collections:
     - redhat.openshift
-    - kubevirt.core
+    - redhat.openshift_virtualization
 
   tasks:
 
   - name: List VMs on OpenShift Virtualization
-    kubevirt.core.kubevirt_vm_info:
+    redhat.openshift_virtualization.kubevirt_vm_info:
       host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
       api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
       validate_certs: false
@@ -26,7 +26,7 @@
         var: vms_list
 
   - name: Delete VirtualMachine on OCP vms-demo namespace
-    kubevirt.core.kubevirt_vm:
+    redhat.openshift_virtualization.kubevirt_vm:
       host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
       api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
       validate_certs: false
