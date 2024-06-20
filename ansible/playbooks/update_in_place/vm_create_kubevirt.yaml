@@ -5,7 +5,7 @@
   gather_facts: no
   collections:
     - redhat.openshift
-    - kubevirt.core
+    - redhat.openshift_virtualization
 
   tasks:
   
@@ -17,7 +17,7 @@
 
   - name: Create a VirtualMachine (when RHEL7) with a DataVolume template
     when: os == "rhel7"
-    kubevirt.core.kubevirt_vm:
+    redhat.openshift_virtualization.kubevirt_vm:
       host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
       api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
       validate_certs: false
@@ -70,7 +70,7 @@
 
   - name: Create a VirtualMachine (when RHEL8 or RHEL9) with a DataVolume template
     when: os == "rhel8" or os == "rhel9"
-    kubevirt.core.kubevirt_vm:
+    redhat.openshift_virtualization.kubevirt_vm:
       host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
       api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
       validate_certs: false
