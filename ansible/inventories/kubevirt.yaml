@@ -1,5 +1,5 @@
 plugin: redhat.openshift_virtualization.kubevirt
 connections:
-  - host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
+  - host: "https://api.ocp.drkspace.fr:6443"
     api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
     validate_certs: false
