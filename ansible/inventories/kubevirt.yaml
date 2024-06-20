@@ -1,6 +1,4 @@
 - name: Authenticate with token and return all VirtualMachineInstances for all accessible namespaces
   plugin: redhat.openshift_virtualization.kubevirt
   connections:
-    - host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
-      api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
-      validate_certs: false
+    - validate_certs: false
