@@ -1,7 +1,5 @@
 plugin: redhat.openshift_virtualization.kubevirt
 connections:
-  - host: "https://api.ocp.drkspace.fr:6443"
-    api_key: "{{ K8S_AUTH_API_KEY }}"
-    namespaces:
+  - namespaces:
       - vms-demo
     validate_certs: false
