@@ -31,7 +31,7 @@
       api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
       validate_certs: false
       state: absent
-      api_version: v1
+      api_version: route.openshift.io/v1
       kind: Route
       name: "cockpit-{{ item }}"
       namespace: vms-demo
@@ -43,7 +43,7 @@
       api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
       validate_certs: false
       state: absent
-      api_version: v1
+      api_version: route.openshift.io/v1
       kind: Route
       name: "app-{{ item }}"
       namespace: vms-demo
