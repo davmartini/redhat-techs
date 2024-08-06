@@ -29,3 +29,8 @@
     
   - name: Show status
     ansible.builtin.shell: composer-cli status show
+    register: composer_status
+
+  - name: Print composer sattus
+    ansible.builtin.debug:
+      var: composer_status
