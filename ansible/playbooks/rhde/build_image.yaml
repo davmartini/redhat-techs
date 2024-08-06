@@ -28,3 +28,18 @@
   - name: Push a RHDE 4.16 blueprint
     infra.osbuild.push_blueprint:
       src: files/rhde_4.16_v1_blueprint.toml
+
+
+  - name: Get list of blueprints
+    infra.osbuild.list_blueprints:
+    register: list_blueprints_out
+
+  - debug: var=list_blueprints
+
+
+  - name: Start ostree compose size 4096
+  infra.osbuild.start_compose:
+    blueprint: RHDE_4_16_v1
+    compose_type: edge-container
+    ostree_ref: rhel/9/x86_64/edge
+    image_name: rhde
