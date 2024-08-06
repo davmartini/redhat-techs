@@ -10,7 +10,6 @@
       name: 
         - osbuild-composer
         - composer-cli
-        - cockpit-composer
         - podman
       state: present
 
