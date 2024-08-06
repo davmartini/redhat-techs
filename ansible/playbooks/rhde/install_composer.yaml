@@ -19,7 +19,7 @@
       enabled: yes
 
   - name: Source file
-    ansible.builtin.command: source /etc/bash_completion.d/composer-cli
+    ansible.builtin.shell: source /etc/bash_completion.d/composer-cli
 
   - name: Restart service osbuild-composer
     ansible.builtin.service:
@@ -27,4 +27,4 @@
       state: restarted
     
   - name: Show status
-    ansible.builtin.command: composer-cli status show
+    ansible.builtin.shell: composer-cli status show
