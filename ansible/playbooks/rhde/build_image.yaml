@@ -37,3 +37,7 @@
   - name: Print blueprint list 
     ansible.builtin.debug:
       var: blueprint_list.stdout_lines
+
+  - name: Build container image
+    ansible.builtin.shell: composer-cli compose start-ostree --ref "rhel/9/$(uname -m)/edge" RHDE_4_16_v1 edge-container
+
