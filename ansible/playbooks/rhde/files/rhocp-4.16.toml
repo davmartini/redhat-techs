@@ -1,7 +1,7 @@
 id = "rhocp-4.16"
 name = "Red Hat OpenShift Container Platform 4.16 for RHEL 9"
 type = "yum-baseurl"
-url = "https://cdn.redhat.com/content/dist/layered/rhel9/$(uname -m)/rhocp/4.16/os"
+url = "https://cdn.redhat.com/content/dist/layered/rhel9/x86_64/rhocp/4.16/os"
 check_gpg = true
 check_ssl = true
 system = false
