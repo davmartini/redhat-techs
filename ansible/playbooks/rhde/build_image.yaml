@@ -16,3 +16,11 @@
     ansible.builtin.copy:
       src: files/rhocp-4.16.toml
       dest: /root/rhde/rhocp-4.16.toml
+
+  - name: import file
+    ansible.builtin.shell: omposer-cli sources add rhocp-4.16.toml && composer-cli sources add fast-datapath.toml && composer-cli sources list
+    register: composer_list
+
+  - name: Print composer list 
+    ansible.builtin.debug:
+          var: composer_list
