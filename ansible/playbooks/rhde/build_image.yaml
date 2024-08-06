@@ -37,14 +37,30 @@
   - debug: var=list_blueprints
 
 
-  - name: Start ostree compose size 4096
-  infra.osbuild.start_compose:
-    blueprint: RHDE_4_16_v1
-    compose_type: edge-container
-    ostree_ref: rhel/9/x86_64/edge
-    image_name: rhde
-    timeout: 360
-  register: edge-container-image
+  - name: Start ostree compose
+    infra.osbuild.start_compose:
+      blueprint: RHDE_4_16_v1
+      compose_type: edge-container
+      ostree_ref: rhel/9/x86_64/edge
+      image_name: rhde
+      timeout: 360
+    register: edge-container-image
   
-  - debug: edge-container-image
+  - debug: var=edge-container-image
 
+  - name: Start podman container
+    ansible.builtin.shell: podman run -d --name=minimal-microshift-server -p 8085:8080 $imageid
+
+  - name: Push a microshift-installer blueprint
+    infra.osbuild.push_blueprint:
+      src: files/microshift-installer.toml
+
+  - name: Start iso compose
+    infra.osbuild.start_compose:
+      blueprint: microshift-installer
+      compose_type: edge-installer
+      ostree_ref: rhel/9/x86_64/edge
+      ostree_url: http://localhost:8085/repo/
+      image_name: rhde-iso
+      timeout: 360
+    register: edge-iso-image
