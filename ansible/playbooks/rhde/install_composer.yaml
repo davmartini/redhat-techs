@@ -11,6 +11,7 @@
         - osbuild-composer
         - composer-cli
         - cockpit-composer
+        - podman
       state: present
 
   - name: Start service osbuild-composer.socket, if not started
