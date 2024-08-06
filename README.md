@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-test
-=======
 # Description
 Repository to host all configuration files, notes and labs
 
