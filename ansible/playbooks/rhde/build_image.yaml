@@ -18,7 +18,7 @@
       dest: /root/rhde/rhocp-4.16.toml
 
   - name: import file
-    ansible.builtin.shell: composer-cli sources add rhocp-4.16.toml && composer-cli sources add fast-datapath.toml && composer-cli sources list
+    ansible.builtin.shell: composer-cli sources add /root/rhde/rhocp-4.16.toml && composer-cli sources add /root/rhde/fast-datapath.toml && composer-cli sources list
     register: composer_list
 
   - name: Print composer list 
