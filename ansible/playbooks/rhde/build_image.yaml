@@ -24,3 +24,16 @@
   - name: Print composer list 
     ansible.builtin.debug:
       var: composer_list.stdout_lines
+
+  - name: copy rhde_4.16_v1_blueprint.toml blueprint
+    ansible.builtin.copy:
+      src: files/rhde_4.16_v1_blueprint.toml
+      dest: /root/rhde/rhde_4.16_v1_blueprint.toml
+
+  - name: import blueprint
+    ansible.builtin.shell: composer-cli blueprints push /root/rhde/rhde_4.16_v1_blueprint.toml && composer-cli blueprints list
+    register: blueprint_list
+
+  - name: Print blueprint list 
+    ansible.builtin.debug:
+      var: blueprint_list.stdout_lines
