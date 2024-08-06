@@ -3,4 +3,5 @@ host_format: "{name}"
 connections:
   - namespaces:
       - vms-demo
+      - vms-rhde
     validate_certs: false
