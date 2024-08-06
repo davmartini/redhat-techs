@@ -5,9 +5,9 @@
     - infra.osbuild
   tasks:
 
-  - name: Add source for custom packages
+  - name: Add source RHOCP4.16
     infra.osbuild.repository:
-      repo_name: "Red Hat OpenShift Container Platform 4.16 for RHEL 9"
+      repo_name: "rhocp-4.16"
       base_url: https://cdn.redhat.com/content/dist/layered/rhel9/x86_64/rhocp/4.16/os
       type: yum-baseurl
       check_ssl: true
@@ -15,4 +15,16 @@
       rhsm: true
       state: present
 
-  
+  - name: Add source Fast Datapath
+    infra.osbuild.repository:
+      repo_name: "fast-datapath"
+      base_url: https://cdn.redhat.com/content/dist/layered/rhel9/x86_64/fast-datapath/os
+      type: yum-baseurl
+      check_ssl: true
+      check_gpg: true
+      rhsm: true
+      state: present
+
+  - name: Push a RHDE 4.16 blueprint
+    infra.osbuild.push_blueprint:
+      src: files/rhde_4.16_v1_blueprint.toml
