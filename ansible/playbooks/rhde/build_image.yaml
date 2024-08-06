@@ -23,4 +23,4 @@
 
   - name: Print composer list 
     ansible.builtin.debug:
-      var: composer_list
+      var: composer_list.stdout_lines
