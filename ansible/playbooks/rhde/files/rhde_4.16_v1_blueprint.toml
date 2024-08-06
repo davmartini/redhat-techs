@@ -1,0 +1,21 @@
+name = "RHDE_4_16_v1"
+description = "MicroShift 4.16.1 on x86_64 platform"
+version = "0.0.1"
+modules = []
+groups = []
+
+[[packages]]
+name = "microshift"
+version = "4.16.1"
+
+[customizations.services]
+enabled = ["microshift"]
+
+[customizations.firewall]
+ports = ["22:tcp", "80:tcp", "443:tcp", "5353:udp", "6443:tcp", "30000-32767:tcp", "30000-32767:udp"]
+
+[[customizations.user]]
+name = "cloud-user"
+description = "Initial User"
+key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC3OL8vJoTsbn/LBUZWgV8YYmxUZSMAWZ6UKMHC2iF9VCYmuI0opJKNBpEDFlomrENOm7HkEIafdPpFfEiDMszDhskvNWAVPiJJChjMBxFgvNWLAEHJQKvGaylVDF4yOex9ehMKOnhBVnO7FFrn33AmgiikEQRcqkz9Q1NQ7ccDZzF5eml0brxmO+2IziUrPdeVwkR7Wzw19zyxLf3f7dfGkfnfoeku1D8BWQaclN0T8AAC4IAVQ1YXp5kf4rpPdf3eCMUKItJCwW4nAKLmJDoJTMXx6LsOGsBZHwPxV0LbR9titUhGpRCBor2nYs1EnN4qCd7f+3yU0lZ+dV5HdMWXesD2czEY8CTncEhD+6c4x3RnyLNC+zqHuM4U1szsQPkOxI5zqItxVgy0HmLThpaA0knohTVYAnq+Qhw+iA6yokRv/pBRTr9fPeUv03LBB5tYEhBDCkGICY4ZRuT+NlsBHMxAjeQIIYeOh0DwldEl2QXVJc3eNt5nkQw49BoCGIU= dmartini@Davids-MacBook-Pro"
+groups = ["wheel"]

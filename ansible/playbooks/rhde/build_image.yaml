@@ -1,0 +1,18 @@
+- name: Build RHDE image
+  hosts: all
+  gather_facts: false
+
+  tasks:
+
+  - name: Create directory
+    ansible.builtin.shell: mkdir /root/rhde && cd /root/rhde
+  
+  - name: copy fast-datapath.toml file
+    ansible.builtin.copy:
+      src: files/fast-datapath.toml
+      dest: /root/rhde/fast-datapath.toml
+
+  - name: copy rhocp-4.16.toml file
+    ansible.builtin.copy:
+      src: files/rhocp-4.16.toml
+      dest: /root/rhde/rhocp-4.16.toml
