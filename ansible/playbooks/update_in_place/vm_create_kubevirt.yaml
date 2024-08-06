@@ -23,7 +23,7 @@
       validate_certs: false
       state: present
       name: "{{ topic }}-{{ uuid }}{{ item }}"
-      namespace: "{{ namespace | default('vms-demo') }}"
+      namespace: "{{ namespace }}"
       labels:
         app: "{{ topic }}"
       instancetype:
@@ -76,7 +76,7 @@
       validate_certs: false
       state: present
       name: "{{ topic }}-{{ uuid }}{{ item }}"
-      namespace: "{{ namespace | default('vms-demo') }}"
+      namespace: "{{ namespace }}"
       labels:
         app: "{{ topic }}"
       instancetype:

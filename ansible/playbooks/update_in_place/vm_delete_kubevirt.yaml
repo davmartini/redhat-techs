@@ -14,7 +14,7 @@
       host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
       api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
       validate_certs: false
-      namespace: "{{ namespace | default(vms-demo) }}"
+      namespace: "{{ namespace }}"
     register: result
     
   - name: Set list vms by name
@@ -34,7 +34,7 @@
       api_version: route.openshift.io/v1
       kind: Route
       name: "cockpit-{{ item }}"
-      namespace: "{{ namespace | default(vms-demo) }}"
+      namespace: "{{ namespace }}"
     loop: "{{ vms_list }}"
 
   - name: Delete Route for App
@@ -46,7 +46,7 @@
       api_version: route.openshift.io/v1
       kind: Route
       name: "app-{{ item }}"
-      namespace: "{{ namespace | default(vms-demo) }}"
+      namespace: "{{ namespace }}"
     loop: "{{ vms_list }}"
 
   - name: Delete Service for Cockpit
@@ -58,7 +58,7 @@
       api_version: v1
       kind: Service
       name: "cockpit-{{ item }}"
-      namespace: "{{ namespace | default(vms-demo) }}"
+      namespace: "{{ namespace }}"
     loop: "{{ vms_list }}"
 
   - name: Delete Service for App
@@ -70,7 +70,7 @@
       api_version: v1
       kind: Service
       name: "app-{{ item }}"
-      namespace: "{{ namespace | default(vms-demo) }}"
+      namespace: "{{ namespace }}"
     loop: "{{ vms_list }}"
 
   - name: Delete VirtualMachine on OCP vms-demo namespace
@@ -80,7 +80,7 @@
       validate_certs: false
       state: absent
       name: "{{ item }}"
-      namespace: "{{ namespace | default(vms-demo) }}"
+      namespace: "{{ namespace }}"
     loop: "{{ vms_list }}"
 
 
