@@ -43,3 +43,8 @@
     compose_type: edge-container
     ostree_ref: rhel/9/x86_64/edge
     image_name: rhde
+    timeout: 360
+  register: edge-container-image
+  
+  - debug: edge-container-image
+
