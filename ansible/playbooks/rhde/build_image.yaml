@@ -1,43 +1,18 @@
 - name: Build RHDE image
   hosts: all
   gather_facts: false
-
+  collections:
+    - infra.osbuild
   tasks:
 
-  - name: Create directory
-    ansible.builtin.shell: mkdir /root/rhde && cd /root/rhde
+  - name: Add source for custom packages
+    infra.osbuild.repository:
+      repo_name: "Red Hat OpenShift Container Platform 4.16 for RHEL 9"
+      base_url: https://cdn.redhat.com/content/dist/layered/rhel9/x86_64/rhocp/4.16/os
+      type: yum-baseurl
+      check_ssl: true
+      check_gpg: true
+      rhsm: true
+      state: present
+
   
-  - name: copy fast-datapath.toml file
-    ansible.builtin.copy:
-      src: files/fast-datapath.toml
-      dest: /root/rhde/fast-datapath.toml
-
-  - name: copy rhocp-4.16.toml file
-    ansible.builtin.copy:
-      src: files/rhocp-4.16.toml
-      dest: /root/rhde/rhocp-4.16.toml
-
-  - name: import file
-    ansible.builtin.shell: composer-cli sources add /root/rhde/rhocp-4.16.toml && composer-cli sources add /root/rhde/fast-datapath.toml && composer-cli sources list
-    register: composer_list
-
-  - name: Print composer list 
-    ansible.builtin.debug:
-      var: composer_list.stdout_lines
-
-  - name: copy rhde_4.16_v1_blueprint.toml blueprint
-    ansible.builtin.copy:
-      src: files/rhde_4.16_v1_blueprint.toml
-      dest: /root/rhde/rhde_4.16_v1_blueprint.toml
-
-  - name: import blueprint
-    ansible.builtin.shell: composer-cli blueprints push /root/rhde/rhde_4.16_v1_blueprint.toml && composer-cli blueprints list
-    register: blueprint_list
-
-  - name: Print blueprint list 
-    ansible.builtin.debug:
-      var: blueprint_list.stdout_lines
-
-  - name: Build container image
-    ansible.builtin.shell: composer-cli compose start-ostree --ref "rhel/9/x86_64/edge" RHDE_4_16_v1 edge-container
-
