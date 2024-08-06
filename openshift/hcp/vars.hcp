@@ -1,0 +1,10 @@
+export CLUSTER_NAME=hcp02
+export PULL_SECRET="./pull-secret"
+export SSH_KEY="./dm_key.pub"
+export MEM="6Gi"
+export CPU="2"
+export WORKER_COUNT="2"
+export BASE_DOMAIN=drkspace.fr
+export CP_DEPLOYMENT_MODE="SingleReplica"
+export INFRA_DEPLOYMENT_MODE="SingleReplica"
+export RELEASE_IMAGE="quay.io/openshift-release-dev/ocp-release@sha256:95e5e0b7b92844abcf84b77314a3595efaed93de9c81487fb14c9be9ab4ebd42"

@@ -1,0 +1,80 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: s2i-serverless-pipeline
+  namespace: dm-pipeline
+spec:
+  params:
+    - default: rev01
+      description: Git revision
+      name: revision
+      type: string
+  tasks:
+    - name: git-clone
+      params:
+        - name: url
+          value: 'https://github.com/davmartini/redhat-techs.git'
+        - name: revision
+          value: main
+        - name: submodules
+          value: 'true'
+        - name: depth
+          value: '1'
+        - name: sslVerify
+          value: 'true'
+        - name: crtFileName
+          value: ca-bundle.crt
+        - name: deleteExisting
+          value: 'true'
+        - name: verbose
+          value: 'true'
+        - name: gitInitImage
+          value: >-
+            registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8@sha256:cadf614a6044ee37397de3abe7674827ecab225e7fac9fb123eff5473e2c4003
+        - name: userHome
+          value: /tekton/home
+      taskRef:
+        kind: ClusterTask
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+    - name: inspect-git-directory
+      params:
+        - name: directory
+          value: >-
+            /workspace/output/tekton/container-images/serverless/$(params.revision)/
+      runAfter:
+        - git-clone
+      taskRef:
+        kind: Task
+        name: inspect-git-directory
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+    - name: s2i-php
+      params:
+        - name: VERSION
+          value: latest
+        - name: PATH_CONTEXT
+          value: >-
+            /workspace/source/tekton/container-images/serverless/$(params.revision)/
+        - name: TLSVERIFY
+          value: 'true'
+        - name: BUILDER_IMAGE
+          value: >-
+            registry.redhat.io/rhel8/buildah@sha256:0a86ecbdfbe86e9d225b7fe4b090a0dd6d323f8afdfdf2bd933ff223ddb53320
+        - name: SKIP_PUSH
+          value: 'false'
+        - name: IMAGE
+          value: 'quay.io/david_martini/serverless:$(params.revision)'
+      runAfter:
+        - inspect-git-directory
+      taskRef:
+        kind: ClusterTask
+        name: s2i-php
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+  workspaces:
+    - name: shared-workspace

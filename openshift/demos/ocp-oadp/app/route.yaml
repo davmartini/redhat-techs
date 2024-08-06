@@ -1,0 +1,17 @@
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app.kubernetes.io/name: oadp
+    app.kubernetes.io/version: 1.0-SNAPSHOT
+    department: fruity-dept
+    app.openshift.io/runtime: quarkus
+  name: oadp
+spec:
+  path: /
+  port:
+    targetPort: quarkus-front-oadp
+  to:
+    kind: Service
+    name: quarkus-front-oadp

@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    app.openshift.io/connects-to: my-cluster
+  name: quarkus-eda-demo
+  labels:
+    app.kubernetes.io/part-of: strimzi-my-cluster
+    app.openshift.io/runtime: quarkus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quarkus-eda-demo
+  template:
+    metadata:
+      labels:
+        app: quarkus-eda-demo
+    spec:
+      containers:
+        - env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: my-cluster-kafka-bootstrap:9092
+          name: quarkus-eda-demo
+          image: quay.io/david_martini/serverless:eda-demo-1.2
+          imagePullPolicy: IfNotPresent

@@ -1,0 +1,249 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  collections:
+    - hpe.oneview
+    - hpe.ilo
+    - hpe.nimble
+
+  vars:
+
+  tasks:
+
+    - set_fact:
+        iso_url: "{{ img_url_base }}/rhel78_def0.iso"
+      when: iso_url is undefined or iso_url | length == 0
+    - debug:
+        msg: 'Installation ISO to be used: {{ iso_url }}'
+
+    - set_fact:
+        ov_profile: "RHOV_{{ inventory_hostname_short }}"
+      when: ov_profile is undefined or ov_profile is not match ("^RHOV_.*")
+    - debug:
+        msg: 'Profile to be assigned: {{ ov_profile }}'
+
+    - name: Gather facts about Server Hardware
+      oneview_server_hardware_facts:
+        params:
+          start: 0
+          count: 10
+          sort: name:ascending
+      delegate_to: localhost
+
+
+#    - debug: msg="{{server_hardwares | map(attribute='model') | unique | list }}"
+#    - debug: var=server_hardwares
+    - debug:
+        msg: Available computes {{server_hardwares | map(attribute='name') | list }}
+
+    - name: Gather facts about Server Hardware Type
+      oneview_server_hardware_type_facts:
+        params:
+          start: 0
+          count: 10
+          sort: name:ascending
+      delegate_to: localhost
+
+    - debug:
+        msg: Available hardware types in environment {{server_hardware_types | map(attribute='name') | unique | list }}
+
+    - name: Gather facts OneView Server Profile Templates facts
+      oneview_server_profile_template_facts:
+        params:
+          start: 0
+          count: 10
+          sort: name:ascending
+      delegate_to: localhost
+
+    - debug:
+        msg: Available server templates {{server_profile_templates | map(attribute='name') | unique | list }}
+
+    - name: Detailed facts for server
+      oneview_server_hardware_facts:
+        name: "{{ ov_hardware }}"
+      delegate_to: localhost
+
+    - set_fact:
+        old_server_profile_uri: '{{ server_hardwares.serverProfileUri }}'
+    - debug:
+        msg: 'Already assigned profile: {{ old_server_profile_uri }}'
+      when: old_server_profile_uri | length > 0
+
+    - name: Handle previously assigned profile
+      block:
+  
+      - name: Get name of already assigned profile
+        oneview_server_profile_facts:
+          uri: "{{ old_server_profile_uri }}"
+        delegate_to: localhost
+
+      - set_fact:
+          old_server_profile_name: '{{ server_profiles[0].name }}'
+      - debug:
+          msg: 'Name of already assigned profile: {{ old_server_profile_name }}'
+
+      - name: Abandon actions when potentially unsafe
+        fail:
+          msg: 'Server {{ ov_hardware }} has a profile with unexpected name assigned ({{ old_server_profile_name }}); Please investigate, e.g. whether this is the correct compute target and if so, manually remove the profile'
+        when: old_server_profile_name is not match ("^RHOV_.*")
+  
+      - name: Handle approved change in profile
+        block:
+
+        - name: Power Off compute in order to remove the profile
+          oneview_server_hardware:
+            state: power_state_set
+            data:
+                name : '{{ ov_hardware }}'
+                powerStateData:
+                    powerState: "Off"
+                    powerControl: "PressAndHold"
+          delegate_to: localhost
+      
+        - name: Remove old profile from compute
+          oneview_server_profile:
+            state: absent
+            data:
+              name: "{{ old_server_profile_name }}"
+          delegate_to: localhost
+
+        when: old_server_profile_name != ov_profile
+
+      when: old_server_profile_uri | length > 0
+
+
+    - name: Create profile from template and assign to compute
+      oneview_server_profile:
+        data:
+          name: "{{ ov_profile }}"
+          serverProfileTemplateName: "{{ ov_template }}"
+          serverHardwareName: "{{ ov_hardware }}"
+        params:
+          force: True
+      register: mpHostInfo
+      delegate_to: localhost
+
+    - name: Ensure profile state is compliant
+      oneview_server_profile:
+        state: "compliant"
+        data:
+          name: "{{ ov_profile }}"
+      delegate_to: localhost
+
+    - name: Detailed facts for server profile
+      oneview_server_profile_facts:
+        name: "{{ ov_profile }}"
+      delegate_to: localhost
+
+    - set_fact:
+        server_profile_uri: '{{ server_profiles[0].uri }}'
+      when: server_profiles|length > 0
+
+    - set_fact:
+        server_profile_mac0: '{{ server_profiles[0].connectionSettings.connections[0].mac }}'
+      when: server_profiles|length > 0
+
+    - debug:
+        msg: MAC address of deployed server = {{ server_profile_mac0 }}
+
+    - name: Create kickstart config
+      template:
+        src: "files/ks_cfg.j2"
+        dest: "/tmp/ks_{{ inventory_hostname_short }}.cfg"
+        mode: 0644
+      delegate_to: localhost
+
+    - name: Create empty kickstart image file
+      shell: mkfs.vfat -C -n OEMDRV /tmp/ks_{{ inventory_hostname_short }}.img 10240
+      delegate_to: localhost
+
+    - name: Add Kickstart file to kickstart image
+      shell: mcopy -i /tmp/ks_{{ inventory_hostname_short }}.img /tmp/ks_{{ inventory_hostname_short }}.cfg ::ks.cfg
+      delegate_to: localhost
+
+    - name: Copy kickstart image to HTTP/Tower server
+      copy:
+        src: /tmp/ks_{{ inventory_hostname_short }}.img
+        dest: "{{ http_base }}/ks_{{ inventory_hostname_short }}.img"
+      delegate_to: "{{ http_server }}"
+      become: true
+
+    - set_fact:
+        img_url: "{{ img_url_base }}/ks_{{ inventory_hostname_short }}.img"
+
+    - name: Gather sso iLO url facts about a Server Hardware
+      oneview_server_hardware_facts:
+        name: "{{ ov_hardware }}"
+        options:
+          - remoteConsoleUrl
+      delegate_to: localhost
+ 
+    - set_fact:
+        remote_console_url: "{{ server_hardware_remote_console_url.remoteConsoleUrl }}"
+    - set_fact:
+        split_uri_session: "{{ remote_console_url.split('&') }}"
+    - set_fact:
+        ilo_ip_address: "{{ split_uri_session[0].split('=')[1] }}"
+    - set_fact:
+        session: "{{ split_uri_session[1].split('=')[1] }}"
+
+    - debug:
+        msg: 'Address of associated iLO: {{ ilo_ip_address }}'
+    - debug:
+        msg: 'Token for iLO session: {{ session }}'
+    - debug:
+        msg: 'Virtual image media mount of: {{ img_url }}'
+    - debug:
+        msg: 'Virtual DVD media mount of: {{ iso_url }}'
+
+    - name: Power Off the server hardware
+      oneview_server_hardware:
+        state: power_state_set
+        data:
+            name : '{{ ov_hardware }}'
+            powerStateData:
+                powerState: "Off"
+                powerControl: "PressAndHold"
+      delegate_to: localhost
+
+
+    - name: Mount virtual media
+      ilo_virtual_media:
+        uri: "{{ ilo_ip_address }}"
+        session_id: "{{ session }}"
+        iso_url: "{{ iso_url }}"
+        img_url: "{{ img_url}}"
+        boot_on_next_server_reset: True
+      register: mount_status
+      when:
+        - ilo_ip_address != ""
+        - session != ""
+      delegate_to: localhost
+
+    - name: Power On the server hardware
+      oneview_server_hardware:
+        state: power_state_set
+        data:
+          name: "{{ ov_hardware }}"
+          powerStateData:
+            powerState: "On"
+            powerControl: "MomentaryPress"
+      delegate_to: localhost
+
+    - name: Wait for system to finish booting
+      wait_for:
+        host: "{{ ansible_host }}"
+        port: 22
+        delay: 60
+        state: started
+        timeout: 1800
+      delegate_to: localhost
+
+    - name: Change motd to show ssh connect is working
+      lineinfile:
+        path: /etc/motd
+        regexp: "This host was setup by Ansible"
+        line: "This host was setup by Ansible on {{ lookup('pipe', 'date -Iseconds') }}"
+        state: present
+      become: true

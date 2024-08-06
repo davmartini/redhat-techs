@@ -1,0 +1,30 @@
+- hosts: all
+  gather_facts: false
+
+  tasks:
+
+    - name: Deploy needed package
+      become: true
+      ansible.builtin.yum:
+        name: 
+          - osbuild-composer
+          - composer-cli
+          - cockpit-composer
+      state: present
+
+    - name: Start service osbuild-composer.socket, if not started
+      ansible.builtin.service:
+        name: osbuild-composer.socket
+      state: started
+      enabled: yes
+
+    - name: Source file
+      ansible.builtin.command: source /etc/bash_completion.d/composer-cli
+
+    - name: Restart service osbuild-composer
+      ansible.builtin.service:
+        name: osbuild-composer
+      state: restarted
+    
+    - name: Show status
+      ansible.builtin.command: composer-cli status show

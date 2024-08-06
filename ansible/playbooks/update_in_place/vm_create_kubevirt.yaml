@@ -1,0 +1,136 @@
+---
+- name: create VM on OpenShift Virt
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  collections:
+    - redhat.openshift
+    - redhat.openshift_virtualization
+
+  tasks:
+  
+  - name: Set vars
+    set_fact:
+      uuid: "{{ 1000 | random }}"
+      os_template: "{{ 'rhel.7' if os == 'rhel7' else 'rhel.8' if os == 'rhel8' else 'rhel.9' if os == 'rhel9' }}"
+    run_once: yes
+
+  - name: Create a VirtualMachine (when RHEL7) with a DataVolume template
+    when: os == "rhel7"
+    redhat.openshift_virtualization.kubevirt_vm:
+      host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
+      api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
+      validate_certs: false
+      state: present
+      name: "{{ topic }}-{{ uuid }}{{ item }}"
+      namespace: "{{ namespace | default(vms-demo) }}"
+      labels:
+        app: "{{ topic }}"
+      instancetype:
+        name: "{{ flavor }}"
+      preference:
+        name: "{{ os_template }}"
+      data_volume_templates:
+        - metadata:
+            name: "{{ topic }}-{{ uuid }}{{ item }}"
+          spec:
+            source:
+              pvc:
+                name: rhel7-template
+                namespace: openshift-virtualization-os-images
+            storage:
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 30Gi
+              storageClassName: lvms-vg1
+      spec:
+        domain:
+          devices: {}
+        accessCredentials:
+        - sshPublicKey:
+            source:
+              secret:
+                secretName: my-pub-key
+            propagationMethod:
+              configDrive: {}
+        volumes:
+        - dataVolume:
+            name: "{{ topic }}-{{ uuid }}{{ item }}"
+          name: datavolume
+        - cloudInitConfigDrive:
+            userData: |-
+              #cloud-config
+              # The default username is: cloud-user
+          name: cloudinit
+      wait: yes
+    loop: "{{ range(0, vm_number|int)|list}}"
+
+
+  - name: Create a VirtualMachine (when RHEL8 or RHEL9) with a DataVolume template
+    when: os == "rhel8" or os == "rhel9"
+    redhat.openshift_virtualization.kubevirt_vm:
+      host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
+      api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
+      validate_certs: false
+      state: present
+      name: "{{ topic }}-{{ uuid }}{{ item }}"
+      namespace: "{{ namespace | default(vms-demo) }}"
+      labels:
+        app: "{{ topic }}"
+      instancetype:
+        name: "{{ flavor }}"
+      preference:
+        name: "{{ os_template }}"
+      data_volume_templates:
+        - metadata:
+            name: "{{ topic }}-{{ uuid }}{{ item }}"
+          spec:
+            sourceRef:
+              kind: DataSource
+              name: "{{ os }}"
+              namespace: openshift-virtualization-os-images
+            storage:
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 30Gi
+              storageClassName: lvms-vg1
+      spec:
+        domain:
+          devices: {}
+        accessCredentials:
+        - sshPublicKey:
+            source:
+              secret:
+                secretName: my-pub-key
+            propagationMethod:
+              configDrive: {}
+        volumes:
+        - dataVolume:
+            name: "{{ topic }}-{{ uuid }}{{ item }}"
+          name: datavolume
+        - cloudInitConfigDrive:
+            userData: |-
+              #cloud-config
+              # The default username is: cloud-user
+          name: cloudinit
+      wait: yes
+    loop: "{{ range(0, vm_number|int)|list}}"
+
+  - name: Generate VM files
+    template:
+      src: templates/vm_template.yml.j2
+      dest: vm_template-{{ item }}.yml
+    loop: "{{ range(0, vm_number|int)|list}}"
+
+  - name: Create Service and Route for Cockpit VMs
+    redhat.openshift.k8s:
+      host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
+      api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
+      validate_certs: false
+      state: present
+      src: vm_template-{{ item }}.yml
+    loop: "{{ range(0, vm_number|int)|list}}"

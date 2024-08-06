@@ -1,0 +1,35 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: vulnerable-log4j
+  namespace: vulnerable-cicd
+spec:
+  tasks:
+  - name: build-image
+    taskRef:
+      name: oc-start-build
+    params:
+    - name: componentName
+      value: vulnerable-log4j
+    - name: namespace
+      value: vulnerable-cicd
+  - name: roxctl-image-check
+    taskRef:
+      name: roxctl-image-check
+    runAfter:
+      - build-image
+    params:
+    - name: roxctlSecret
+      value: central-apitoken
+    - name: image
+      value: __REGISTRY__/vulnerable-cicd/vulnerable-log4j:latest
+  - name: deploy
+    taskRef:
+      name: oc-deploy
+    runAfter:
+      - roxctl-image-check
+    params:
+    - name: componentName
+      value: settlement-app
+    - name: namespace
+      value: vulnerable-log4j

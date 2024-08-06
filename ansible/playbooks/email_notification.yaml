@@ -1,0 +1,17 @@
+---
+- hosts: localhost
+  gather_facts: no
+
+  tasks:
+
+    - name: Sending an e-mail using Gmail SMTP servers
+      community.general.mail:
+        sender: AAP Controller
+        host: "{{ EMAIL_SERVER_URL }}"
+        port: "{{ EMAIL_SERVER_PORT }}"
+        username: "{{ EMAIL_USERNAME }}"
+        password: "{{ EMAIL_PASSWORD }}"
+        to: "{{ EMAIL_TO }}"
+        subject: "{{ EMAIL_SUBJECT }}"
+        body: "{{ EMAIL_BODY }}"
+      delegate_to: localhost

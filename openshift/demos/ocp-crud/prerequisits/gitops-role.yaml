@@ -1,0 +1,70 @@
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: gitops-users
+rules:
+  - verbs:
+      - get
+      - watch
+      - list
+      - create
+      - delete
+    apiGroups:
+      - ''
+    resources:
+      - services
+      - secrets
+  - verbs:
+      - get
+      - watch
+      - list
+      - create
+      - delete
+    apiGroups:
+      - apps
+    resources:
+      - deployments
+  - verbs:
+      - get
+      - watch
+      - list
+      - create
+      - delete
+    apiGroups:
+      - route.openshift.io
+    resources:
+      - routes
+  - verbs:
+      - get
+      - watch
+      - list
+      - create
+      - delete
+    apiGroups:
+      - serving.knative.dev
+    resources:
+      - services
+  - verbs:
+      - get
+      - watch
+      - list
+      - create
+      - delete
+    apiGroups:
+      - apps.openshift.io
+    resources:
+      - deploymentconfigs
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: gitops-users
+subjects:
+  - kind: ServiceAccount
+    name: openshift-gitops-argocd-application-controller
+    namespace: openshift-gitops
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: gitops-users

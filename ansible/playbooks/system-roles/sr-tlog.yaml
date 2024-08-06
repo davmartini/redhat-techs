@@ -1,0 +1,18 @@
+---
+- name: Apply system-role
+  hosts: "{{ host_target }}"
+  become: true
+  collections:
+    - redhat.rhel_system_roles
+
+  tasks:
+
+    - when: tlog_on == 'yes'
+      name: Deploy session recording
+      include_role:
+        name: redhat.rhel_system_roles.tlog
+      vars:
+        tlog_scope_sssd: all
+        tlog_users_sssd:
+          - cloud-user
+

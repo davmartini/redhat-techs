@@ -1,0 +1,4 @@
+vim [platform:rpm]
+jq [platform:rpm]
+libxml2-devel [platform:rpm]
+subversion [platform:rpm]

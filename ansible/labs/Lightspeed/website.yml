@@ -1,0 +1,7 @@
+---
+- host: all
+  name: Deploy web application
+
+  tasks:
+
+  

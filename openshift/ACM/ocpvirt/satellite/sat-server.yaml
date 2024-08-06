@@ -1,0 +1,174 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  annotations:
+    kubevirt.io/latest-observed-api-version: v1
+    kubevirt.io/storage-observed-api-version: v1alpha3
+    name.os.template.kubevirt.io/rhel9.0: Red Hat Enterprise Linux 8.0 or higher
+  name: satellite
+  namespace: openshift-vms
+  labels:
+    app: satellite
+    flavor.template.kubevirt.io/small: 'true'
+    os.template.kubevirt.io/rhel9.0: 'true'
+    vm.kubevirt.io/template: rhel8-server-small
+    vm.kubevirt.io/template.namespace: openshift
+    vm.kubevirt.io/template.revision: '1'
+    vm.kubevirt.io/template.version: v0.19.6
+    workload.template.kubevirt.io/server: 'true'
+spec:
+  dataVolumeTemplates:
+    - apiVersion: cdi.kubevirt.io/v1beta1
+      kind: DataVolume
+      metadata:
+        creationTimestamp: null
+        name: satellite
+      spec:
+        source:
+          pvc:
+            name: rhel8
+            namespace: openshift-virtualization-os-images
+        storage:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 120Gi
+          storageClassName: odf-lvm-vg1
+          volumeMode: Filesystem
+  running: true
+  template:
+    metadata:
+      annotations:
+        vm.kubevirt.io/flavor: small
+        vm.kubevirt.io/os: rhel8
+        vm.kubevirt.io/workload: server
+      creationTimestamp: null
+      labels:
+        flavor.template.kubevirt.io/small: 'true'
+        kubevirt.io/domain: satellite
+        kubevirt.io/size: small
+        os.template.kubevirt.io/rhel9.0: 'true'
+        vm.kubevirt.io/name: satellite
+        workload.template.kubevirt.io/server: 'true'
+    spec:
+      domain:
+        cpu:
+          cores: 2
+          sockets: 2
+          threads: 1
+        devices:
+          disks:
+            - bootOrder: 1
+              disk:
+                bus: virtio
+              name: satellite
+            - disk:
+                bus: virtio
+              name: cloudinitdisk
+          interfaces:
+            - masquerade: {}
+              name: default
+          networkInterfaceMultiqueue: true
+          rng: {}
+        features:
+          acpi: {}
+          smm:
+            enabled: true
+        firmware:
+          bootloader:
+            efi: {}
+        machine:
+          type: pc-q35-rhel8.4.0
+        resources:
+          requests:
+            memory: 16Gi
+      evictionStrategy: LiveMigrate
+      hostname: satellite
+      networks:
+        - name: default
+          pod: {}
+      terminationGracePeriodSeconds: 180
+      volumes:
+        - dataVolume:
+            name: satellite
+          name: satellite
+        - cloudInitNoCloud:
+            userData: |
+              #cloud-config
+              user: cloud-user
+              password: ''
+              chpasswd:
+                expire: false
+              ssh_authorized_keys:
+                - >-
+                  ssh-rsa
+                  AAAAB3NzaC1yc2EAAAADAQABAAABgQC3OL8vJoTsbn/LBUZWgV8YYmxUZSMAWZ6UKMHC2iF9VCYmuI0opJKNBpEDFlomrENOm7HkEIafdPpFfEiDMszDhskvNWAVPiJJChjMBxFgvNWLAEHJQKvGaylVDF4yOex9ehMKOnhBVnO7FFrn33AmgiikEQRcqkz9Q1NQ7ccDZzF5eml0brxmO+2IziUrPdeVwkR7Wzw19zyxLf3f7dfGkfnfoeku1D8BWQaclN0T8AAC4IAVQ1YXp5kf4rpPdf3eCMUKItJCwW4nAKLmJDoJTMXx6LsOGsBZHwPxV0LbR9titUhGpRCBor2nYs1EnN4qCd7f+3yU0lZ+dV5HdMWXesD2czEY8CTncEhD+6c4x3RnyLNC+zqHuM4U1szsQPkOxI5zqItxVgy0HmLThpaA0knohTVYAnq+Qhw+iA6yokRv/pBRTr9fPeUv03LBB5tYEhBDCkGICY4ZRuT+NlsBHMxAjeQIIYeOh0DwldEl2QXVJc3eNt5nkQw49BoCGIU=
+                  dmartini@Davids-MacBook-Pro
+          name: cloudinitdisk
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: satellite
+  namespace: openshift-vms
+spec:
+  ports:
+    - name: ssh
+      protocol: TCP
+      port: 22
+      targetPort: 22
+    - name: dnstcp
+      protocol: TCP
+      port: 53
+      targetPort: 53
+    - name: dnsudp
+      protocol: UDP
+      port: 53
+      targetPort: 53
+    - name: katello
+      protocol: TCP
+      port: 5646
+      targetPort: 5646
+    - name: puppet
+      protocol: TCP
+      port: 8140
+      targetPort: 8140
+    - name: hostregistration
+      protocol: TCP
+      port: 8443
+      targetPort: 8443
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
+    - name: https
+      protocol: TCP
+      port: 443
+      targetPort: 443
+    - name: api
+      protocol: TCP
+      port: 9090
+      targetPort: 9090
+  selector:
+    kubevirt.io/domain: satellite
+
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: satellite
+  namespace: openshift-vms
+  labels:
+    app.kubernetes.io/instance: satellite
+spec:
+  host: satellite.apps.ocp.drkspace.fr
+  to:
+    kind: Service
+    name: satellite
+    weight: 100
+  port:
+    targetPort: https
+  tls:
+    termination: passthrough
+  wildcardPolicy: None

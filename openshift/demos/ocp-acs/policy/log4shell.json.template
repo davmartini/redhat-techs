@@ -1,0 +1,69 @@
+{
+    "policies": [
+        {
+            "name": "Log4Shell",
+            "description": "Alert on deployments with images containing the Log4Shell vulnerabilities (CVE-2021-44228 and CVE-2021-45046). There are flaws in the Java logging library Apache Log4j in versions from 2.0-beta9 to 2.15.0, excluding 2.12.2.",
+            "rationale": "These vulnerabilities allows a remote attacker to execute code on the server if the system logs an attacker-controlled string value with the attacker's JNDI LDAP server lookup.",
+            "remediation": "Update the log4j libary to version 2.16.0 (for Java 8 or later), 2.12.2 (for Java 7) or later. If not possible to upgrade, then remove the JndiLookup class from the classpath: zip -q -d log4j-core-*.jar org/apache/logging/log4j/core/lookup/JndiLookup.class and annotate the image with cve.log4shell.remediation=applied.",
+            "disabled": false,
+            "categories": [
+                "Vulnerability Management"
+            ],
+            "fields": null,
+            "lifecycleStages": [
+                "BUILD",
+                "DEPLOY"
+            ],
+            "eventSource": "NOT_APPLICABLE",
+            "whitelists": [],
+            "exclusions": [],
+            "scope": [],
+            "severity": "CRITICAL_SEVERITY",
+            "enforcementActions": [
+                "FAIL_BUILD_ENFORCEMENT"
+            ],
+            "notifiers": [
+                "{{ notifier_id }}"
+            ],
+            "lastUpdated": "2022-02-21T14:19:19.206939932Z",
+            "SORTName": "",
+            "SORTLifecycleStage": "",
+            "SORTEnforcement": false,
+            "policyVersion": "1.1",
+            "policySections": [
+                {
+                    "sectionName": "",
+                    "policyGroups": [
+                        {
+                            "fieldName": "CVE",
+                            "booleanOperator": "OR",
+                            "negate": false,
+                            "values": [
+                                {
+                                    "value": "CVE-2021-44228"
+                                },
+                                {
+                                    "value": "CVE-2021-45046"
+                                }
+                            ]
+                        },
+                        {
+                            "fieldName": "Required Image Label",
+                            "booleanOperator": "OR",
+                            "negate": false,
+                            "values": [
+                                {
+                                    "value": "cve.log4shell.remediation=applied"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "mitreAttackVectors": [],
+            "criteriaLocked": false,
+            "mitreVectorsLocked": false,
+            "isDefault": false
+        }
+    ]
+}

@@ -1,0 +1,50 @@
+---
+- name: Delete system from Insights
+  hosts: all
+  gather_facts: false
+  collections:
+    - redhat.satellite
+
+  tasks:
+
+    - name: Unregister the insights client for dev env
+      ansible.builtin.command: insights-client --unregister
+      when:
+        - env_delete == "dev"
+        - inventory_hostname in groups['foreman_demo_dev']
+      ignore_errors: true
+
+    - name: Unregister the insights client for qualif env
+      ansible.builtin.command: insights-client --unregister
+      when:
+        - env_delete == "qualif"
+        - inventory_hostname in groups['foreman_demo_qualif']
+      ignore_errors: true
+
+    - name: Unregister the insights client for prod env
+      ansible.builtin.command: insights-client --unregister
+      when:
+        - env_delete == "prod"
+        - inventory_hostname in groups['foreman_demo_prod']
+      ignore_errors: true
+
+    - name: Unregister the insights client for all dev env
+      ansible.builtin.command: insights-client --unregister
+      when:
+        - env_delete == "all"
+        - inventory_hostname in groups['foreman_demo_dev']
+      ignore_errors: true
+
+    - name: Unregister the insights client for all qualif env
+      ansible.builtin.command: insights-client --unregister
+      when:
+        - env_delete == "all"
+        - inventory_hostname in groups['foreman_demo_qualif']
+      ignore_errors: true
+
+    - name: Unregister the insights client for all prod env
+      ansible.builtin.command: insights-client --unregister
+      when:
+        - env_delete == "all"
+        - inventory_hostname in groups['foreman_demo_prod']
+      ignore_errors: true

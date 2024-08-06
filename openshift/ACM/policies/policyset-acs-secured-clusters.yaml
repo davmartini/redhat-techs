@@ -1,0 +1,39 @@
+apiVersion: policy.open-cluster-management.io/v1beta1
+kind: PolicySet
+metadata:
+  name: acs-secured-clusters
+  namespace: acm-policies-ns
+spec:
+  description: ""
+  policies:
+    - policy-acs-secured-cluster
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: acs-secured-clusters-placement
+  namespace: acm-policies-ns
+spec:
+  clusterConditions:
+    - status: "True"
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: acs
+        operator: In
+        values:
+          - enable
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: acs-secured-clusters-placement
+  namespace: acm-policies-ns
+placementRef:
+  name: acs-secured-clusters-placement
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+subjects:
+  - name: acs-secured-clusters
+    apiGroup: policy.open-cluster-management.io
+    kind: PolicySet

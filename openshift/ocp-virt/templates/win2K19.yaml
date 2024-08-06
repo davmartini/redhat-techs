@@ -1,0 +1,117 @@
+kind: Template
+apiVersion: template.openshift.io/v1
+metadata:
+  name: win2k19-small-dm
+  namespace: openshift
+  labels:
+    app.kubernetes.io/part-of: hyperconverged-cluster
+    flavor.template.kubevirt.io/small: 'true'
+    template.kubevirt.io/version: v0.23.4
+    app.kubernetes.io/version: 4.11.0
+    template.kubevirt.io/type: vm
+    app.kubernetes.io/component: templating
+    template.kubevirt.io/default-os-variant: 'false'
+    app.kubernetes.io/name: common-templates
+    workload.template.kubevirt.io/server: 'true'
+  annotations:
+    template.kubevirt.io/provider: 'David Martini'
+    template.kubevirt.io/editable: |
+      /objects[0].spec.template.spec.domain.cpu.sockets
+      /objects[0].spec.template.spec.domain.cpu.cores
+      /objects[0].spec.template.spec.domain.cpu.threads
+      /objects[0].spec.template.spec.domain.resources.requests.memory
+      /objects[0].spec.template.spec.domain.devices.disks
+      /objects[0].spec.template.spec.volumes
+      /objects[0].spec.template.spec.networks
+    template.openshift.io/bindable: 'false'
+    iconClass: icon-windows
+    openshift.io/provider-display-name: 'DM - Win2K19 - Small'
+objects:
+  - apiVersion: kubevirt.io/v1
+    kind: VirtualMachine
+    metadata:
+      annotations:
+        vm.kubevirt.io/validations: |
+          [
+            {
+              "name": "minimal-required-memory",
+              "path": "jsonpath::.spec.domain.resources.requests.memory",
+              "rule": "integer",
+              "message": "This VM requires more memory.",
+              "min": 1610612736
+            }
+          ]
+      labels:
+        app: '${NAME}'
+        vm.kubevirt.io/template: win2k19-small-dm
+        vm.kubevirt.io/template.revision: '1'
+        vm.kubevirt.io/template.namespace: openshift
+      name: '${NAME}'
+    spec:
+      dataVolumeTemplates:
+        - apiVersion: cdi.kubevirt.io/v1beta1
+          kind: DataVolume
+          metadata:
+            name: '${NAME}'
+          spec:
+            sourceRef:
+              kind: DataSource
+              name: '${DATA_SOURCE_NAME}'
+              namespace: '${DATA_SOURCE_NAMESPACE}'
+            storage:
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 22Gi
+              volumeMode: Filesystem
+      running: false
+      template:
+        metadata:
+          annotations:
+            vm.kubevirt.io/flavor: small
+            vm.kubevirt.io/os: win2k19
+            vm.kubevirt.io/workload: server
+          labels:
+            kubevirt.io/domain: '${NAME}'
+            kubevirt.io/size: small
+        spec:
+          domain:
+            cpu:
+              cores: 1
+              sockets: 2
+              threads: 1
+            devices:
+              disks:
+                - disk:
+                    bus: virtio
+                  name: rootdisk
+              interfaces:
+                - masquerade: {}
+                  name: default
+              networkInterfaceMultiqueue: true
+              rng: {}
+            machine:
+              type: pc-q35-rhel8.6.0
+            resources:
+              requests:
+                memory: 8Gi
+          networks:
+            - name: default
+              pod: {}
+          terminationGracePeriodSeconds: 180
+          volumes:
+            - dataVolume:
+                name: '${NAME}'
+              name: rootdisk
+parameters:
+  - name: NAME
+    description: VM name
+    generate: expression
+    from: 'win2k19-[a-z0-9]{16}'
+  - name: DATA_SOURCE_NAME
+    description: Name of the DataSource to clone
+    value: win2k19-template-disk-cheap-planarian
+  - name: DATA_SOURCE_NAMESPACE
+    description: Namespace of the DataSource
+    value: openshift-virtualization-os-images

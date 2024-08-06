@@ -1,0 +1,25 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  collections:
+    - nutanix.ncp
+
+  tasks:
+
+    - name: List VMS using length, offset, sort order and vm_name sort attribute
+      ntnx_vms_info:
+        nutanix_host: "{{ nutanix_host }}"
+        nutanix_username: "{{ nutanix_username }}"
+        nutanix_password: "{{ nutanix_password }}"
+        validate_certs: False
+        length: 1
+        offset: 1
+        sort_order: "ASCENDING"
+        sort_attribute: "vm_name"
+      register: result
+
+    - name: print
+      debug:
+        msg: "{{ result }}"
+

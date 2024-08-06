@@ -1,0 +1,17 @@
+#cloud-config
+hostname: {{ env }}-demoaap-{{ uuid }}{{ item }}
+manage_etc_hosts: true
+
+users:
+  - name: cloud-user
+    gecos: cloud-user
+    groups: users,admin,wheel
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    lock_passwd: true
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCuq0UMiXKUy1ATXwBOGYkW0j+5fmP3VNIxVpdn24Gpyqe0rth6Bfa1fjMofT9ndpM3yaidWgxgq5+5WHld0KHMlsUXtYPx93W+MGK/SG9OhM5RZftTHnljp/8NBTODAgEdB9aQ3YeaaOROeiaDHotLJ1vu5wvZw43pdNxMKyYIb7CvAh2KeX7YctBTcfLu3yJJ+OXExVyXfu5/7hAeu+KM+7X7su4s/Q/wWAZZyX/U1q+Lei9q/CHfWcuVOTUDo8fAsZqHVWV93vE52yiNfJ8tcASOqwOKyZ+ArUrY8NNvdct7t6thEwHvWl5Rca/mcG6hiEQJBIJJKeRbe4+bidhjlvH2Qp0Gwy0HQzbi+Ntl8j/gP7NeKDNzum4kJF+BfMhuYWurAdgyIQe6qscR8JGtbjxKY0yTeiE6Lys5UnHQHf1DZwwnhL7Nm5KdJLMdDC8lQfi1sTGXwnHdNB6VgxmbPFqyKITJ4Y3k1fLdTmGqDc93eJvZbo0emH/U8f/IWqs= dmartini@Davids-MacBook-Pro
+
+runcmd:
+  - >-
+    {{ token_sat }}

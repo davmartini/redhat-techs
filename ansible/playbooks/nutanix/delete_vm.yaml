@@ -1,0 +1,45 @@
+---
+- name: delete Nutanix VMs
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  collections:
+    - nutanix.ncp
+  module_defaults:
+    group/nutanix.ncp.ntnx:
+      nutanix_host: "{{ nutanix_host }}"
+      nutanix_username: "{{ nutanix_username }}"
+      nutanix_password: "{{ nutanix_password }}"
+      validate_certs: false
+
+  tasks:
+
+    - name: List env VMs on Nutanix
+      nutanix.ncp.ntnx_vms_info:
+        filter:
+         vm_name: ".*{{ env_delete }}-.*"
+      register: vms_env
+      when: env_delete == 'dev' or env_delete == 'qualif' or env_delete == 'prod'
+
+    - name: List all VMs on Nutanix
+      nutanix.ncp.ntnx_vms_info:
+        filter:
+         vm_name: ".*-demoaap-.*"
+      register: vms_all   
+      when: env_delete == 'all'     
+
+    - name: Set list vms by name
+      ansible.builtin.set_fact:
+        uuid_vms_list: "{{ vms_all.response | json_query('entities[*].metadata.uuid') if env_delete == 'all' else vms_env.response | json_query('entities[*].metadata.uuid') }}"
+
+    - name: Print VMs
+      ansible.builtin.debug:
+        var: uuid_vms_list
+
+    - name: Delete Nutanix VMs
+      nutanix.ncp.ntnx_vms:
+        state: absent
+        vm_uuid: "{{ item }}"
+      loop: "{{ uuid_vms_list }}"
+      register: vms_delete
+      when: uuid_vms_list | length > 0

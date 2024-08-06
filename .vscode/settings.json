@@ -1,0 +1,10 @@
+{
+    "ansible.python.interpreterPath": "/usr/local/bin/python3.11",
+    "files.associations": {
+        "*.yaml": "ansible",
+        "*.yml": "ansible"
+    },
+    "yaml.schemas": {
+        "https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/ansible.json#/$defs/playbook": "file:///Users/dmartini/Documents/github/redhat-techs/ansible/playbooks/update_in_place/vm_create_kubevirt.yaml"
+    }
+}

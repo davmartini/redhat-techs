@@ -1,0 +1,21 @@
+- name: Reboot systems
+  hosts: foreman_demo_dev
+  gather_facts: false
+  become: true
+  
+  tasks:
+    - block:
+        - name: Reboot system
+          shell: sleep 2 && shutdown -r now "Ansible triggered reboot"
+          async: 1
+          poll: 0
+          ignore_errors: true
+
+        - name: Wait for system to boot up
+          local_action:
+            module: wait_for
+            host: "{{ hostvars[inventory_hostname]['ansible_host'] | default(hostvars[inventory_hostname]['ansible_ssh_host'], true) | default(inventory_hostname, true) }}"
+            port: "{{ hostvars[inventory_hostname]['ansible_port'] | default(hostvars[inventory_hostname]['ansible_ssh_port'], true) | default('22', true) }}"
+            delay: 15
+            timeout: 300
+          become: false

@@ -1,0 +1,10 @@
+apiVersion: metallb.io/v1beta1
+kind: AddressPool
+metadata:
+  name: ip-addresspool-host-network
+  namespace: metallb-system
+spec:
+  addresses:
+    - 10.6.82.201-10.6.82.203
+  autoAssign: true
+  protocol: layer2

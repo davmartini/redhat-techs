@@ -1,0 +1,57 @@
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: vulnerable-log4j
+  namespace: vulnerable-cicd
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: 'vulnerable-log4j:latest'
+  strategy:
+    type: Source
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        namespace: openshift
+        name: 'java:11'
+  source:
+    type: Git
+    git:
+      uri: 'https://github.com/nmasse-itix/demo-rhacs.git'
+      ref: main
+    contextDir: src
+  triggers:
+    - type: ImageChange
+      imageChange: {}
+    - type: ConfigChange
+  runPolicy: Serial
+---
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: exploitkit-log4j
+  namespace: vulnerable-cicd
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: 'exploitkit-log4j:latest'
+  strategy:
+    type: Docker
+    dockerStrategy:
+      from:
+        kind: ImageStreamTag
+        namespace: openshift
+        name: 'java:11'
+  source:
+    type: Git
+    git:
+      uri: 'https://github.com/nmasse-itix/demo-rhacs.git'
+      ref: main
+    contextDir: exploit/image
+  triggers:
+    - type: ImageChange
+      imageChange: {}
+    - type: ConfigChange
+  runPolicy: Serial

@@ -1,0 +1,17 @@
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  annotations:
+    openshift.io/display-name: Image vulnerable to log4j
+  name: vulnerable-log4j
+  namespace: vulnerable-cicd
+spec:
+---
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  annotations:
+    openshift.io/display-name: Exploit for log4j
+  name: exploitkit-log4j
+  namespace: vulnerable-cicd
+spec:

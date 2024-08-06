@@ -1,0 +1,4 @@
+---
+collections:
+  - redhat.satellite
+  - redhat.insights

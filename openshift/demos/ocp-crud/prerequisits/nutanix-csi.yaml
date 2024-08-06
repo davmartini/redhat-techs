@@ -1,0 +1,47 @@
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ntnx-secret
+  namespace: openshift-cluster-csi-drivers
+stringData:
+  # prism-ip:prism-port:username:password.
+  key: 10.6.116.30:9440:admin:RedHatNuta4@cic
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: nutanix-volume
+  annotations:
+    storageclass.kubernetes.io/is-default-class: 'true'
+provisioner: csi.nutanix.com
+parameters:
+  csi.storage.k8s.io/provisioner-secret-name: ntnx-secret
+  csi.storage.k8s.io/provisioner-secret-namespace: openshift-cluster-csi-drivers
+  csi.storage.k8s.io/node-publish-secret-name: ntnx-secret
+  csi.storage.k8s.io/node-publish-secret-namespace: openshift-cluster-csi-drivers
+  csi.storage.k8s.io/controller-expand-secret-name: ntnx-secret
+  csi.storage.k8s.io/controller-expand-secret-namespace: openshift-cluster-csi-drivers
+  csi.storage.k8s.io/fstype: ext4
+  storageContainer: ocp01
+  storageType: NutanixVolumes
+  #description: "description added to each storage object created by the driver"
+  #isSegmentedIscsiNetwork: "false"
+  #whitelistIPMode: ENABLED
+  #chapAuth: ENABLED
+  #isLVMVolume: "false"
+  #numLVMDisks: 4
+allowVolumeExpansion: true
+reclaimPolicy: Delete
+---
+apiVersion: snapshot.storage.k8s.io/v1
+deletionPolicy: Delete
+driver: csi.nutanix.com
+kind: VolumeSnapshotClass
+metadata:
+  name: nutanix-snapshot-class
+parameters:
+  csi.storage.k8s.io/snapshotter-secret-name: ntnx-secret
+  csi.storage.k8s.io/snapshotter-secret-namespace: openshift-cluster-csi-drivers
+  storageType: NutanixVolumes

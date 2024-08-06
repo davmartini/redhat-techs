@@ -1,0 +1,17 @@
+schemaVersion: 2.2.0
+metadata:
+  name: ansible-devspaces-nutanix
+projects:
+  - name: project    
+    git:
+      remotes:
+        origin: "https://github.com/davmartini/redhat-techs.git"
+components:
+  - name: aap-nutanix
+    container:
+      image: quay.io/david_martini/ee:nutanix
+      memoryRequest: 256M
+      memoryLimit: 6Gi
+      cpuRequest: 250m
+      cpuLimit: 2000m
+      args: ['tail', '-f', '/dev/null']

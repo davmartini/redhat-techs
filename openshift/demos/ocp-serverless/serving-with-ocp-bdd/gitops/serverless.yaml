@@ -1,0 +1,88 @@
+---
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  annotations:
+    app.openshift.io/connects-to: >-
+      [{"apiVersion":"apps.openshift.io/v1","kind":"DeploymentConfig","name":"postgresql-db"}]
+    app.quarkus.io/vcs-url: https://github.com/davmartini/redhat-techs.git
+  labels:
+    app.openshift.io/runtime: quarkus
+    app.kubernetes.io/name: quarkus-front-kn-ocp
+    app.kubernetes.io/part-of: quarkus-app-with-bdd-on-ocp
+    app.kubernetes.io/version: "1.0"
+  name: quarkus-front-kn-ocp
+spec:
+  template:
+    metadata:
+      annotations:
+        app.quarkus.io/vcs-url: https://github.com/davmartini/redhat-techs.git
+        autoscaling.knative.dev/max-scale: '10'
+        autoscaling.knative.dev/min-scale: '0'
+      labels:
+        app.openshift.io/runtime: quarkus
+        app.kubernetes.io/name: quarkus-front-kn-ocp
+        app.kubernetes.io/part-of: quarkus-app-with-bdd-on-ocp
+        app.kubernetes.io/version: "1.0"
+    spec:
+      containers:
+      - args:
+        - -jar
+        - /deployments/target/atomic-fruit-service-1.0-SNAPSHOT-runner.jar
+        - -cp
+        - /deployments/target/lib/io.quarkus.quarkus-security-runtime-spi-1.10.5.Final.jar:/deployments/target/lib/io.netty.netty-common-4.1.49.Final.jar:/deployments/target/lib/io.netty.netty-buffer-4.1.49.Final.jar:/deployments/target/lib/io.netty.netty-transport-4.1.49.Final.jar:/deployments/target/lib/io.netty.netty-codec-socks-4.1.49.Final.jar:/deployments/target/lib/io.netty.netty-handler-proxy-4.1.49.Final.jar:/deployments/target/lib/io.netty.netty-codec-http-4.1.49.Final.jar:/deployments/target/lib/io.netty.netty-codec-http2-4.1.49.Final.jar:/deployments/target/lib/io.netty.netty-resolver-4.1.49.Final.jar:/deployments/target/lib/io.netty.netty-codec-dns-4.1.49.Final.jar:/deployments/target/lib/io.netty.netty-resolver-dns-4.1.49.Final.jar:/deployments/target/lib/io.vertx.vertx-core-3.9.5.jar:/deployments/target/lib/io.quarkus.quarkus-vertx-core-1.10.5.Final.jar:/deployments/target/lib/io.vertx.vertx-web-common-3.9.5.jar:/deployments/target/lib/io.vertx.vertx-auth-common-3.9.5.jar:/deployments/target/lib/io.vertx.vertx-bridge-common-3.9.5.jar:/deployments/target/lib/io.vertx.vertx-web-3.9.5.jar:/deployments/target/lib/io.quarkus.quarkus-vertx-http-1.10.5.Final.jar:/deployments/target/lib/org.jboss.spec.javax.ws.rs.jboss-jaxrs-api_2.1_spec-2.0.1.Final.jar:/deployments/target/lib/org.jboss.resteasy.resteasy-core-spi-4.5.8.Final.jar:/deployments/target/lib/com.ibm.async.asyncutil-0.1.0.jar:/deployments/target/lib/org.jboss.resteasy.resteasy-core-4.5.8.Final.jar:/deployments/target/lib/com.sun.activation.jakarta.activation-1.2.1.jar:/deployments/target/lib/io.quarkus.quarkus-resteasy-common-1.10.5.Final.jar:/deployments/target/lib/jakarta.validation.jakarta.validation-api-2.0.2.jar:/deployments/target/lib/io.quarkus.quarkus-resteasy-server-common-1.10.5.Final.jar:/deployments/target/lib/io.quarkus.quarkus-resteasy-1.10.5.Final.jar:/deployments/target/lib/org.eclipse.yasson-1.0.8.jar:/deployments/target/lib/io.quarkus.quarkus-jsonb-1.10.5.Final.jar:/deployments/target/lib/org.glassfish.jakarta.json-1.1.6.jar:/deployments/target/lib/jakarta.json.bind.jakarta.json.bind-api-1.0.2.jar:/deployments/target/lib/org.jboss.logging.jboss-logging-3.4.1.Final.jar:/deployments/target/lib/org.jboss.resteasy.resteasy-json-binding-provider-4.5.8.Final.jar:/deployments/target/lib/org.jboss.resteasy.resteasy-json-p-provider-4.5.8.Final.jar:/deployments/target/lib/commons-io.commons-io-2.8.0.jar:/deployments/target/lib/io.quarkus.quarkus-resteasy-jsonb-1.10.5.Final.jar:/deployments/target/lib/org.postgresql.postgresql-42.2.18.jar:/deployments/target/lib/io.quarkus.quarkus-jdbc-postgresql-1.10.5.Final.jar:/deployments/target/lib/com.oracle.database.jdbc.ucp-19.6.0.0.jar:/deployments/target/lib/com.oracle.database.security.oraclepki-19.6.0.0.jar:/deployments/target/lib/com.oracle.database.security.osdt_cert-19.6.0.0.jar:/deployments/target/lib/com.oracle.database.security.osdt_core-19.6.0.0.jar:/deployments/target/lib/com.oracle.database.ha.simplefan-19.6.0.0.jar:/deployments/target/lib/com.oracle.database.ha.ons-19.6.0.0.jar:/deployments/target/lib/com.oracle.database.jdbc.ojdbc8-19.6.0.0.jar:/deployments/target/lib/jakarta.annotation.jakarta.annotation-api-1.3.5.jar:/deployments/target/lib/jakarta.inject.jakarta.inject-api-1.0.jar:/deployments/target/lib/io.quarkus.quarkus-development-mode-spi-1.10.5.Final.jar:/deployments/target/lib/io.smallrye.config.smallrye-config-common-1.9.3.jar:/deployments/target/lib/io.smallrye.common.smallrye-common-function-1.4.1.jar:/deployments/target/lib/io.smallrye.common.smallrye-common-expression-1.4.1.jar:/deployments/target/lib/io.smallrye.common.smallrye-common-constraint-1.4.1.jar:/deployments/target/lib/io.smallrye.common.smallrye-common-classloader-1.4.1.jar:/deployments/target/lib/org.ow2.asm.asm-9.0.jar:/deployments/target/lib/io.smallrye.config.smallrye-config-1.9.3.jar:/deployments/target/lib/org.jboss.logmanager.jboss-logmanager-embedded-1.0.6.jar:/deployments/target/lib/org.jboss.logging.jboss-logging-annotations-2.1.0.Final.jar:/deployments/target/lib/org.jboss.threads.jboss-threads-3.1.1.Final.jar:/deployments/target/lib/org.slf4j.slf4j-api-1.7.30.jar:/deployments/target/lib/org.jboss.slf4j.slf4j-jboss-logmanager-1.1.0.Final.jar:/deployments/target/lib/org.graalvm.sdk.graal-sdk-20.2.0.jar:/deployments/target/lib/org.wildfly.common.wildfly-common-1.5.4.Final-format-001.jar:/deployments/target/lib/io.smallrye.common.smallrye-common-io-1.4.1.jar:/deployments/target/lib/io.quarkus.quarkus-bootstrap-runner-1.10.5.Final.jar:/deployments/target/lib/io.quarkus.quarkus-core-1.10.5.Final.jar:/deployments/target/lib/io.quarkus.quarkus-datasource-common-1.10.5.Final.jar:/deployments/target/lib/io.quarkus.quarkus-datasource-1.10.5.Final.jar:/deployments/target/lib/org.jboss.jboss-transaction-spi-7.6.0.Final.jar:/deployments/target/lib/org.jboss.spec.javax.resource.jboss-connector-api_1.7_spec-1.0.0.Final.jar:/deployments/target/lib/org.jboss.narayana.jta.narayana-jta-5.10.6.Final.jar:/deployments/target/lib/org.jboss.narayana.jts.narayana-jts-integration-5.10.6.Final.jar:/deployments/target/lib/io.agroal.agroal-api-1.9.jar:/deployments/target/lib/io.agroal.agroal-narayana-1.9.jar:/deployments/target/lib/io.agroal.agroal-pool-1.9.jar:/deployments/target/lib/io.quarkus.quarkus-credentials-1.10.5.Final.jar:/deployments/target/lib/io.quarkus.quarkus-agroal-1.10.5.Final.jar:/deployments/target/lib/io.smallrye.smallrye-context-propagation-jta-1.0.19.jar:/deployments/target/lib/io.smallrye.reactive.smallrye-reactive-converter-api-1.2.2.jar:/deployments/target/lib/io.smallrye.reactive.smallrye-reactive-converter-mutiny-1.2.2.jar:/deployments/target/lib/io.quarkus.quarkus-narayana-jta-1.10.5.Final.jar:/deployments/target/lib/net.bytebuddy.byte-buddy-1.10.17.jar:/deployments/target/lib/antlr.antlr-2.7.7.jar:/deployments/target/lib/com.fasterxml.classmate-1.3.4.jar:/deployments/target/lib/org.dom4j.dom4j-2.1.3.jar:/deployments/target/lib/org.hibernate.common.hibernate-commons-annotations-5.1.2.Final.jar:/deployments/target/lib/org.hibernate.hibernate-core-5.4.26.Final.jar:/deployments/target/lib/org.hibernate.hibernate-graalvm-5.4.26.Final.jar:/deployments/target/lib/org.glassfish.jaxb.txw2-2.3.3-b02.jar:/deployments/target/lib/com.sun.istack.istack-commons-runtime-3.0.10.jar:/deployments/target/lib/org.glassfish.jaxb.jaxb-runtime-2.3.3-b02.jar:/deployments/target/lib/org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec-2.0.0.Final.jar:/deployments/target/lib/jakarta.persistence.jakarta.persistence-api-2.2.3.jar:/deployments/target/lib/jakarta.transaction.jakarta.transaction-api-1.3.3.jar:/deployments/target/lib/com.google.errorprone.error_prone_annotations-2.2.0.jar:/deployments/target/lib/com.github.ben-manes.caffeine.caffeine-2.8.6.jar:/deployments/target/lib/org.hibernate.quarkus-local-cache-0.1.0.jar:/deployments/target/lib/io.quarkus.quarkus-caffeine-1.10.5.Final.jar:/deployments/target/lib/io.quarkus.quarkus-hibernate-orm-1.10.5.Final.jar:/deployments/target/lib/io.quarkus.quarkus-panache-hibernate-common-1.10.5.Final.jar:/deployments/target/lib/io.quarkus.quarkus-hibernate-orm-panache-common-1.10.5.Final.jar:/deployments/target/lib/io.quarkus.arc.arc-1.10.5.Final.jar:/deployments/target/lib/org.eclipse.microprofile.context-propagation.microprofile-context-propagation-api-1.0.1.jar:/deployments/target/lib/io.quarkus.quarkus-arc-1.10.5.Final.jar:/deployments/target/lib/io.quarkus.quarkus-panache-common-1.10.5.Final.jar:/deployments/target/lib/io.quarkus.quarkus-hibernate-orm-panache-1.10.5.Final.jar:/deployments/target/lib/com.h2database.h2-1.4.197.jar:/deployments/target/lib/org.locationtech.jts.jts-core-1.15.0.jar:/deployments/target/lib/io.quarkus.quarkus-jdbc-h2-1.10.5.Final.jar:/deployments/target/lib/org.eclipse.microprofile.openapi.microprofile-openapi-api-1.1.2.jar:/deployments/target/lib/org.eclipse.microprofile.config.microprofile-config-api-1.4.jar:/deployments/target/lib/com.fasterxml.jackson.core.jackson-core-2.11.3.jar:/deployments/target/lib/com.fasterxml.jackson.core.jackson-annotations-2.11.3.jar:/deployments/target/lib/com.fasterxml.jackson.core.jackson-databind-2.11.3.jar:/deployments/target/lib/org.yaml.snakeyaml-1.27.jar:/deployments/target/lib/com.fasterxml.jackson.dataformat.jackson-dataformat-yaml-2.11.3.jar:/deployments/target/lib/org.jboss.jandex-2.2.1.Final.jar:/deployments/target/lib/io.smallrye.smallrye-open-api-core-2.0.16.jar:/deployments/target/lib/io.quarkus.quarkus-swagger-ui-1.10.5.Final.jar:/deployments/target/lib/io.quarkus.quarkus-smallrye-openapi-1.10.5.Final.jar:/deployments/target/lib/org.eclipse.microprofile.health.microprofile-health-api-2.2.jar:/deployments/target/lib/io.smallrye.smallrye-health-api-2.2.5.jar:/deployments/target/lib/io.smallrye.smallrye-health-2.2.5.jar:/deployments/target/lib/io.smallrye.smallrye-health-ui-2.2.5.jar:/deployments/target/lib/io.smallrye.smallrye-health-provided-checks-2.2.5.jar:/deployments/target/lib/io.quarkus.quarkus-jsonp-1.10.5.Final.jar:/deployments/target/lib/io.quarkus.quarkus-smallrye-health-1.10.5.Final.jar:/deployments/target/lib/io.quarkus.quarkus-kubernetes-client-internal-1.10.5.Final.jar:/deployments/target/lib/io.quarkus.quarkus-openshift-1.10.5.Final.jar:/deployments/target/lib/io.quarkus.qute.qute-core-1.10.5.Final.jar:/deployments/target/lib/io.quarkus.quarkus-qute-1.10.5.Final.jar:/deployments/target/lib/io.quarkus.quarkus-resteasy-qute-1.10.5.Final.jar:/deployments/target/lib/io.netty.netty-codec-4.1.49.Final.jar:/deployments/target/lib/io.netty.netty-handler-4.1.49.Final.jar:/deployments/target/lib/io.quarkus.quarkus-netty-1.10.5.Final.jar:/deployments/target/lib/com.fasterxml.jackson.datatype.jackson-datatype-jsr310-2.11.3.jar:/deployments/target/lib/com.fasterxml.jackson.datatype.jackson-datatype-jdk8-2.11.3.jar:/deployments/target/lib/com.fasterxml.jackson.module.jackson-module-parameter-names-2.11.3.jar:/deployments/target/lib/io.quarkus.quarkus-jackson-1.10.5.Final.jar:/deployments/target/lib/org.eclipse.microprofile.reactive-streams-operators.microprofile-reactive-streams-operators-api-1.0.1.jar:/deployments/target/lib/org.eclipse.microprofile.reactive-streams-operators.microprofile-reactive-streams-operators-core-1.0.1.jar:/deployments/target/lib/io.smallrye.reactive.mutiny-reactive-streams-operators-0.11.0.jar:/deployments/target/lib/org.reactivestreams.reactive-streams-1.0.3.jar:/deployments/target/lib/io.smallrye.reactive.smallrye-axle-generator-1.2.2.jar:/deployments/target/lib/io.smallrye.reactive.smallrye-axle-core-1.2.2.jar:/deployments/target/lib/io.reactivex.rxjava2.rxjava-2.2.20.jar:/deployments/target/lib/org.mvel.mvel2-2.3.1.Final.jar:/deployments/target/lib/io.vertx.vertx-codegen-3.9.5.jar:/deployments/target/lib/io.vertx.vertx-rx-gen-3.9.5.jar:/deployments/target/lib/io.vertx.vertx-rx-java2-3.9.5.jar:/deployments/target/lib/io.smallrye.smallrye-context-propagation-api-1.0.19.jar:/deployments/target/lib/io.smallrye.smallrye-context-propagation-1.0.19.jar:/deployments/target/lib/io.quarkus.quarkus-smallrye-context-propagation-1.10.5.Final.jar:/deployments/target/lib/io.smallrye.reactive.mutiny-context-propagation-0.11.0.jar:/deployments/target/lib/io.quarkus.quarkus-mutiny-1.10.5.Final.jar:/deployments/target/lib/io.smallrye.reactive.smallrye-mutiny-vertx-runtime-1.2.2.jar:/deployments/target/lib/io.smallrye.reactive.vertx-mutiny-generator-1.2.2.jar:/deployments/target/lib/io.smallrye.reactive.smallrye-mutiny-vertx-core-1.2.2.jar:/deployments/target/lib/io.quarkus.quarkus-vertx-1.10.5.Final.jar:/deployments/target/lib/io.smallrye.common.smallrye-common-annotation-1.4.1.jar:/deployments/target/lib/io.smallrye.reactive.mutiny-0.11.0.jar:/deployments/target/lib/io.quarkus.security.quarkus-security-1.1.3.Final.jar:/deployments/target/lib/jakarta.el.jakarta.el-api-3.0.3.jar:/deployments/target/lib/jakarta.interceptor.jakarta.interceptor-api-1.2.5.jar:/deployments/target/lib/jakarta.enterprise.jakarta.enterprise.cdi-api-2.0.2.jar:/deployments/target/lib/io.quarkus.quarkus-vertx-web-1.10.5.Final.jar
+        - -Dquarkus.http.host=0.0.0.0
+        - -Djava.util.logging.manager=org.jboss.logmanager.LogManager
+        command:
+        - java
+        env:
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: DB_PASSWORD
+              name: fruits-db-ocp
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: DB_USER
+              name: fruits-db-ocp
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              key: DB_NAME
+              name: fruits-db-ocp
+        - name: DB_IP
+          valueFrom:
+            secretKeyRef:
+              key: DB_IP
+              name: fruits-db-ocp
+        - name: JAVA_APP_JAR
+          value: /deployments/target/atomic-fruit-service-1.0-SNAPSHOT-runner.jar
+        - name: JAVA_LIB_DIR
+          value: /deployments/target/lib
+        image: quay.io/david_martini/openshift:crud-with-ocp
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health/live
+            port: null
+            scheme: HTTP
+          initialDelaySeconds: 0
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 10
+        name: quarkus-front-kn
+        ports:
+        - containerPort: 8080
+          name: http1
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health/ready
+            port: null
+            scheme: HTTP
+          initialDelaySeconds: 0
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 10

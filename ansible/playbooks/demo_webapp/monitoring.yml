@@ -1,0 +1,13 @@
+- name: Manage Monitoring
+  hosts: foreman_demo_{{ vm_env_type }}
+  gather_facts: false
+
+  tasks:
+
+    - when: monitoring == 'enable'
+      name: Start monitoring
+      debug: msg="Application monitoring is started"
+
+    - when: monitoring == 'disable'
+      name: Stop monitoring
+      debug: msg="Application monitoring is stopped"

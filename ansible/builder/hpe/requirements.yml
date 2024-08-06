@@ -1,0 +1,5 @@
+---
+collections:
+  - hpe.oneview
+  - hpe.ilo
+  - hpe.nimble

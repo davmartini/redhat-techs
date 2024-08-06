@@ -1,0 +1,25 @@
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  annotations:
+    app.openshift.io/connects-to: postgresql-db
+    app.quarkus/id: "42"
+    foo: bar
+    app.openshift.io/vcs-url: https://github.com/davmartini/redhat-techs.git
+    app.quarkus.io/vcs-url: https://github.com/davmartini/redhat-techs.git
+  labels:
+    app.kubernetes.io/name: quarkus-front-service
+    app.kubernetes.io/part-of: quarkus-app-with-bdd-on-ocp
+    app.kubernetes.io/version: 1.0-SNAPSHOT
+    department: fruity-dept
+    app.openshift.io/runtime: quarkus
+  name: quarkus-front-service
+spec:
+  host: ""
+  path: /
+  port:
+    targetPort: 8080
+  to:
+    kind: Service
+    name: quarkus-front

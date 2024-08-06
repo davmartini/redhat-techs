@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: $CLUSTER_NAME
+  name: $CLUSTER_NAME-apps
+  namespace: clusters-$CLUSTER_NAME
+spec:
+  ports:
+  - name: https-443
+    port: 443
+    protocol: TCP
+    targetPort: ${HTTPS_NODEPORT}
+  - name: http-80
+    port: 80
+    protocol: TCP
+    targetPort: ${HTTP_NODEPORT}
+  selector:
+    kubevirt.io: virt-launcher
+  type: LoadBalancer

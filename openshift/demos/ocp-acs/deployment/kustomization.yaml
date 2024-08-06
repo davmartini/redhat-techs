@@ -1,0 +1,8 @@
+resources:
+- 10-deploy.yaml
+- 20-svc.yaml
+- 30-route.yaml
+images:
+- name: vulnerable-log4j-image
+  newName: __REGISTRY__/vulnerable-cicd/vulnerable-log4j
+  newTag: latest

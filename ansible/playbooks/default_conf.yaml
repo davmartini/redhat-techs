@@ -1,0 +1,10 @@
+---
+- hosts: foreman_global_host_group
+  gather_facts: yes
+
+
+  tasks:
+
+    - name: Set timezone to Europe/Paris
+      community.general.timezone:
+        name: Europe/Paris

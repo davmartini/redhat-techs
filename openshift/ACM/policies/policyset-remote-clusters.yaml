@@ -1,0 +1,39 @@
+apiVersion: policy.open-cluster-management.io/v1beta1
+kind: PolicySet
+metadata:
+  name: remote-clusters-placement
+  namespace: acm-policies
+spec:
+  description: ""
+  policies:
+    - policy-manage-groups-users
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: remote-clusters-placement
+  namespace: acm-policies
+spec:
+  clusterConditions:
+    - status: "True"
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: cluster-type
+        operator: In
+        values:
+          - remote
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: remote-clusters-placement
+  namespace: acm-policies
+placementRef:
+  name: remote-clusters-placement
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+subjects:
+  - name: remote-clusters-placement
+    apiGroup: policy.open-cluster-management.io
+    kind: PolicySet

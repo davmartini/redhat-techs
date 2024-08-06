@@ -1,0 +1,15 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: test-dm-metallb-loadbalancer-ssh-service
+  namespace: vms
+  annotations:
+    metallb.universe.tf/ip-allocated-from-pool: ip-addresspool-vlan-network
+spec:
+  ports:
+    - protocol: TCP
+      port: 22000
+      targetPort: 22
+  selector:
+    kubevirt.io/domain: test-dm-metallb
+  type: LoadBalancer

@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: full-vm
+  namespace: openshift-gitops
+spec:
+  destination:
+    namespace: openshift-vms-sandbox
+    server: https://kubernetes.default.svc
+  project: ocpvirt-demo
+  source:
+    path: openshift/demos/ocp-argocd-ocp-virt/apps/full-vm
+    repoURL: https://github.com/davmartini/redhat-techs.git
+    targetRevision: main
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: false
+    syncOptions:
+    - CreateNamespace=true

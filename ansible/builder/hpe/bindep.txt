@@ -1,0 +1,3 @@
+vim [platform:rpm]
+jq [platform:rpm]
+subversion [platform:rpm]

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: settlement-app
+  name: settlement-app
+  namespace: vulnerable-log4j
+spec:
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    deployment: settlement-app
+  sessionAffinity: None
+  type: ClusterIP

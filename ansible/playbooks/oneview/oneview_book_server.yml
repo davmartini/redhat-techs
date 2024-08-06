@@ -1,0 +1,124 @@
+---
+- name: Create servers with OneView
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  collections:
+    - hpe.oneview
+    - hpe.ilo
+
+  vars:
+    - server_template_name: Openshift-BM-Ansible
+
+  tasks:
+        
+    - name: Create profile template
+      oneview_server_profile_template:
+        state: present
+        data:
+          name: "{{ server_template_name }}"
+          serverHardwareTypeName: "SY 480 Gen9 (SAS)"
+          enclosureGroupName: "Demo1_Rack12_EG"
+          boot:
+            manageBoot: true
+            order:
+              - "HardDisk"
+          bootMode:
+            manageMode: true
+            mode: "UEFI"
+            pxeBootPolicy: "IPv4"
+          connectionSettings:
+            manageConnections: true
+            complianceControl: Checked
+            connections:
+              - id: 1
+                name: Redhat_Provisionning_1
+                functionType: Ethernet
+                portId: Auto
+                requestedVFs: ""
+                requestedMbps: 2500
+                networkName: "Redhat_Provisionning_1"
+              - id: 2
+                name: RedHat_WRKLD
+                functionType: Ethernet
+                portId: Auto
+                requestedVFs: ""
+                requestedMbps: 2500
+                networkName: "Redhat_workload"
+#          localStorage:
+#            complianceControl: "CheckedMinimum"
+#            controllers:
+#              - deviceSlot: "Mezz 1"
+#                initialize: false
+#                mode: "HBA"
+#            sasLogicalJBODs:
+#              - id: 1
+#                deviceSlot: "Mezz 1"
+#                name: "ODF_DISK"
+#                description: "Disk used by ODF"
+#                numPhysicalDrives: 2
+#                driveMinSizeGB: 480
+#                driveMaxSizeGB: 480
+#                driveTechnology: SataSsd
+#                persistent: true
+          managementProcessor:
+            manageMp: true
+            mpSettings:
+              - settingType: "LocalAccounts"
+                args:
+                  localAccounts:
+                    - userName: "{{ lookup('env', 'ilo_username') }}"
+                      displayName: "rh_account"
+                      password: "{{ lookup('env', 'ilo_password') }}"
+                      userConfigPriv: true
+                      remoteConsolePriv: true
+                      virtualMediaPriv: true
+                      virtualPowerAndResetPriv: true
+                      iLOConfigPriv: true
+        params:
+          force: True
+
+    - name: Gather facts about Server Hardware
+      oneview_server_hardware_facts:
+        params:
+          start: 0
+          count: "{{ nb_servers }}"
+          sort: name:ascending
+          filter: 
+            - serverProfileUri=null
+            - serverHardwareTypeUri='/rest/server-hardware-types/5F7DD323-BCB1-4DDE-9918-E465572A3684'
+
+    - name: Display new server hardware
+      debug: msg="{{server_hardwares | map(attribute='name') }}"
+
+    - set_fact:
+        string_to_echo: "{{ server_hardwares | map(attribute='name') }}"
+
+    - name: List servers
+      debug: 
+        msg: "Le serveur utilisé est {{ item }}"
+      loop: "{{ string_to_echo }}"
+
+    - name: Create a Server Profiles from Server Profile Template
+      oneview_server_profile:
+        data:
+          name: "ocp-bm-worker-{{ 999999 | random }}"
+          serverProfileTemplateName: "{{ server_template_name }}"
+          serverHardwareName: "{{ item }}"
+          description: "OCP-Node to scale OCP Cluster"
+        state: present
+        params:
+          force: True
+      loop: "{{ string_to_echo }}"
+      register: create_server_profile
+    #   async: 1800
+    #   poll: 10 
+     
+    # - name: Wait for server profile creation to finish
+    #   async_status:
+    #     jid: "{{ item.ansible_job_id }}"
+    #   register: create_server_profile_jobs
+    #   until: create_server_profile_jobs.finished
+    #   delay: 5  # Check every 5 seconds. Adjust as you like.
+    #   retries: 400  # Retry up to 400 times. Adjust as needed.
+    #   with_items: "{{ create_server_profile }}"

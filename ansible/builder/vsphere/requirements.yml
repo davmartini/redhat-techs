@@ -1,0 +1,4 @@
+---
+collections:
+  - name: vmware.vmware_rest
+    version: 1.0.1

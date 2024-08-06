@@ -1,0 +1,68 @@
+- name: Manage Awesome website
+  hosts: all
+  gather_facts: true
+  vars:
+    index_title: Awesome website
+    index_content: This is awesome !
+    index_foot: Hosted on "RHEL:{{ ansible_distribution_version }}" 
+    int_address: '{{ ansible_ssh_host }}'
+
+  tasks:
+
+    - when: command == 'deploy'
+      name: Deploy web App
+      become: true
+      block:
+        - name: Httpd package is present
+          ansible.builtin.yum:
+            name: httpd
+
+        - name: Latest index file is present
+          ansible.builtin.template:
+            src: ../templates/index.html.j2
+            dest: /var/www/html/index.html
+            owner: apache
+            group: apache
+
+        - name: Configure Firewall for Web server
+          ansible.builtin.include_role:
+            name: redhat.rhel_system_roles.firewall
+          vars:
+            firewall:
+              service: http
+              state: enabled
+
+    - when: command == 'deploy' or command == 'start'
+      name: Awesome website is started
+      become: true
+      ansible.builtin.service:
+        name: httpd
+        state: started
+
+    - when: command == 'stop'
+      name: Awesome website is stopped
+      become: true
+      ansible.builtin.service:
+        name: httpd
+        state: stopped
+
+    - when: command == 'smoke_test'
+      name: Awesome website is responding locally
+      ansible.builtin.uri:
+        url: 'http://localhost/'
+      register: test_local
+      ignore_errors: true
+
+    - when: command == 'smoke_test'
+      name: Awesome website is responding internally
+      ansible.builtin.uri:
+        url: 'http://{{ int_address }}/'
+      register: test_internal
+      ignore_errors: true
+
+    - when: command == 'smoke_test'
+      ansible.builtin.assert:
+        that:
+          - test_local.status == 200
+          - test_internal.status == 200
+        success_msg: "Awesome website is up and running :)"

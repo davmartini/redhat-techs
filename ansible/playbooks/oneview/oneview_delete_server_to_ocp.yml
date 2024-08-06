@@ -1,0 +1,96 @@
+---
+- name: Add oneview servers to OCP cluster
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  collections:
+    - hpe.oneview
+    - hpe.ilo
+ 
+  vars:
+    - server_template_name: Openshift-BM-Ansible
+
+  tasks:
+
+    - name: OCP Login
+      shell: oc login --insecure-skip-tls-verify=true -u {{ lookup('env', 'OCP_USERNAME') }} -p {{ lookup('env', 'OCP_PASSWORD') }} {{ lookup('env', 'OCP_URL') }}
+
+    - name: OCP Get BMH before operation
+      shell: oc get bmh -n openshift-machine-api --selector=ansible=scale|sed 1d |head -n {{ nb_servers }}| awk '{ print $1 }'
+      register: oc_bmh_before
+      when: nb_servers != "all"
+
+    - name: OCP Get BMH before operation
+      shell: oc get bmh -n openshift-machine-api --selector=ansible=scale|sed 1d | awk '{ print $1 }'
+      register: oc_bmh_before
+      when: nb_servers == "all"  
+        
+    - debug: msg="{{ oc_bmh_before.stdout_lines }}"
+
+    - name: delete bmh server to your OCP cluster
+      shell: oc delete bmh {{ oc_bmh_before.stdout_lines[item] }} -n openshift-machine-api
+      loop: "{{ range(0, oc_bmh_before.stdout_lines|length|int)|list}}"
+      ignore_errors: yes
+
+    - set_fact:
+        ocp_server_list: "{{ oc_bmh_before.stdout_lines | list }}"
+        ocp_server_nb: "{{ oc_bmh_before.stdout_lines|length }}"
+
+    - debug: msg="{{ ocp_server_list }} | {{ ocp_server_nb }} "
+
+    - name: Get MachineSet count
+      shell: oc get machineset -n openshift-machine-api|tail -n 1|awk '{print $2}'
+      register: ocp_machineset_count
+
+    - name: OCP Get BMH after operation
+      shell: oc get bmh -n openshift-machine-api --selector=ansible=scale
+      register: oc_bmh_after
+
+    - debug: msg="{{ oc_bmh_after.stdout_lines }}"
+
+    - name: Get MachineSet name
+      shell: oc get machineset -n openshift-machine-api|tail -n 1|awk '{print $1}'
+      register: ocp_machineset_name
+
+    - name: Get MachineSet count
+      shell: oc get machineset -n openshift-machine-api|tail -n 1|awk '{print $2}'
+      register: ocp_machineset_count
+
+    - name: Scale down MachineSet
+      shell: oc scale --replicas={{ ocp_machineset_count.stdout|int - oc_bmh_before.stdout_lines|length|int }} machineset {{ ocp_machineset_name.stdout }} -n openshift-machine-api
+
+    - name: Delete server profile
+      oneview_server_profile:
+        state: absent
+        data:
+          name: "{{ oc_bmh_before.stdout_lines[item] }}"
+        params:
+          force: True
+      loop: "{{ range(0, oc_bmh_before.stdout_lines|length|int)|list}}"
+      delegate_to: localhost
+      ignore_errors: yes
+
+- name: Remove servers to DHCP server
+  hosts: all
+  gather_facts: no
+  become: yes
+
+  tasks:
+
+    - set_fact:
+        ocp_server_list2: "{{ hostvars['localhost']['ocp_server_list'] }}"
+        ocp_server_nb2: "{{ hostvars['localhost']['ocp_server_nb'] }}"
+
+    - name: Remove old backup and create new one
+      shell: rm -f /opt/dhcp/hosts.json.bkp && cp /opt/dhcp/hosts.json /opt/dhcp/hosts.json.bkp
+
+    - name: Print variables
+      debug:
+        msg: |
+          {{ nb_servers2 }}| {{ ocp_server_list2[item] }}
+      loop: "{{ range(0, ocp_server_nb2|int)|list}}"
+      ignore_errors: yes
+
+    - name: Remove server NET to DHCP server  
+      shell: sed -i '/{{ ocp_server_list2[item] }}/,+2d' /opt/dhcp/hosts.json
+      loop: "{{ range(0, ocp_server_nb2|int)|list}}"

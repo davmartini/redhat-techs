@@ -1,0 +1,82 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+ annotations:
+   policy.open-cluster-management.io/categories: CM Configuration Management
+   policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+   policy.open-cluster-management.io/standards: NIST SP 800-53
+ name: policy-ocpvirt-operator
+spec:
+ disabled: false
+ policy-templates:
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-ocpvirt-namespace
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: v1
+               kind: Namespace
+               metadata:
+                 name: openshift-cnv
+                 labels:
+                   openshift.io/cluster-monitoring: "true"
+         remediationAction: enforce
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-ocpvirt-operator-operatorgroup
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: operators.coreos.com/v1
+               kind: OperatorGroup
+               metadata:
+                 name: kubevirt-hyperconverged-group
+                 namespace: openshift-cnv
+               spec:
+                 targetNamespaces:
+                   - openshift-cnv
+         remediationAction: enforce
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-ocpvirt-operator-subscription
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: operators.coreos.com/v1alpha1
+               kind: Subscription
+               metadata:
+                 name: hco-operatorhub
+                 namespace: openshift-cnv
+               spec:
+                 source: redhat-operators
+                 sourceNamespace: openshift-marketplace
+                 name: kubevirt-hyperconverged
+                 startingCSV: kubevirt-hyperconverged-operator.v4.10.3
+                 channel: "stable"
+         remediationAction: enforce
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-ocpvirtcluster
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: hco.kubevirt.io/v1beta1
+               kind: HyperConverged
+               metadata:
+                 name: kubevirt-hyperconverged
+                 namespace: openshift-cnv
+               spec:
+         remediationAction: enforce

@@ -1,0 +1,85 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+ annotations:
+   policy.open-cluster-management.io/categories: CM Configuration Management
+   policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+   policy.open-cluster-management.io/standards: NIST SP 800-53
+ name: policy-quay-operator
+spec:
+ disabled: false
+ policy-templates:
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-quay-namespace
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: v1
+               kind: Namespace
+               metadata:
+                 name: openshift-operators
+         remediationAction: enforce
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-quay-operator-subscription
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: operators.coreos.com/v1alpha1
+               kind: Subscription
+               metadata:
+                 name: quay-operator
+                 namespace: openshift-operators
+               spec:
+                 source: redhat-operators
+                 sourceNamespace: openshift-marketplace
+                 name: quay-operator
+                 channel: stable-3.7
+                 installPlanApproval: Automatic
+         remediationAction: enforce
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-quay-instance
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: quay.redhat.com/v1
+               kind: QuayRegistry
+               metadata:
+                 name: quay-registry
+                 namespace: openshift-operators
+               spec:
+                 components:
+                   - managed: true
+                     kind: clair
+                   - managed: true
+                     kind: postgres
+                   - managed: true
+                     kind: objectstorage
+                   - managed: true
+                     kind: redis
+                   - managed: true
+                     kind: horizontalpodautoscaler
+                   - managed: true
+                     kind: route
+                   - managed: false
+                     kind: mirror
+                   - managed: true
+                     kind: monitoring
+                   - managed: true
+                     kind: tls
+                   - managed: true
+                     kind: quay
+                   - managed: true
+                     kind: clairpostgres
+         remediationAction: enforce

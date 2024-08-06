@@ -1,0 +1,7 @@
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: vms-bridge-1085
+  namespace: vms
+spec:
+  config: '{"name":"vms-bridge-1085","type":"cnv-bridge","cniVersion":"0.3.1","bridge":"br1","macspoofchk":true,"ipam":{},"preserveDefaultVlan":false}'

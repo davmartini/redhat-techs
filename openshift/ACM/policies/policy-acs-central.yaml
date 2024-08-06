@@ -1,0 +1,130 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+ annotations:
+   policy.open-cluster-management.io/categories: CM Configuration Management
+   policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+   policy.open-cluster-management.io/standards: NIST SP 800-53
+ name: policy-acs-central
+spec:
+ disabled: false
+ policy-templates:
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-acs-namespace
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: v1
+               kind: Namespace
+               metadata:
+                 name: rhacs-operator 
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: v1
+               kind: Namespace
+               metadata:
+                 name: stackrox
+         remediationAction: enforce
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-acs-operator-operatorgroup
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: operators.coreos.com/v1
+               kind: OperatorGroup
+               metadata:
+                 name: rhacs-operator
+                 namespace: rhacs-operator
+         remediationAction: enforce
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-acs-operator-subscription
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: operators.coreos.com/v1alpha1
+               kind: Subscription
+               metadata:
+                 name: rhacs-operator
+                 namespace: rhacs-operator
+               spec:
+                 source: redhat-operators
+                 sourceNamespace: openshift-marketplace
+                 name: rhacs-operator
+                 channel: latest
+                 installPlanApproval: Automatic
+         remediationAction: enforce
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-acs-central
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: platform.stackrox.io/v1alpha1
+               kind: Central
+               metadata:
+                 namespace: stackrox
+                 name: stackrox-central-services
+               spec:
+                 central:
+                   exposure:
+                     loadBalancer:
+                       enabled: false
+                       port: 443
+                     nodePort:
+                       enabled: false
+                     route:
+                       enabled: true
+                   persistence:
+                     persistentVolumeClaim:
+                       claimName: stackrox-db
+                 egress:
+                   connectivityPolicy: Online
+                 scanner:
+                   analyzer:
+                     scaling:
+                       autoScaling: Enabled
+                       maxReplicas: 5
+                       minReplicas: 2
+                       replicas: 3
+                 scannerComponent: Enabled
+         remediationAction: enforce
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-acs-install-acs-agent
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: platform.stackrox.io/v1alpha1
+               kind: SecuredCluster
+               metadata:
+                 namespace: stackrox
+                 name: stackrox-secured-cluster-services
+               spec:
+                 clusterName: |
+                   {{ fromSecret "open-cluster-management-agent" "hub-kubeconfig-secret" "cluster-name" | base64dec }}
+                 auditLogs:
+                   collection: Auto
+                 centralEndpoint: |
+                   central-stackrox.apps.ocp.drkspace.fr:443
+                 admissionControl:
+                   listenOnCreates: false
+                   listenOnEvents: true
+         remediationAction: enforce

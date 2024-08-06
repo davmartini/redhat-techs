@@ -1,0 +1,21 @@
+---
+- name: Delete server profile template in OneView
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  collections:
+    - hpe.oneview
+    - hpe.ilo
+
+  vars:
+    - server_template_name: Openshift-BM-Ansible
+
+  tasks:
+
+    - name: Remove the server profile
+      oneview_server_profile_template:
+        state: absent
+        data:
+          name: "{{ server_template_name }}"
+        params:
+          force: True

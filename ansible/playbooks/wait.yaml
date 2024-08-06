@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+
+  tasks:
+
+    - name: "wait operation success"
+      pause:
+        seconds: "{{ wait_time }}"

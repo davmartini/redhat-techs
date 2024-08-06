@@ -1,0 +1,34 @@
+---
+- name: create VM on OpenShift Virt
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  collections:
+    - redhat.openshift
+    - redhat.openshift_virtualization
+
+  tasks:
+
+    - name: List VMs on OpenShift Virtualization
+      redhat.openshift_virtualization.kubevirt_vm_info:
+        host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
+        api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
+        validate_certs: false
+        namespace: "{{ namespace | default(vms-demo) }}"
+      register: result
+    
+    - name: Set list vms by name
+      ansible.builtin.set_fact:
+        vms_list: "{{ result | json_query('resources[*].metadata.name') }}"
+
+    - name: Print listed VMs
+      ansible.builtin.debug:
+          var: vms_list
+
+    - name: If login succeeded, try to log out (revoke access token)
+      when: openshift_auth_results.openshift_auth.api_key is defined
+      redhat.openshift.openshift_auth:
+        state: absent
+        host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
+        api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
+        validate_certs: false

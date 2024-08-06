@@ -1,0 +1,86 @@
+---
+- name: create VM on OpenShift Virt
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  collections:
+    - redhat.openshift
+    - redhat.openshift_virtualization
+
+  tasks:
+
+  - name: List VMs on OpenShift Virtualization
+    redhat.openshift_virtualization.kubevirt_vm_info:
+      host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
+      api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
+      validate_certs: false
+      namespace: "{{ namespace | default(vms-demo) }}"
+    register: result
+    
+  - name: Set list vms by name
+    ansible.builtin.set_fact:
+      vms_list: "{{ result | json_query('resources[*].metadata.name') }}"
+
+  - name: Print listed VMs
+    ansible.builtin.debug:
+        var: vms_list
+
+  - name: Delete Route for Cockpit
+    redhat.openshift.k8s:
+      host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
+      api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
+      validate_certs: false
+      state: absent
+      api_version: route.openshift.io/v1
+      kind: Route
+      name: "cockpit-{{ item }}"
+      namespace: "{{ namespace | default(vms-demo) }}"
+    loop: "{{ vms_list }}"
+
+  - name: Delete Route for App
+    redhat.openshift.k8s:
+      host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
+      api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
+      validate_certs: false
+      state: absent
+      api_version: route.openshift.io/v1
+      kind: Route
+      name: "app-{{ item }}"
+      namespace: "{{ namespace | default(vms-demo) }}"
+    loop: "{{ vms_list }}"
+
+  - name: Delete Service for Cockpit
+    redhat.openshift.k8s:
+      host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
+      api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
+      validate_certs: false
+      state: absent
+      api_version: v1
+      kind: Service
+      name: "cockpit-{{ item }}"
+      namespace: "{{ namespace | default(vms-demo) }}"
+    loop: "{{ vms_list }}"
+
+  - name: Delete Service for App
+    redhat.openshift.k8s:
+      host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
+      api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
+      validate_certs: false
+      state: absent
+      api_version: v1
+      kind: Service
+      name: "app-{{ item }}"
+      namespace: "{{ namespace | default(vms-demo) }}"
+    loop: "{{ vms_list }}"
+
+  - name: Delete VirtualMachine on OCP vms-demo namespace
+    redhat.openshift_virtualization.kubevirt_vm:
+      host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
+      api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
+      validate_certs: false
+      state: absent
+      name: "{{ item }}"
+      namespace: "{{ namespace | default(vms-demo) }}"
+    loop: "{{ vms_list }}"
+
+

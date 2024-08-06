@@ -1,0 +1,23 @@
+---
+- hosts: workstation
+  gather_facts: no
+
+  tasks:
+
+    - name: Generate full OCP backup
+      shell: ssh -i /root/.ssh/dm_key core@10.128.0.2 sudo /usr/local/bin/cluster-backup.sh /home/core/assets/backup
+
+    - name: Tar OCP backup
+      shell: ssh -i /root/.ssh/dm_key core@10.128.0.2 sudo tar -cf /tmp/ocp_backup.tar /home/core/assets/backup
+
+    - name: Get OCP backup
+      shell: scp -i /root/.ssh/dm_key core@10.128.0.2:/tmp/ocp_backup.tar /tmp/
+
+    - name: Upload backup on GDrive
+      shell: /root/.google-drive-upload/bin/gupload /tmp/ocp_backup.tar --overwrite && rm -rf /tmp/ocp_backup.tar
+
+    - name: Remove OCP backup tmp
+      shell: ssh -i /root/.ssh/dm_key core@10.128.0.2 sudo rm -rf /tmp/ocp_backup.tar
+
+    - name: Remove OCP backup tmp
+      shell: ssh -i /root/.ssh/dm_key core@10.128.0.2 sudo rm -rf /home/core/assets/backup

@@ -1,0 +1,70 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  collections:
+    - nutanix.ncp
+
+  tasks:
+
+    - name: Set uniq uuid
+      set_fact:
+        uuid: "{{ 1000 | random }}"
+      run_once: yes
+    
+    - name: Create Nutanix VM for ACM Demo
+      nutanix.ncp.ntnx_vms:
+        nutanix_host: "{{ nutanix_host }}"
+        nutanix_username: "{{ nutanix_username }}"
+        nutanix_password: "{{ nutanix_password }}"
+        state: present
+        name: "{{ prefix_name }}-demoacm-{{ uuid }}{{ item }}"
+        timezone: "UTC"
+        validate_certs: False
+        cluster:
+          name: "ntnx-cluster-hpe-cic"
+        networks:
+          - is_connected: True
+            subnet:
+              name: "workload"
+        boot_config:
+          boot_type: "LEGACY"
+          boot_order:
+            - "DISK"
+            - "CDROM"
+            - "NETWORK"
+        disks:
+          - type: "CDROM"
+            clone_image:
+              name:  "hpe-cic-nutanix-discovery-image"
+            bus: "SATA"
+          - type: "DISK"
+            size_gb: 120
+            bus: "SCSI"
+        vcpus: "{{ nb_cpu }}"
+        cores_per_vcpu: "{{ nb_core }}"
+        memory_gb: "{{ nb_mem }}"
+      loop: "{{ range(0, vm_number|int)|list}}"
+
+    - name: List Nutanix VM for ACM Demo
+      nutanix.ncp.ntnx_vms_info:
+        nutanix_host: "{{ nutanix_host }}"
+        nutanix_username: "{{ nutanix_username }}"
+        nutanix_password: "{{ nutanix_password }}"
+        validate_certs: False
+        filter:
+          vm_name: "{{ prefix_name }}-demoacm-{{ uuid }}{{ item }}"
+        kind: vm
+      loop: "{{ range(0, vm_number|int)|list}}"
+      register: result
+
+    - set_fact :
+        ip_vm : "{{ result | json_query('results[*].response.entities[*].status.resources.nic_list[*].ip_endpoint_list[*].ip') }}"
+
+    - debug:
+        msg: "{{ ip_vm|to_yaml }}"
+    
+    - name: Print VM IP
+      debug: 
+        msg: "IP Server : {{ item }}"
+      with_items: "{{ ip_vm }}"

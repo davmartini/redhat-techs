@@ -1,0 +1,59 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-certificatepolicy
+  namespace: acm-policies
+  annotations:
+    policy.open-cluster-management.io/categories: SC System and Communications Protection
+    policy.open-cluster-management.io/controls: SC-8 Transmission Confidentiality and Integrity
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: CertificatePolicy
+        metadata:
+          name: policy-certificate
+        spec:
+          minimumDuration: 300h
+          namespaceSelector:
+            exclude:
+              - kube-*
+            include:
+              - default
+              - openshift-console
+              - openshift-ingress
+          remediationAction: inform
+          severity: low
+  remediationAction: inform
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: remote-clusters-placement
+  namespace: acm-policies
+spec:
+  clusterConditions:
+    - status: "True"
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: cluster-type
+        operator: In
+        values:
+          - remote
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: policy-certificatepolicy-placement
+  namespace: acm-policies
+placementRef:
+  name: remote-clusters-placement
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+subjects:
+  - name: policy-certificatepolicy
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy

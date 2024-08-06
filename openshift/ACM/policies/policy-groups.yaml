@@ -1,0 +1,50 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+ annotations:
+   policy.open-cluster-management.io/categories: CM Configuration Management
+   policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+   policy.open-cluster-management.io/standards: NIST SP 800-53
+ name: policy-manage-groups-users
+spec:
+ disabled: false
+ policy-templates:
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-admin-group
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: user.openshift.io/v1
+               kind: Group
+               metadata:
+                 name: admin
+               users:
+                 - admin01
+                 - admin02
+         remediationAction: enforce
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-admin-group-role-binding
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: rbac.authorization.k8s.io/v1
+               kind: ClusterRoleBinding
+               metadata:
+                 name: cluster-admin-0
+               subjects:
+                 - kind: Group
+                   apiGroup: rbac.authorization.k8s.io
+                   name: admin
+               roleRef:
+                 apiGroup: rbac.authorization.k8s.io
+                 kind: ClusterRole
+                 name: cluster-admin
+         remediationAction: enforce

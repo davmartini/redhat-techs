@@ -1,0 +1,46 @@
+---
+- name: Leapp framework
+  hosts: all
+  gather_facts: true
+  collections:
+    - infra.leapp
+    - redhat.rhel_system_roles
+  pre_tasks:
+
+    - name: Create password for a user
+      ansible.builtin.user:
+        name: "cloud-user"
+        password: "{{ user_password | password_hash('sha512') }}"
+        state: present
+
+    - name: Remove RIPU files
+      ansible.builtin.file:
+        path: /var/log/ripu
+        state: absent
+  
+  vars:
+    cockpit_packages: 
+      - cockpit
+      - cockpit-networkmanager
+      - cockpit-packagekit
+      - cockpit-selinux
+      - cockpit-storaged
+      - cockpit-leapp
+      - cockpit-system
+    cockpit_enabled: true
+    cockpit_started: true
+    cockpit_port: 9090
+    leapp_upgrade_type: cdn
+    leapp_answerfile: |
+      [remove_pam_pkcs11_module_check]
+      confirm = True
+  roles:
+    - role: redhat.rhel_system_roles.cockpit
+      when: (ansible_distribution == "RedHat") and (ansible_distribution_major_version < "9") 
+    - role: infra.leapp.analysis
+      when: (ansible_distribution == "RedHat") and (ansible_distribution_major_version < "9")   
+  post_tasks:
+
+    - name: URLs to connect to cockpit URL to review LEAPP report
+      ansible.builtin.debug:
+        msg: "https://{{ ansible_hostname }}-vms-demo.apps.ocp.drkspace.fr"

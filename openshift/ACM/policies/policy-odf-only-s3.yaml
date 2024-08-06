@@ -1,0 +1,123 @@
+# This policy verifies the installation of the official version of the OpenShift Data Foundation
+# Logical Volume Manager Operator on the managed clusters.
+# If set to "enforce" it installs the operator.
+# Used APIs: OLM, ODF-LVMO #https://github.com/operator-framework/operator-lifecycle-manager
+# https://github.com/red-hat-storage/lvm-operator
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+ annotations:
+   policy.open-cluster-management.io/categories: CM Configuration Management
+   policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+   policy.open-cluster-management.io/standards: NIST SP 800-53
+ name: policy-odf-operator
+spec:
+ disabled: false
+ policy-templates:
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-odf-namespace
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: v1
+               kind: Namespace
+               metadata:
+                 name: openshift-storage
+                 labels:
+                   openshift.io/cluster-monitoring: "true"
+         remediationAction: inform
+         severity: high
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-odf-operator-operatorgroup
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: operators.coreos.com/v1alpha2
+               kind: OperatorGroup
+               metadata:
+                 name: openshift-storage-operatorgroup
+                 namespace: openshift-storage
+               spec:
+                 targetNamespaces:
+                   - openshift-storage
+         remediationAction: inform
+         severity: high
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-odf-operator-subscription
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: operators.coreos.com/v1alpha1
+               kind: Subscription
+               metadata:
+                 name: odf-operator
+                 namespace: openshift-storage
+               spec:
+                 channel: stable-4.10
+                 installPlanApproval: Automatic
+                 name: odf-operator
+                 source: redhat-operators
+                 sourceNamespace: openshift-marketplace
+                 startingCSV: odf-operator.v4.10.5
+         remediationAction: inform
+         severity: high
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-odfcluster
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: odf.openshift.io/v1alpha1
+               kind: StorageSystem
+               metadata:
+                 name: odf-storagecluster-storagesystem
+                 namespace: openshift-storage
+               spec:
+                 kind: storagecluster.ocs.openshift.io/v1
+                 name: odf-storagecluster
+                 namespace: openshift-storage
+         remediationAction: enforce
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+ name: binding-policy-odf-operator
+placementRef:
+ apiGroup: apps.open-cluster-management.io
+ kind: PlacementRule
+ name: placement-policy-odf-operator
+subjects:
+ - apiGroup: policy.open-cluster-management.io
+   kind: Policy
+   name: policy-odf-operator
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+ name: placement-policy-odf-operator
+spec:
+ clusterConditions:
+   - status: 'True'
+     type: ManagedClusterConditionAvailable
+ clusterSelector:
+   matchExpressions:
+     - key: name
+       operator: In
+       values:
+         - local-cluster

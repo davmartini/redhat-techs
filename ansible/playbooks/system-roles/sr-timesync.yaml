@@ -1,0 +1,25 @@
+---
+- name: Apply system-role
+  hosts: "{{ host_target }}"
+  become: true
+  collections:
+    - redhat.rhel_system_roles
+
+  tasks:
+
+    - when: time_on == 'yes'
+      name: Configure Time
+      include_role:
+        name: redhat.rhel_system_roles.timesync
+      vars:
+        timesync_ntp_servers:
+          - hostname: 0.rhel.pool.ntp.org
+            iburst: yes
+          - hostname: 1.rhel.pool.ntp.org
+            iburst: yes
+          - hostname: 2.rhel.pool.ntp.org
+            iburst: yes
+        timesync_ntp_provider: chrony
+        timesync_services: 
+          - chronyd
+

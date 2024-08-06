@@ -1,0 +1,14 @@
+kind: Kubeturbo
+apiVersion: charts.helm.k8s.io/v1
+metadata:
+  name: kubeturbo-release
+  namespace: turbonomic-kubeturbo
+spec:
+  serverMeta:
+    turboServer: 'https://turbonomic.apps.ocp.drkspace.fr'
+  targetConfig:
+    targetName: ocp-lab
+  restAPIConfig:
+  #  turbonomicCredentialsSecretName: "turbonomic-credentials"
+    opsManagerUserName: 
+    opsManagerPassword: 

@@ -1,0 +1,53 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+ annotations:
+   policy.open-cluster-management.io/categories: CM Configuration Management
+   policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+   policy.open-cluster-management.io/standards: NIST SP 800-53
+ name: policy-config-idp
+spec:
+ disabled: false
+ policy-templates:
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-idp-secret
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: v1
+               kind: Secret
+               metadata:
+                 name: google-secret
+                 namespace: openshift-config
+               type: Opaque
+               data:
+                 clientSecret: $SECRET
+         remediationAction: enforce
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-idp-config
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: config.openshift.io/v1
+               kind: OAuth
+               metadata:
+                 name: cluster
+               spec:
+                 identityProviders:
+                 - name: googleidp 
+                   mappingMethod: claim 
+                   type: Google
+                   google:
+                     clientID: "$CLIENTID"
+                     clientSecret:
+                       name: google-secret
+                     hostedDomain: "redhat.com" 
+         remediationAction: enforce

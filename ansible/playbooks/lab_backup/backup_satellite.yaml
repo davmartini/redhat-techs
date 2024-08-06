@@ -1,0 +1,19 @@
+---
+- hosts: satellite.openshift-vms.svc.cluster.local
+  gather_facts: yes
+
+  tasks:
+
+    - name: Generate full Satellite backup
+      shell: satellite-maintain backup offline --skip-pulp-content --assumeyes /var/satellite-backup/
+
+    - name: Tar Satellite backup
+      shell: tar -cf /var/satellite-backup/satellite_backup.tar /var/satellite-backup/satellite-backup-*
+
+    - name: Upload backup on GDrive
+      shell: /root/.google-drive-upload/bin/gupload /var/satellite-backup/satellite_backup.tar --overwrite
+
+    - name: Remove local backup
+      file:
+        path: /var/satellite-backup
+        state: absent

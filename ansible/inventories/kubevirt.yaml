@@ -1,0 +1,6 @@
+plugin: redhat.openshift_virtualization.kubevirt
+host_format: "{name}"
+connections:
+  - namespaces:
+      - vms-demo
+    validate_certs: false

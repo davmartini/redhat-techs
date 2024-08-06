@@ -1,0 +1,43 @@
+apiVersion: policy.open-cluster-management.io/v1beta1
+kind: PolicySet
+metadata:
+  name: local-cluster-placement
+  namespace: acm-policies
+spec:
+  description: ""
+  policies:
+    - policy-lvm-operator
+    - policy-odf-operator
+    - policy-ocpvirt-operator
+    - policy-gitops-operator
+    - policy-manage-groups-users
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: local-cluster-placement-placement
+  namespace: acm-policies
+spec:
+  clusterConditions:
+    - status: "True"
+      type: ManagedClusterConditionAvailable
+  clusterSelector:
+    matchExpressions:
+      - key: name
+        operator: In
+        values:
+          - local-cluster
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: local-cluster-placement-placement
+  namespace: acm-policies
+placementRef:
+  name: local-cluster-placement-placement
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+subjects:
+  - name: local-cluster-placement
+    apiGroup: policy.open-cluster-management.io
+    kind: PolicySet

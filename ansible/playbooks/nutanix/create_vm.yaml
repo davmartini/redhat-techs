@@ -1,0 +1,56 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  collections:
+    - nutanix.ncp
+
+  tasks:
+
+    - name: Get env satellite token
+      set_fact:
+        token_sat: "{{ SAT_TOKEN_DEV if env == 'dev' else SAT_TOKEN_QUALIF if env == 'qualif' else SAT_TOKEN_PROD if env == 'prod' }}"
+
+    - name: Set uniq uuid
+      set_fact:
+        uuid: "{{ 1000 | random }}"
+      run_once: yes
+
+    - name: Generate cloud-init files
+      template:
+        src: templates/cloud_init.yml.j2
+        dest: "cloud_init_{{ item }}.yml"
+        owner: root
+        group: root
+        mode: '0644'
+      loop: "{{ range(0, vm_number|int)|list}}"
+
+    - name: Create Nutanix VM
+      nutanix.ncp.ntnx_vms:
+        nutanix_host: "{{ nutanix_host }}"
+        nutanix_username: "{{ nutanix_username }}"
+        nutanix_password: "{{ nutanix_password }}"
+        state: present
+        name: "{{ env }}-demoaap-{{ uuid }}{{ item }}"
+        timezone: "UTC"
+        validate_certs: False
+        cluster:
+          name: "ntnx-cluster-hpe-cic"
+        networks:
+          - is_connected: True
+            subnet:
+              name: "workload"
+        disks:
+          - type: "DISK"
+            size_gb: 10
+            clone_image:
+              name:  "rhel-8.7-x86_64-kvm.qcow2"
+            bus: "SCSI"
+        vcpus: "{{ nb_cpu }}"
+        cores_per_vcpu: 1
+        memory_gb: "{{ nb_mem }}"
+        guest_customization:
+          type: "cloud_init"
+          script_path: "./cloud_init_{{ item }}.yml"
+          is_overridable: True
+      loop: "{{ range(0, vm_number|int)|list}}"

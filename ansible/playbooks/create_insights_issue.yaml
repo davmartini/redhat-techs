@@ -1,0 +1,44 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+
+  tasks:
+
+    - name: Set list
+      set_fact:
+        group_sat: "{{ 'foreman_demo_dev' if vm_env_type == 'dev' else 'foreman_demo_qualif' if vm_env_type == 'qualif' else 'foreman_demo_prod' if vm_env_type == 'prod' }}"
+
+- hosts: all
+  gather_facts: no
+
+  tasks:
+
+    - set_fact:
+        group_sat2: "{{ hostvars['localhost']['group_sat'] }}"
+
+    - name: Change logs permissions
+      shell: chmod 777 /var/log/maillog /var/log/secure
+      when: 
+        - 'inventory_hostname in groups[group_sat2]'  
+      ignore_errors: yes
+
+    - name: Change tuned profile
+      shell: tuned-adm profile hpc-compute
+      when: 
+        - 'inventory_hostname in groups[group_sat2]'  
+      ignore_errors: yes
+
+    - name: Remove irqbalance rpm
+      yum:
+        name: irqbalance
+        state: absent
+      when: 
+        - 'inventory_hostname in groups[group_sat2]'  
+      ignore_errors: yes
+    
+    - name: Start insights client
+      shell: insights-client
+      when: 
+        - 'inventory_hostname in groups[group_sat2]'  
+      ignore_errors: yes

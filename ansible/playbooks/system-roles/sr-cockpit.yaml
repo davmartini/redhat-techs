@@ -1,0 +1,32 @@
+---
+- name: Apply system-role
+  hosts: "{{ host_target }}"
+  become: true
+  collections:
+    - redhat.rhel_system_roles
+
+  tasks:
+
+    - when: cockpit_on == 'yes'
+      block:
+        - name: Install RHE Web Console (Cockpit)
+          include_role:
+            name: redhat.rhel_system_roles.cockpit
+          vars:
+            cockpit_packages: "{{ cockpit_package | default('default') }}"
+            cockpit_enabled: yes
+            cockpit_started: yes
+        
+        - name: define password for root
+          user:
+            name: root
+            state: present
+            password: "{{ cockpit_password | password_hash('sha512') }}"
+
+        - name: Configure Firewall for Web Console
+          include_role:
+            name: redhat.rhel_system_roles.firewall
+          vars:
+            firewall:
+              service: cockpit
+              state: enabled

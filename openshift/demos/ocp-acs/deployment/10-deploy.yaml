@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: settlement-app
+    app.kubernetes.io/component: settlement-app
+    app.kubernetes.io/instance: settlement-app
+  name: settlement-app
+  namespace: vulnerable-log4j
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      deployment: settlement-app
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        deployment: settlement-app
+    spec:
+      containers:
+      - image: vulnerable-log4j-image:latest
+        imagePullPolicy: Always
+        name: settlement-app
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30

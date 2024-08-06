@@ -1,0 +1,171 @@
+---
+- name: Add oneview servers to OCP cluster
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  collections:
+    - hpe.oneview
+    - hpe.ilo
+    
+  vars:
+    - server_template_name: Openshift-BM-Ansible
+
+  tasks:
+
+    - name: env
+      shell: env
+      register: env
+
+    - debug: msg="{{ env }}"
+
+    - name: Gather facts about a Server Profile Template by name
+      oneview_server_profile_template_facts:
+        name: '{{ server_template_name }}'
+      delegate_to: localhost
+
+    - name: Set template URI
+      set_fact:
+        profile_template_uri: "{{ server_profile_templates | map(attribute='uri') | list}}" 
+
+    - name: Gather facts about all Server Profiles
+      oneview_server_profile_facts:
+        params:
+          sort: name:ascending
+          filter: serverProfileTemplateUri='{{ profile_template_uri[0] }}'
+      delegate_to: localhost
+      register: server_target
+
+    - name: Gather facts about all Server Hardware
+      oneview_server_hardware_facts:
+        uri: "{{ item }}"
+      loop: "{{ server_target.ansible_facts.server_profiles | map(attribute='serverHardwareUri') | list }}"
+      delegate_to: localhost
+      register: server_target_hw  
+
+    - set_fact:
+        ocp_server_name: "{{ server_target.ansible_facts.server_profiles | map(attribute='name') | list }}"
+        ocp_server_network_name_pxe: "{{ server_target.ansible_facts.server_profiles | json_query(pxenamequery) }}"
+        ocp_server_mac_pxe: "{{ server_target.ansible_facts.server_profiles | json_query(pxemacquery) }}"
+        ocp_server_network_name_wkl: "{{ server_target.ansible_facts.server_profiles | json_query(wklnamequery) }}"
+        ocp_server_mac_wkl: "{{ server_target.ansible_facts.server_profiles | json_query(wklmacquery) }}"
+        ocp_server_hw_uri: "{{ server_target.ansible_facts.server_profiles | map(attribute='serverHardwareUri') | list }}"
+        ocp_server_ilo_uri: "{{ server_target_hw.results | json_query(iloquery) }}"
+        nb_line: "{{ server_target.ansible_facts.server_profiles | map(attribute='name') | length}}"
+      vars:
+        pxenamequery: "[*].connectionSettings.connections[0].name"
+        pxemacquery: "[*].connectionSettings.connections[0].mac"
+        wklnamequery: "[*].connectionSettings.connections[1].name"
+        wklmacquery: "[*].connectionSettings.connections[1].mac"
+        iloquery: "[*].ansible_facts.server_hardwares.mpHostInfo.mpIpAddresses[1].address"
+
+    - name: Print variables
+      debug:
+        msg: |
+          {{ nb_line }}| {{ ocp_server_name[item] }} | {{ ocp_server_network_name_pxe[item] }} | {{ ocp_server_mac_pxe[item] }} | {{ ocp_server_network_name_wkl[item] }} | {{ ocp_server_mac_wkl[item] }} | {{ ocp_server_ilo_uri[item] }}
+      loop: "{{ range(0, nb_line|int)|list}}"
+      ignore_errors: yes
+
+    - name: Generate bmh files
+      template:
+        src: templates/bmh.yaml.j2
+        dest: bmh-{{ item }}.yaml
+        owner: root
+        group: root
+        mode: '0644'
+      loop: "{{ range(0, nb_line|int)|list}}"
+      ignore_errors: yes
+       
+    - name: Generate bmh files
+      template:
+        src: templates/bmh-secret.yaml.j2
+        dest: bmh-secret-{{ item }}.yaml
+        owner: root
+        group: root
+        mode: '0644'
+      loop: "{{ range(0, nb_line|int)|list}}"
+      ignore_errors: yes
+
+    - name: cat template file
+      shell: cat bmh-secret*
+      register: cat
+
+    - debug: msg="{{ cat.stdout }}"
+
+    - name: OCP Login
+      shell: oc login --insecure-skip-tls-verify=true -u {{ lookup('env', 'OCP_USERNAME') }} -p {{ lookup('env', 'OCP_PASSWORD') }} {{ lookup('env', 'OCP_URL') }}
+
+    - name: Get MachineSet name
+      shell: oc get machineset -n openshift-machine-api|tail -n 1|awk '{print $1}'
+      register: ocp_machineset_name
+
+    - name: Get MachineSet count
+      shell: oc get machineset -n openshift-machine-api|tail -n 1|awk '{print $2}'
+      register: ocp_machineset_count     
+
+    - name: OCP Get BMH before operation
+      shell: oc get bmh -n openshift-machine-api
+      register: oc_bmh_before
+
+    - debug: msg="{{ oc_bmh_before.stdout_lines }}"
+
+    - name: Add new bmh server console secrets to your OCP cluster
+      shell: oc apply -f bmh-secret-{{ item }}.yaml -n openshift-machine-api
+      loop: "{{ range(0, nb_line|int)|list}}"
+      ignore_errors: yes
+
+    - name: Add new bmh server to your OCP cluster
+      shell: oc create -f bmh-{{ item }}.yaml -n openshift-machine-api
+      loop: "{{ range(0, nb_line|int)|list}}"
+      ignore_errors: yes
+
+    - name: Scale MachineSet
+      shell: oc scale --replicas={{ ocp_machineset_count.stdout|int + nb_servers|int }} machineset {{ ocp_machineset_name.stdout }} -n openshift-machine-api
+
+    - name: OCP Get BMH after operation
+      shell: oc get bmh -n openshift-machine-api
+      register: oc_bmh_after
+
+    - debug: msg="{{ oc_bmh_after.stdout_lines }}"
+
+- name: Add new servers to DHCP server
+  hosts: all
+  gather_facts: no
+  become: yes
+
+  tasks:
+
+    - set_fact:
+        ocp_server_name2: "{{ hostvars['localhost']['ocp_server_name'] }}"
+        ocp_server_mac_wkl2: "{{ hostvars['localhost']['ocp_server_mac_wkl'] }}"
+        nb_line2: "{{ hostvars['localhost']['nb_line'] }}"
+
+    - name: Remove old backup and create new one
+      shell: rm -f /opt/dhcp/hosts.json.bkp && cp /opt/dhcp/hosts.json /opt/dhcp/hosts.json.bkp
+      
+    - name: Create tmp file
+      shell: cp /opt/dhcp/hosts.json /opt/dhcp/hosts.json.tmp
+
+    - name: Print variables
+      debug:
+        msg: |
+          {{ nb_line2 }}| {{ ocp_server_name2[item] }} | {{ ocp_server_mac_wkl2[item] }}
+      loop: "{{ range(0, nb_line2|int)|list}}"
+      ignore_errors: yes
+
+    - name: Add server NET to DHCP server  
+      blockinfile:
+        path: /opt/dhcp/hosts.json.tmp
+        block: |
+            "{{ ocp_server_name2[item] }}": {
+             "mac": "{{ ocp_server_mac_wkl2[item] }}"
+            },
+        marker: ""
+        insertafter: "},"
+        state: present
+      loop: "{{ range(0, nb_line2|int)|list}}"
+
+    - name: Remove blank file
+      shell: sed -i '/^$/d' /opt/dhcp/hosts.json.tmp
+
+    - name: modify original file
+      shell: mv -f /opt/dhcp/hosts.json.tmp /opt/dhcp/hosts.json

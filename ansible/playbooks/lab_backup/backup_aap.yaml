@@ -1,0 +1,14 @@
+---
+- hosts: aap-controller.openshift-vms.svc.cluster.local
+  gather_facts: yes
+
+  tasks:
+
+    - name: Generate full AAP backup
+      shell: cd /root/ansible-automation-platform-setup-2.2.0-6/ && ./setup.sh -b
+
+    - name: Upload backup on GDrive
+      shell: /root/.google-drive-upload/bin/gupload /root/ansible-automation-platform-setup-2.2.0-6/automation-platform-backup-latest.tar.gz --overwrite
+
+    - name: Remove local backup
+      shell: rm -rf /root/ansible-automation-platform-setup-2.2.0-6/automation-platform-backup-*

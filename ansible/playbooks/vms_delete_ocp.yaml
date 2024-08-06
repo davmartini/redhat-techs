@@ -1,0 +1,60 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  collections:
+    - redhat.openshift
+    - community.kubevirt
+
+  tasks:
+
+    - name: OCP Login
+      shell: oc login --insecure-skip-tls-verify=true --token={{ lookup('env', 'K8S_AUTH_API_KEY') }} {{ lookup('env', 'K8S_AUTH_HOST') }}
+
+    - name: Delete dev VMs in sandbox project
+      shell: oc delete VirtualMachine -l type=demo -l env=dev -n openshift-vms-sandbox
+      when: env_delete == "dev"
+
+    - name: Delete dev services in sandbox project
+      shell: oc delete service -l type=demo -l env=dev -n openshift-vms-sandbox
+      when: env_delete == "dev"
+    
+    - name: Delete dev routes in sandbox project
+      shell: oc delete route -l type=demo -l env=dev -n openshift-vms-sandbox
+      when: env_delete == "dev"
+
+    - name: Delete qualif VMs in sandbox project
+      shell: oc delete VirtualMachine -l type=demo -l env=qualif -n openshift-vms-sandbox
+      when: env_delete == "qualif"
+
+    - name: Delete qualif services in sandbox project
+      shell: oc delete service -l type=demo -l env=qualif -n openshift-vms-sandbox
+      when: env_delete == "qualif"
+    
+    - name: Delete qualif routes in sandbox project
+      shell: oc delete route -l type=demo -l env=qualif -n openshift-vms-sandbox
+      when: env_delete == "qualif"
+
+    - name: Delete prod VMs in sandbox project
+      shell: oc delete VirtualMachine -l type=demo -l env=prod -n openshift-vms-sandbox
+      when: env_delete == "prod"
+
+    - name: Delete prod services in sandbox project
+      shell: oc delete service -l type=demo -l env=prod -n openshift-vms-sandbox
+      when: env_delete == "prod"
+    
+    - name: Delete prod routes in sandbox project
+      shell: oc delete route -l type=demo -l env=prod -n openshift-vms-sandbox
+      when: env_delete == "prod"
+
+    - name: Delete all VMs in sandbox project
+      shell: oc delete VirtualMachine -l type=demo -n openshift-vms-sandbox
+      when: env_delete == "all"
+
+    - name: Delete all services in sandbox project
+      shell: oc delete service -l type=demo -n openshift-vms-sandbox
+      when: env_delete == "all"
+
+    - name: Delete all route in sandbox project
+      shell: oc delete route -l type=demo -n openshift-vms-sandbox
+      when: env_delete == "all"

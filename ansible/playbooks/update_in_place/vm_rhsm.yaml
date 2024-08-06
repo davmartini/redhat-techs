@@ -1,0 +1,16 @@
+---
+- name: Subscribe RHEL system
+  hosts: all
+  gather_facts: yes
+  collections:
+    - redhat.redhat.rhel_system_roles
+  vars:
+    rhc_auth:
+      login:
+        username: "{{ lookup('env', 'RHSM_USER') }}"
+        password: "{{ lookup('env', 'RHSM_PASSWORD') }}"
+    rhc_state: "{{ RHSM_STATE }}"
+    rhc_insights:
+      state: "{{ INSIGHTS_STATE }}"
+  roles:
+    - redhat.rhel_system_roles.rhc

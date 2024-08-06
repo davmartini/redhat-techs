@@ -1,0 +1,31 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: inspect-git-directory
+  namespace: pipelines
+  resourceVersion: '474225964'
+  uid: 9c9d7de5-df9c-48be-98cd-09b2e41cb48a
+spec:
+  params:
+    - name: directory
+      type: string
+  steps:
+    - args:
+        - '-c'
+        - df -m
+      command:
+        - /bin/bash
+      image: registry.redhat.io/ubi8/ubi-minimal
+      name: list-fs
+      resources: {}
+    - args:
+        - '-c'
+        - ls -l /workspace/source/
+      command:
+        - /bin/bash
+      image: registry.redhat.io/ubi8/ubi-minimal
+      name: inspect-fs
+      resources: {}
+  workspaces:
+    - mountPath: /workspace/source
+      name: source

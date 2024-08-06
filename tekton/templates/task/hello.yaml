@@ -1,0 +1,15 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: hello
+  namespace: pipeline-tutorial
+spec:
+  steps:
+    - args:
+        - '-c'
+        - echo Hello World
+      command:
+        - /bin/bash
+      image: registry.access.redhat.com/ubi8/ubi
+      name: say-hello
+      resources: {}

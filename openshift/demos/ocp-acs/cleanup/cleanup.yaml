@@ -1,0 +1,141 @@
+---
+
+- name: Reset the RHACS demo
+  hosts: localhost
+  gather_facts: no
+  vars:
+    ansible_connection: local
+    acs_api: https://{{ central_hostname }}/v1
+    validate_certs: no
+    central_admin_password: "{{ lookup('env', 'ROX_ADMIN_PASSWORD' )}}"
+    central_hostname: "{{ lookup('env', 'ROX_CENTRAL_ENDPOINT' )}}"
+    jira_password: "{{ lookup('env', 'JIRA_PASSWORD' )}}"
+  tasks:
+  - include_vars:
+      file: ansible-vault.yaml
+
+  - assert:
+      that:
+      - central_admin_password|length > 0
+      msg: >
+        Please pass your RHACS Admin Password in the 'central_admin_password' extra var
+        or in the ROX_ADMIN_PASSWORD environment variable.
+
+  - assert:
+      that:
+      - central_hostname|length > 0
+      msg: >
+        Please pass your RHACS Central hostname in the 'central_hostname'
+        extra var or in the ROX_CENTRAL_ENDPOINT environment variable.
+
+  - assert:
+      that:
+      - jira_password|length > 0
+      msg: >
+        Please pass your Jira Password in the 'jira_password'
+        extra var or in the JIRA_PASSWORD environment variable.
+
+  - name: Check if jmespath is available locally
+    debug: msg={{ dummy|json_query('@') }}
+    register: check_jmespath
+    ignore_errors: yes
+    vars:
+      dummy: Hello World
+
+  - name: Ensure JMESPath is installed
+    assert:
+      that:
+      - 'check_jmespath is success'
+      msg: >
+        The JMESPath library is required by this playbook. 
+        Please install the JMESPath library with 'pip install jmespath'.
+
+  - name: Find notifiers
+    uri:
+      url: '{{ acs_api }}/notifiers'
+      validate_certs: '{{ validate_certs }}'
+      url_username: admin
+      url_password: '{{ central_admin_password }}'
+      force_basic_auth: yes
+    register: find_notifier_response
+    changed_when: false
+
+  - name: Read system time
+    setup:
+      gather_subset:
+        - min
+
+  - set_fact:
+      notifier: '{{ patched_notifier | combine({ "name": "Jira-" ~ ansible_date_time.epoch, "id": "" }) }}'
+      notifiers: '{{ find_notifier_response.json|json_query(query) }}'
+    vars:
+      patched_notifier: '{% if first_notifier.jira.update({"password": jira_password}) %}{% endif %}{{first_notifier}}'
+      first_notifier: '{{ find_notifier_response.json|json_query(query)|first }}'
+      query: >
+        notifiers[?type == `jira`]
+
+  - name: Make a copy of the Jira notifier
+    uri:
+      url: '{{ acs_api }}/notifiers'
+      method: POST
+      status_code: "200"
+      validate_certs: '{{ validate_certs }}'
+      url_username: admin
+      url_password: '{{ central_admin_password }}'
+      body: '{{ notifier }}'
+      body_format: json
+      force_basic_auth: yes
+    register: create_notifier_response
+    changed_when: create_notifier_response.status == 200
+    vars:
+      notifier: '{{ notifiers | first |  }}'
+
+  - name: Delete all Jira notifiers
+    uri:
+      url: '{{ acs_api }}/notifiers/{{ item.id }}'
+      method: DELETE
+      status_code: "200,404"
+      validate_certs: '{{ validate_certs }}'
+      url_username: admin
+      url_password: '{{ central_admin_password }}'
+      force_basic_auth: yes
+    register: delete_notifier_response
+    changed_when: delete_notifier_response.status == 200
+    with_items: '{{ notifiers }}'
+    loop_control:
+      label: '{{ item.name }}'
+
+  - name: Create the Policy template
+    template:
+      src: '{{ playbook_dir }}/../policy/log4shell.json.template'
+      dest: '{{ playbook_dir }}/../policy/log4shell.json'
+    vars:
+      notifier_id: '{{ create_notifier_response.json.id }}'
+
+  - name: Find the Log4Shell policy
+    uri:
+      url: '{{ acs_api }}/policies?query=Policy:Log4Shell'
+      validate_certs: '{{ validate_certs }}'
+      url_username: admin
+      url_password: '{{ central_admin_password }}'
+      force_basic_auth: yes
+    register: find_policies_response
+    changed_when: false
+
+  - set_fact:
+      policies: '{{ find_policies_response.json.policies | selectattr("name", "eq", "Log4Shell") | list }}'
+
+  - name: Delete the Log4Shell policy
+    uri:
+      url: '{{ acs_api }}/policies/{{ item.id }}'
+      method: DELETE
+      status_code: "200,404"
+      validate_certs: '{{ validate_certs }}'
+      url_username: admin
+      url_password: '{{ central_admin_password }}'
+      force_basic_auth: yes
+    register: delete_policy_response
+    changed_when: delete_policy_response.status == 200
+    with_items: '{{ policies }}'
+    loop_control:
+      label: '{{ item.name }}'

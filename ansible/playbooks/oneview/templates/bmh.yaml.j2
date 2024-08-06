@@ -1,0 +1,14 @@
+apiVersion: metal3.io/v1alpha1
+kind: BareMetalHost
+metadata:
+  name: {{ ocp_server_name[item]|lower }}
+  labels:
+    ansible: scale
+spec:
+  online: true
+  bmc:
+    address: 'ipmi://{{ ocp_server_ilo_uri[item] }}'
+    credentialsName: '{{ ocp_server_name[item]|lower }}-bmc-secret'
+    disableCertificateVerification: True
+  bootMACAddress: '{{ ocp_server_mac_wkl[item] }}'
+  hardwareProfile: unknown

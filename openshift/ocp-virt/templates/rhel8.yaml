@@ -1,0 +1,223 @@
+kind: Template
+apiVersion: template.openshift.io/v1
+metadata:
+  name: rhel8-server-large-dm
+  namespace: openshift
+  uid: ce78988d-178a-434a-a59f-19842fd5e395
+  resourceVersion: '151519602'
+  creationTimestamp: '2022-09-16T07:31:20Z'
+  labels:
+    app.kubernetes.io/part-of: hyperconverged-cluster
+    flavor.template.kubevirt.io/small: 'true'
+    template.kubevirt.io/version: v0.23.4
+    app.kubernetes.io/version: 4.11.0
+    template.kubevirt.io/type: vm
+    app.kubernetes.io/component: templating
+    app.kubernetes.io/managed-by: ssp-operator
+    os.template.kubevirt.io/rhel8.0: 'true'
+    os.template.kubevirt.io/rhel8.1: 'true'
+    os.template.kubevirt.io/rhel8.2: 'true'
+    template.kubevirt.io/default-os-variant: 'false'
+    app.kubernetes.io/name: common-templates
+    os.template.kubevirt.io/rhel8.3: 'true'
+    os.template.kubevirt.io/rhel8.4: 'true'
+    os.template.kubevirt.io/rhel8.5: 'true'
+    os.template.kubevirt.io/rhel8.6: 'true'
+    workload.template.kubevirt.io/server: 'true'
+  annotations:
+    template.kubevirt.io/provider: ''
+    template.kubevirt.io/provider-url: 'https://www.redhat.com'
+    template.kubevirt.io/containerdisks: |
+      registry.redhat.io/rhel8/rhel-guest-image
+    template.kubevirt.io/version: v1alpha1
+    openshift.io/display-name: DM - Red Hat Enterprise Linux 8.0+ VM
+    openshift.io/documentation-url: 'https://github.com/kubevirt/common-templates'
+    template.kubevirt.io/images: >
+      https://access.redhat.com/downloads/content/479/ver=/rhel---8/8.6/x86_64/product-software
+    operator-sdk/primary-resource-type: SSP.ssp.kubevirt.io
+    defaults.template.kubevirt.io/disk: rootdisk
+    name.os.template.kubevirt.io/rhel8.0: Red Hat Enterprise Linux 8.0 or higher
+    name.os.template.kubevirt.io/rhel8.1: Red Hat Enterprise Linux 8.0 or higher
+    name.os.template.kubevirt.io/rhel8.2: Red Hat Enterprise Linux 8.0 or higher
+    template.kubevirt.io/editable: |
+      /objects[0].spec.template.spec.domain.cpu.sockets
+      /objects[0].spec.template.spec.domain.cpu.cores
+      /objects[0].spec.template.spec.domain.cpu.threads
+      /objects[0].spec.template.spec.domain.resources.requests.memory
+      /objects[0].spec.template.spec.domain.devices.disks
+      /objects[0].spec.template.spec.volumes
+      /objects[0].spec.template.spec.networks
+    template.openshift.io/bindable: 'false'
+    name.os.template.kubevirt.io/rhel8.3: Red Hat Enterprise Linux 8.0 or higher
+    operator-sdk/primary-resource: openshift-cnv/ssp-kubevirt-hyperconverged
+    name.os.template.kubevirt.io/rhel8.4: Red Hat Enterprise Linux 8.0 or higher
+    name.os.template.kubevirt.io/rhel8.5: Red Hat Enterprise Linux 8.0 or higher
+    tags: 'hidden,kubevirt,virtualmachine,linux,rhel'
+    name.os.template.kubevirt.io/rhel8.6: Red Hat Enterprise Linux 8.0 or higher
+    template.kubevirt.io/provider-support-level: Full
+    description: >-
+      Template for Red Hat Enterprise Linux 8 VM or newer. A PVC with the RHEL
+      disk image must be available.
+    openshift.io/support-url: 'https://github.com/kubevirt/common-templates/issues'
+    iconClass: icon-rhel
+    openshift.io/provider-display-name: ''
+  managedFields:
+    - manager: Mozilla
+      operation: Update
+      apiVersion: template.openshift.io/v1
+      time: '2022-09-16T07:31:20Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:annotations':
+            'f:template.kubevirt.io/editable': {}
+            'f:operator-sdk/primary-resource': {}
+            'f:operator-sdk/primary-resource-type': {}
+            'f:defaults.template.kubevirt.io/disk': {}
+            'f:name.os.template.kubevirt.io/rhel8.0': {}
+            'f:template.kubevirt.io/provider-support-level': {}
+            'f:name.os.template.kubevirt.io/rhel8.1': {}
+            'f:description': {}
+            'f:name.os.template.kubevirt.io/rhel8.2': {}
+            'f:template.openshift.io/bindable': {}
+            'f:name.os.template.kubevirt.io/rhel8.3': {}
+            'f:name.os.template.kubevirt.io/rhel8.4': {}
+            'f:iconClass': {}
+            'f:name.os.template.kubevirt.io/rhel8.5': {}
+            'f:name.os.template.kubevirt.io/rhel8.6': {}
+            'f:tags': {}
+            .: {}
+            'f:template.kubevirt.io/provider': {}
+            'f:template.kubevirt.io/provider-url': {}
+            'f:template.kubevirt.io/containerdisks': {}
+            'f:openshift.io/support-url': {}
+            'f:openshift.io/provider-display-name': {}
+            'f:template.kubevirt.io/images': {}
+            'f:openshift.io/display-name': {}
+            'f:template.kubevirt.io/version': {}
+            'f:openshift.io/documentation-url': {}
+          'f:labels':
+            'f:os.template.kubevirt.io/rhel8.0': {}
+            'f:os.template.kubevirt.io/rhel8.1': {}
+            'f:os.template.kubevirt.io/rhel8.2': {}
+            'f:template.kubevirt.io/default-os-variant': {}
+            'f:os.template.kubevirt.io/rhel8.3': {}
+            'f:os.template.kubevirt.io/rhel8.4': {}
+            'f:app.kubernetes.io/managed-by': {}
+            'f:os.template.kubevirt.io/rhel8.5': {}
+            'f:os.template.kubevirt.io/rhel8.6': {}
+            'f:app.kubernetes.io/name': {}
+            .: {}
+            'f:app.kubernetes.io/part-of': {}
+            'f:workload.template.kubevirt.io/server': {}
+            'f:flavor.template.kubevirt.io/small': {}
+            'f:app.kubernetes.io/version': {}
+            'f:template.kubevirt.io/type': {}
+            'f:template.kubevirt.io/version': {}
+            'f:app.kubernetes.io/component': {}
+        'f:objects': {}
+        'f:parameters': {}
+objects:
+  - apiVersion: kubevirt.io/v1
+    kind: VirtualMachine
+    metadata:
+      annotations:
+        vm.kubevirt.io/validations: |
+          [
+            {
+              "name": "minimal-required-memory",
+              "path": "jsonpath::.spec.domain.resources.requests.memory",
+              "rule": "integer",
+              "message": "This VM requires more memory.",
+              "min": 1610612736
+            }
+          ]
+      labels:
+        app: '${NAME}'
+        vm.kubevirt.io/template: rhel8-server-large-dm
+        vm.kubevirt.io/template.revision: '1'
+        vm.kubevirt.io/template.namespace: openshift
+      name: '${NAME}'
+    spec:
+      dataVolumeTemplates:
+        - apiVersion: cdi.kubevirt.io/v1beta1
+          kind: DataVolume
+          metadata:
+            name: '${NAME}'
+          spec:
+            sourceRef:
+              kind: DataSource
+              name: '${DATA_SOURCE_NAME}'
+              namespace: '${DATA_SOURCE_NAMESPACE}'
+            storage:
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 20Gi
+              volumeMode: Filesystem
+      running: false
+      template:
+        metadata:
+          annotations:
+            vm.kubevirt.io/flavor: small
+            vm.kubevirt.io/os: rhel8
+            vm.kubevirt.io/workload: server
+          labels:
+            kubevirt.io/domain: '${NAME}'
+            kubevirt.io/size: small
+        spec:
+          domain:
+            cpu:
+              cores: 1
+              sockets: 2
+              threads: 1
+            devices:
+              disks:
+                - disk:
+                    bus: virtio
+                  name: rootdisk
+                - disk:
+                    bus: virtio
+                  name: cloudinitdisk
+              interfaces:
+                - masquerade: {}
+                  name: default
+              networkInterfaceMultiqueue: true
+              rng: {}
+            machine:
+              type: pc-q35-rhel8.6.0
+            resources:
+              requests:
+                memory: 8Gi
+          evictionStrategy: LiveMigrate
+          networks:
+            - name: default
+              pod: {}
+          terminationGracePeriodSeconds: 180
+          volumes:
+            - dataVolume:
+                name: '${NAME}'
+              name: rootdisk
+            - cloudInitNoCloud:
+                userData: |-
+                  #cloud-config
+                  user: cloud-user
+                  password: ${CLOUD_USER_PASSWORD}
+                  chpasswd: { expire: False }
+              name: cloudinitdisk
+parameters:
+  - name: NAME
+    description: VM name
+    generate: expression
+    from: 'rhel8-[a-z0-9]{16}'
+  - name: DATA_SOURCE_NAME
+    description: Name of the DataSource to clone
+    value: rhel8
+  - name: DATA_SOURCE_NAMESPACE
+    description: Namespace of the DataSource
+    value: openshift-virtualization-os-images
+  - name: CLOUD_USER_PASSWORD
+    description: Randomized password for the cloud-init user cloud-user
+    generate: expression
+    from: '[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}'

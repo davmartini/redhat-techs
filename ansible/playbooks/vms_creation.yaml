@@ -1,0 +1,31 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  collections:
+    - redhat.openshift
+    - community.kubevirt
+
+  tasks:
+
+    - name: Get env satellite token
+      set_fact:
+        token_sat: "{{ SAT_TOKEN_DEV if vm_env_type == 'dev' else SAT_TOKEN_QUALIF if vm_env_type == 'qualif' else SAT_TOKEN_PROD if vm_env_type == 'prod' }}"
+     
+    - name: Generate VM files
+      template:
+        src: templates/vm_template.yml.j2
+        dest: vm_template-{{ item }}.yml
+        owner: root
+        group: root
+        mode: '0644'
+      vars:
+        uuid: "{{ 9999 | random }}" 
+      loop: "{{ range(0, vm_number|int)|list}}"
+
+    - name: OCP Login
+      shell: oc login --insecure-skip-tls-verify=true --token={{ lookup('env', 'K8S_AUTH_API_KEY') }} {{ lookup('env', 'K8S_AUTH_HOST') }}
+
+    - name: Create VM in sandbox project
+      shell: oc apply -f vm_template-{{ item }}.yml -n openshift-vms-sandbox
+      loop: "{{ range(0, vm_number|int)|list}}"

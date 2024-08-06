@@ -1,0 +1,45 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  collections:
+    - redhat.satellite
+
+  tasks:
+
+    - name: "Show all hosts with hostgroup demo_dev"
+      redhat.satellite.host_info:
+        search: "hostgroup_name = demo_dev"
+      register: server_list_dev
+      when: env_delete == "dev"
+
+    - name: "Show all hosts with hostgroup demo_qualif"
+      redhat.satellite.host_info:
+        search: "hostgroup_name = demo_qualif"
+      register: server_list_qualif
+      when: env_delete == "qualif"
+
+    - name: "Show all hosts with hostgroup demo_prod"
+      redhat.satellite.host_info:
+        search: "hostgroup_name = demo_prod"
+      register: server_list_prod
+      when: env_delete == "prod"
+
+    - name: "Show all hosts with hostgroup demo_dev"
+      redhat.satellite.host_info:
+        search: "hostgroup ~ demo"
+      register: server_list_all
+      when: env_delete == "all"
+
+    - name: Set list
+      set_fact:
+        server_list: "{{ server_list_dev if env_delete == 'dev' else server_list_qualif if env_delete == 'qualif' else server_list_prod if env_delete == 'prod' else server_list_all if env_delete == 'all' }}"
+
+    - name: list VMs
+      debug: msg="{{ server_list.hosts | map(attribute='name') }}"  
+
+    - name: "Delete a host"
+      redhat.satellite.host:
+        name: "{{ item }}"
+        state: absent
+      loop: "{{ server_list.hosts | map(attribute='name') }}"

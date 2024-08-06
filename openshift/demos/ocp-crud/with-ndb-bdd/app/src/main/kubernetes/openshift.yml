@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: fruits-db-ndb
+stringData:
+  DB_USER: postgres
+  DB_PASSWORD: testndb
+  DB_NAME: fruitsdb
+  DB_IP: 10.6.115.85

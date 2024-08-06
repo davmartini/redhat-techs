@@ -1,0 +1,102 @@
+# This policy verifies the installation of the official version of the OpenShift Data Foundation
+# Logical Volume Manager Operator on the managed clusters.
+# If set to "enforce" it installs the operator.
+# Used APIs: OLM, ODF-LVMO #https://github.com/operator-framework/operator-lifecycle-manager
+# https://github.com/red-hat-storage/lvm-operator
+
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+ annotations:
+   policy.open-cluster-management.io/categories: CM Configuration Management
+   policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+   policy.open-cluster-management.io/standards: NIST SP 800-53
+ name: policy-odf-operator
+spec:
+ disabled: false
+ policy-templates:
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-odf-namespace
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: v1
+               kind: Namespace
+               metadata:
+                 name: openshift-storage
+                 labels:
+                   openshift.io/cluster-monitoring: "true"
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: v1
+               kind: Namespace
+               metadata:
+                 name: openshift-local-storage
+         remediationAction: enforce
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-odf-operator-operatorgroup
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: operators.coreos.com/v1alpha2
+               kind: OperatorGroup
+               metadata:
+                 name: openshift-storage-operatorgroup
+                 namespace: openshift-storage
+               spec:
+                 targetNamespaces:
+                   - openshift-storage
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: operators.coreos.com/v1alpha2
+               kind: OperatorGroup
+               metadata:
+                 name: local-operator-group
+                 namespace: openshift-local-storage
+               spec:
+                 targetNamespaces:
+                   - openshift-local-storage
+         remediationAction: enforce
+   - objectDefinition:
+       apiVersion: policy.open-cluster-management.io/v1
+       kind: ConfigurationPolicy
+       metadata:
+         name: policy-odf-operator-subscription
+       spec:
+         object-templates:
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: operators.coreos.com/v1alpha1
+               kind: Subscription
+               metadata:
+                 name: odf-operator
+                 namespace: openshift-storage
+               spec:
+                 channel: stable-4.10
+                 installPlanApproval: Automatic
+                 name: odf-operator
+                 source: redhat-operators
+                 sourceNamespace: openshift-marketplace
+                 startingCSV: odf-operator.v4.10.5
+           - complianceType: musthave
+             objectDefinition:
+               apiVersion: operators.coreos.com/v1alpha1
+               kind: Subscription
+               metadata:
+                 name: local-storage-operator
+                 namespace: openshift-local-storage
+               spec:
+                 channel: stable
+                 installPlanApproval: Automatic
+                 name: local-storage-operator
+                 source: redhat-operators
+                 sourceNamespace: openshift-marketplace
+         remediationAction: enforce

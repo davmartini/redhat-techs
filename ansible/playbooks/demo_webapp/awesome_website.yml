@@ -1,0 +1,67 @@
+- name: Manage Awesome website
+  hosts: all
+  gather_facts: false
+  vars:
+    index_title: Awesome website
+    index_content: This is awesome !
+    index_foot: Hosted on RHEL
+    int_address: '{{ ansible_ssh_host }}'
+
+  tasks:
+  
+  - when: command == 'deploy'
+    become: true
+    block:
+      - name: httpd package is present
+        yum:
+          name: httpd
+
+      - name: latest index.html file is present
+        template:
+          src: ../templates/index.html.j2
+          dest: /var/www/html/index.html
+          owner: apache
+          group: apache
+      
+      - name: Configure Firewall for Web server
+        include_role:
+          name: redhat.rhel_system_roles.firewall
+        vars:
+          firewall:
+            service: http
+            state: enabled
+
+  - when: command == 'deploy' or command == 'start'
+    name: Awesome website is started
+    become: true
+    service:
+      name: httpd
+      state: started
+
+  - when: command == 'stop'
+    name: Awesome website is stopped
+    become: true
+    service:
+      name: httpd
+      state: stopped
+
+  - when: command == 'smoke_test'
+    name: Awesome website is responding locally
+    uri:
+      url: 'http://localhost/'
+    register: test_local
+    ignore_errors: true
+
+  - when: command == 'smoke_test'
+    name: Awesome website is responding internally
+    uri:
+      url: 'http://{{ int_address }}/'
+    register: test_internal
+    ignore_errors: true
+
+  - when: command == 'smoke_test'
+    assert:
+      that:
+        - test_local.status == 200
+        - test_internal.status == 200
+      success_msg: "Awesome website is up and running :)"
