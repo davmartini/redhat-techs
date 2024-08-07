@@ -48,9 +48,9 @@
       ostree_ref: rhel/9/x86_64/edge
       image_name: rhde
       timeout: 360
-    register: edge-container-image
+    register: edge_container_image
   
-  - debug: var=edge-container-image
+  - debug: var=edge_container_image
 
   - name: Start podman container
     ansible.builtin.shell: podman run -d --name=minimal-microshift-server -p 8085:8080 $imageid
