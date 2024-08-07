@@ -38,7 +38,7 @@
     infra.osbuild.list_blueprints:
     register: list_blueprints_out
 
-  - debug: var=list_blueprints
+  - debug: var=list_blueprints_out
 
 
   - name: Start ostree compose
