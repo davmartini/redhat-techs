@@ -11,6 +11,8 @@
         - osbuild-composer
         - composer-cli
         - podman
+        - python3-toml
+        - python3-tomli
       state: present
 
   - name: Start service osbuild-composer.socket, if not started
