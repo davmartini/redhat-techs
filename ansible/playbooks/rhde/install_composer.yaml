@@ -15,6 +15,13 @@
         - python3-tomli
       state: present
 
+  - name: Install multi python packages with version specifiers
+    ansible.builtin.pip:
+      name:
+        - toml
+        - pytoml
+        - configparser
+
   - name: Start service osbuild-composer.socket, if not started
     ansible.builtin.service:
       name: osbuild-composer.socket
