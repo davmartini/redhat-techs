@@ -25,10 +25,14 @@
       rhsm: true
       state: present
 
+  - name: copy rhocp-4.16.toml file
+    ansible.builtin.copy:
+      src: files/rhde_4.16_v1_blueprint.toml
+      dest: /tmp/rhde/rhocp-4.16.toml
+
   - name: Push a RHDE 4.16 blueprint
     infra.osbuild.push_blueprint:
-      src: files/rhde_4.16_v1_blueprint.toml
-
+      src: /tmp/rhde/rhocp-4.16.toml
 
   - name: Get list of blueprints
     infra.osbuild.list_blueprints:
@@ -51,9 +55,14 @@
   - name: Start podman container
     ansible.builtin.shell: podman run -d --name=minimal-microshift-server -p 8085:8080 $imageid
 
+  - name: copy microshift-installer.toml file
+    ansible.builtin.copy:
+      src: files/microshift-installer.toml
+      dest: /tmp/microshift-installer.toml
+
   - name: Push a microshift-installer blueprint
     infra.osbuild.push_blueprint:
-      src: files/microshift-installer.toml
+      src: /tmp/microshift-installer.toml
 
   - name: Start iso compose
     infra.osbuild.start_compose:
