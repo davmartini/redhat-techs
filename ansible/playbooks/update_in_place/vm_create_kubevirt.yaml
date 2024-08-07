@@ -64,6 +64,7 @@
               #cloud-config
               # The default username is: cloud-user
           name: cloudinit
+      wait_timeout: 300
       wait: yes
     loop: "{{ range(0, vm_number|int)|list}}"
 
@@ -117,6 +118,7 @@
               #cloud-config
               # The default username is: cloud-user
           name: cloudinit
+      wait_timeout: 300
       wait: yes
     loop: "{{ range(0, vm_number|int)|list}}"
 
