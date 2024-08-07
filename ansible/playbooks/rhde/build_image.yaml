@@ -28,11 +28,11 @@
   - name: copy rhocp-4.16.toml file
     ansible.builtin.copy:
       src: files/rhde_4.16_v1_blueprint.toml
-      dest: /tmp/rhde/rhocp-4.16.toml
+      dest: /tmp/rhocp-4.16.toml
 
   - name: Push a RHDE 4.16 blueprint
     infra.osbuild.push_blueprint:
-      src: /tmp/rhde/rhocp-4.16.toml
+      src: /tmp/rhocp-4.16.toml
 
   - name: Get list of blueprints
     infra.osbuild.list_blueprints:
