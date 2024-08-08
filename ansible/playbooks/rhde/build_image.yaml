@@ -62,8 +62,12 @@
       compose_id: "{{ edge_container_image.result.body.build_id }}"
       dest: "/tmp/edge_container_image.tar"
 
+
   - name: Start podman container
-    ansible.builtin.shell: podman run -d --name=minimal-microshift-server -p 8085:8080 "{{ edge_container_image.result.body.build_id }}"
+    ansible.builtin.shell: IMAGEID=$(cat < "/tmp/edge_container_image.tar" | sudo podman load | grep -o -P '(?<=sha256[@:])[a-z0-9]*')
+
+  - name: Start podman container
+    ansible.builtin.shell: podman run -d --name=minimal-microshift-server -p 8085:8080 ${IMAGEID}
 
   - name: copy microshift-installer.toml file
     ansible.builtin.copy:
@@ -83,3 +87,15 @@
       image_name: rhde-iso
       timeout: 360
     register: edge-iso-image
+
+  - debug: var=edge-iso-image.result.body.build_id
+
+  - name: Wait for compose to complete
+    infra.osbuild.wait_compose:
+      compose_id: "{{ edge-iso-image.result.body.build_id }}"
+      timeout: 5000
+
+  - name: Export edge_iso_image image
+    infra.osbuild.export_compose:
+      compose_id: "{{ edge-iso-image.result.body.build_id }}"
+      dest: "/tmp/rhde_image.iso"
