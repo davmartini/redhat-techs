@@ -50,10 +50,10 @@
       timeout: 360
     register: edge_container_image
   
-  - debug: var=edge_container_image
+  - debug: var=edge_container_image.result.body.build_id
 
   - name: Start podman container
-    ansible.builtin.shell: podman run -d --name=minimal-microshift-server -p 8085:8080 $imageid
+    ansible.builtin.shell: podman run -d --name=minimal-microshift-server -p 8085:8080 "{{ edge_container_image.result.body.build_id }}"
 
   - name: copy microshift-installer.toml file
     ansible.builtin.copy:
