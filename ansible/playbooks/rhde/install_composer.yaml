@@ -45,3 +45,20 @@
   - name: Print composer sattus
     ansible.builtin.debug:
       var: composer_status
+
+  - name: Download virtctl cli
+    ansible.builtin.get_url:
+      url: https://hyperconverged-cluster-cli-download-openshift-cnv.apps.ocp.drkspace.fr/amd64/linux/virtctl.tar.gz
+      dest: /tmp/virtctl.tar.gz
+      mode: '0770'
+      validate_certs : false
+
+  - name: Extract virtctl cli
+    ansible.builtin.unarchive:
+      src: /tmp/virtctl.tar.gz
+      dest: /tmp/virtctl
+
+  - name: Changing perm virtclt, adding "+x"
+    ansible.builtin.file: 
+      path: /tmp/virtctl
+      mode: 'a+x'
