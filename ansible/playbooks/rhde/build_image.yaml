@@ -64,7 +64,7 @@
 
 
   - name: Start podman container
-    ansible.builtin.shell: cat < "/tmp/edge_container_image.tar" | sudo podman load | grep -o -P '(?<=sha256[@:])[a-z0-9]*')
+    ansible.builtin.shell: cat < "/tmp/edge_container_image.tar" | sudo podman load | grep -o -P '(?<=sha256[@:])[a-z0-9]*'
     register: podman_image_id
 
   - debug: var=podman_image_id

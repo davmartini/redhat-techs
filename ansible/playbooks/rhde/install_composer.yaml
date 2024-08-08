@@ -54,7 +54,7 @@
       validate_certs : false
 
   - name: Extract virtctl cli
-    ansible.builtin.shell: tar -xvf /tmp/virtctl.tar.gz
+    ansible.builtin.shell: tar -xvf /tmp/virtctl.tar.gz -C /tmp/
 
   - name: Changing perm virtclt, adding "+x"
     ansible.builtin.file: 
