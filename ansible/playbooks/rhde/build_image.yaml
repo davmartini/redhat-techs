@@ -69,8 +69,12 @@
 
   - debug: var=podman_image_id.stdout_lines
 
+  - name: Set fact
+    ansible.builtin.set_fact:
+      image_id: "{{ podman_image_id.stdout_lines }}"
+
   - name: Start podman container
-    ansible.builtin.shell: podman run -d --name=minimal-microshift-server -p 8085:8080 {{ podman_image_id.stdout_lines }}
+    ansible.builtin.shell: podman run -d --name=minimal-microshift-server -p 8085:8080 {{ image_id }}
 
   - name: copy microshift-installer.toml file
     ansible.builtin.copy:
@@ -92,6 +96,8 @@
     register: edge-iso-image
 
   - debug: var=edge-iso-image.result.body.build_id
+
+
 
   - name: Wait for compose to complete
     infra.osbuild.wait_compose:
