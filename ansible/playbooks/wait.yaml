@@ -5,6 +5,6 @@
 
   tasks:
 
-    - name: "wait operation success"
-      pause:
-        seconds: "{{ wait_time }}"
+  - name: "wait operation success"
+    pause:
+      seconds: "{{ wait_time }}"
