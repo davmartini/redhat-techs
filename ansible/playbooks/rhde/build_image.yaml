@@ -52,6 +52,16 @@
   
   - debug: var=edge_container_image.result.body.build_id
 
+  - name: Wait for compose to complete
+    infra.osbuild.wait_compose:
+      compose_id: "{{ edge_container_image.result.body.build_id }}"
+      timeout: 5000
+
+  - name: Export edge_container_image image
+    infra.osbuild.export_compose:
+      compose_id: "{{ edge_container_image.result.body.build_id }}"
+      dest: "/tmp/edge_container_image.tar"
+
   - name: Start podman container
     ansible.builtin.shell: podman run -d --name=minimal-microshift-server -p 8085:8080 "{{ edge_container_image.result.body.build_id }}"
 
