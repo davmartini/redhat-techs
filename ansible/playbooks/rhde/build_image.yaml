@@ -67,11 +67,11 @@
     ansible.builtin.shell: cat < "/tmp/edge_container_image.tar" | sudo podman load | grep -o -P '(?<=sha256[@:])[a-z0-9]*'
     register: podman_image_id
 
-  - debug: var=podman_image_id.stdout_lines
-
   - name: Set fact
     ansible.builtin.set_fact:
-      image_id: "{{ podman_image_id.stdout_lines }}"
+      image_id: podman_image_id.stdout_lines[1:-1]
+
+  - debug: var=image_id
 
   - name: Start podman container
     ansible.builtin.shell: podman run -d --name=minimal-microshift-server -p 8085:8080 {{ image_id }}
