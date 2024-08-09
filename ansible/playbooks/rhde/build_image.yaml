@@ -69,7 +69,7 @@
 
   - name: Set fact
     ansible.builtin.set_fact:
-      image_id: podman_image_id.stdout_lines[1:-1]
+      image_id: "{{ podman_image_id.stdout_lines[1:-1] }}"
 
   - debug: var=image_id
 
