@@ -1,32 +1,174 @@
 apiVersion: v1alpha1
-  kind: AgentConfig
-  metadata:
-    name: sno-cluster
-  rendezvousIP: 192.168.111.80 
-  hosts:
-    - hostname: master-0
+kind: AgentConfig
+metadata:
+  name: bm1
+rendezvousIP: 10.6.82.31 
+hosts:
+  - hostname: ocp-bm1-master01
+    interfaces:
+      - name: eno49
+        macAddress: 58:20:b1:86:40:90 
+    networkConfig:
       interfaces:
-        - name: eno1
-          macAddress: 00:ef:44:21:e6:a5 
-      networkConfig:
-        interfaces:
-          - name: eno1
-            type: ethernet
-            state: up
-            mac-address: 00:ef:44:21:e6:a5
-            ipv4:
-              enabled: true
-              address:
-                - ip: 192.168.111.80 
-                  prefix-length: 23 
-              dhcp: false
-        dns-resolver:
-          config:
-            server:
-              - 192.168.111.1 
-        routes:
-          config:
-            - destination: 0.0.0.0/0
-              next-hop-address: 192.168.111.1 
-              next-hop-interface: eno1
-              table-id: 254
+        - name: eno49
+          type: ethernet
+          state: up
+          mac-address: 58:20:b1:86:40:90
+          ipv4:
+            enabled: true
+            address:
+              - ip: 10.6.82.31 
+                prefix-length: 24 
+            dhcp: false
+      dns-resolver:
+        config:
+          server:
+            - 10.6.82.91
+            - 10.11.0.14
+            - 10.11.0.13
+      routes:
+        config:
+          - destination: 0.0.0.0/0
+            next-hop-address: 10.6.82.1
+            next-hop-interface: eno49
+            table-id: 254
+  - hostname: ocp-bm1-master02
+    interfaces:
+      - name: eno49
+        macAddress: 58:20:b1:86:70:00 
+    networkConfig:
+      interfaces:
+        - name: eno49
+          type: ethernet
+          state: up
+          mac-address: 58:20:b1:86:70:00
+          ipv4:
+            enabled: true
+            address:
+              - ip: 10.6.82.32 
+                prefix-length: 24 
+            dhcp: false
+      dns-resolver:
+        config:
+          server:
+            - 10.6.82.91
+            - 10.11.0.14
+            - 10.11.0.13
+      routes:
+        config:
+          - destination: 0.0.0.0/0
+            next-hop-address: 10.6.82.1
+            next-hop-interface: eno49
+            table-id: 254
+  - hostname: ocp-bm1-master03
+    interfaces:
+      - name: eno49
+        macAddress: 58:20:b1:86:90:60 
+    networkConfig:
+      interfaces:
+        - name: eno49
+          type: ethernet
+          state: up
+          mac-address: 58:20:b1:86:90:60
+          ipv4:
+            enabled: true
+            address:
+              - ip: 10.6.82.33 
+                prefix-length: 24 
+            dhcp: false
+      dns-resolver:
+        config:
+          server:
+            - 10.6.82.91
+            - 10.11.0.14
+            - 10.11.0.13
+      routes:
+        config:
+          - destination: 0.0.0.0/0
+            next-hop-address: 10.6.82.1
+            next-hop-interface: eno49
+            table-id: 254
+  - hostname: ocp-bm1-worker01
+    interfaces:
+      - name: eno49
+        macAddress: 5e:24:6b:c0:00:53
+    networkConfig:
+      interfaces:
+        - name: eno49
+          type: ethernet
+          state: up
+          mac-address: 5e:24:6b:c0:00:53
+          ipv4:
+            enabled: true
+            address:
+              - ip: 10.6.82.34 
+                prefix-length: 24 
+            dhcp: false
+      dns-resolver:
+        config:
+          server:
+            - 10.6.82.91
+            - 10.11.0.14
+            - 10.11.0.13
+      routes:
+        config:
+          - destination: 0.0.0.0/0
+            next-hop-address: 10.6.82.1
+            next-hop-interface: eno49
+            table-id: 254
+  - hostname: ocp-bm1-worker02
+    interfaces:
+      - name: eno49
+        macAddress: 5e:24:6b:c0:00:65
+    networkConfig:
+      interfaces:
+        - name: eno49
+          type: ethernet
+          state: up
+          mac-address: 5e:24:6b:c0:00:65
+          ipv4:
+            enabled: true
+            address:
+              - ip: 10.6.82.35 
+                prefix-length: 24 
+            dhcp: false
+      dns-resolver:
+        config:
+          server:
+            - 10.6.82.91
+            - 10.11.0.14
+            - 10.11.0.13
+      routes:
+        config:
+          - destination: 0.0.0.0/0
+            next-hop-address: 10.6.82.1
+            next-hop-interface: eno49
+            table-id: 254
+  - hostname: ocp-bm1-worker03
+    interfaces:
+      - name: eno49
+        macAddress: 5e:24:6b:c0:00:67
+    networkConfig:
+      interfaces:
+        - name: eno49
+          type: ethernet
+          state: up
+          mac-address: 5e:24:6b:c0:00:67
+          ipv4:
+            enabled: true
+            address:
+              - ip: 10.6.82.36 
+                prefix-length: 24 
+            dhcp: false
+      dns-resolver:
+        config:
+          server:
+            - 10.6.82.91
+            - 10.11.0.14
+            - 10.11.0.13
+      routes:
+        config:
+          - destination: 0.0.0.0/0
+            next-hop-address: 10.6.82.1
+            next-hop-interface: eno49
+            table-id: 254
