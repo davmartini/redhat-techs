@@ -5,6 +5,9 @@ metadata:
 rendezvousIP: 10.6.82.31 
 hosts:
   - hostname: ocp-bm1-master01
+    role: master
+    rootDeviceHints:
+      deviceName: "/dev/sda"
     interfaces:
       - name: eno49
         macAddress: 58:20:b1:86:40:90 
@@ -33,6 +36,9 @@ hosts:
             next-hop-interface: eno49
             table-id: 254
   - hostname: ocp-bm1-master02
+    role: master
+    rootDeviceHints:
+      deviceName: "/dev/sda"
     interfaces:
       - name: eno49
         macAddress: 58:20:b1:86:70:00 
@@ -61,6 +67,9 @@ hosts:
             next-hop-interface: eno49
             table-id: 254
   - hostname: ocp-bm1-master03
+    role: master
+    rootDeviceHints:
+      deviceName: "/dev/sda"
     interfaces:
       - name: eno49
         macAddress: 58:20:b1:86:90:60 
@@ -89,6 +98,9 @@ hosts:
             next-hop-interface: eno49
             table-id: 254
   - hostname: ocp-bm1-worker01
+    role: worker
+    rootDeviceHints:
+      deviceName: "/dev/nvme0n1"
     interfaces:
       - name: eno49
         macAddress: 5e:24:6b:c0:00:53
@@ -117,6 +129,9 @@ hosts:
             next-hop-interface: eno49
             table-id: 254
   - hostname: ocp-bm1-worker02
+    role: worker
+    rootDeviceHints:
+      deviceName: "/dev/nvme0n1"
     interfaces:
       - name: eno49
         macAddress: 5e:24:6b:c0:00:65
@@ -145,6 +160,9 @@ hosts:
             next-hop-interface: eno49
             table-id: 254
   - hostname: ocp-bm1-worker03
+    role: worker
+    rootDeviceHints:
+      deviceName: "/dev/nvme0n1"
     interfaces:
       - name: eno49
         macAddress: 5e:24:6b:c0:00:67
