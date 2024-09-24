@@ -1,0 +1,31 @@
+apiVersion: v1
+baseDomain: redhat.hpecic.net
+compute:
+- architecture: amd64
+  hyperthreading: Enabled
+  name: worker
+  replicas: 3
+controlPlane:
+  architecture: amd64
+  hyperthreading: Enabled
+  name: master
+  replicas: 3
+metadata:
+  name: bm1 
+networking:
+  clusterNetwork:
+  - cidr: 10.144.0.0/14
+    hostPrefix: 23
+  machineNetwork:
+  - cidr: 10.6.82.0/24
+  networkType: OVNKubernetes 
+  serviceNetwork:
+  - 172.34.0.0/16
+platform:
+  baremetal:
+    apiVIPs:
+    - 10.6.82.103
+    ingressVIPs:
+    - 10.6.82.104
+pullSecret: '<pull_secret>' 
+sshKey: '<ssh_pub_key>' 

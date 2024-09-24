@@ -1,0 +1,5 @@
+apiVersion: v1alpha1
+kind: AgentConfig
+metadata:
+  name: ocp04
+rendezvousIP: 10.6.115.200
