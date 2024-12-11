@@ -1,0 +1,17 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: my-operator-catalog
+  namespace: openshift-marketplace
+spec:
+  sourceType: grpc
+  secrets: 
+  - "private-registry-secret"
+  grpcPodConfig:
+    securityContextConfig: legacy
+  image: registry-quay-quay.apps.ocp.drkspace.fr/ocp-mirror/redhat/redhat-operator-index:v4.17
+  displayName: My Operator Catalog
+  publisher: dmartini
+  updateStrategy:
+    registryPoll:
+      interval: 2m
