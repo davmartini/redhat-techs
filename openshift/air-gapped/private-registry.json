@@ -1,0 +1,7 @@
+{
+        "auths": {
+                "registry-quay-quay.apps.ocp.drkspace.fr": {
+                        "auth": "TO BE ADD"
+                }
+        }
+}
