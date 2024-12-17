@@ -23,3 +23,39 @@ export HTTP_NODEPORT=$(oc --kubeconfig $CLUSTER_NAME-kubeconfig get services -n 
 export HTTPS_NODEPORT=$(oc --kubeconfig $CLUSTER_NAME-kubeconfig get services -n openshift-ingress router-nodeport-default -o jsonpath='{.spec.ports[?(@.name=="https")].nodePort}')
 oc apply -f dedicated-lb.yaml
 ```
+
+
+
+
+
+
+
+# HCP + External OCP-V
+
+**Source :** https://docs.redhat.com/en/documentation/openshift_container_platform/4.17/html/hosted_control_planes/deploying-hosted-control-planes#hcp-virt-create-hc-ext-infra_hcp-deploy-virt
+
+## What you need
+
+1. Create dedicated namesapce on target cluster
+```
+oc create ns hcp-external
+```
+
+2. Create a SA account with cluster admin role
+
+3. Extract kubeconfig from target cluster with SA account
+```
+oc login --server=api.example.com:6443 --token=$TOKEN --kubeconfig=/tmp/serviceaccount-kubeconfig 
+```
+
+4. Create cluster from ACM cluster
+```
+hcp create cluster kubevirt \
+  --name hcp02 \
+  --node-pool-replicas 3 \
+  --pull-secret pull.txt \
+  --memory 8Gi \
+  --cores 4 \
+  --infra-namespace=hcp-external \
+  --infra-kubeconfig-file=sa.kubeconfig
+```
