@@ -1,0 +1,36 @@
+apiVersion: v1alpha1
+kind: AgentConfig
+metadata:
+  name: bm1
+rendezvousIP: 135.181.21.110
+hosts:
+  - hostname: ocp-sn
+    role: master
+    rootDeviceHints:
+      deviceName: "/dev/nvme0n1"
+    interfaces:
+      - name: eth0
+        macAddress: a8:a1:59:8b:28:b9 
+    networkConfig:
+      interfaces:
+        - name: eth0
+          type: ethernet
+          state: up
+          mac-address: a8:a1:59:8b:28:b9
+          ipv4:
+            enabled: true
+            address:
+              - ip: 135.181.21.110
+                prefix-length: 26 
+            dhcp: false
+      dns-resolver:
+        config:
+          server:
+            - 8.8.8.8
+            - 1.1.1.1
+      routes:
+        config:
+          - destination: 0.0.0.0/0
+            next-hop-address: 135.181.21.65
+            next-hop-interface: eth0
+            table-id: 254

@@ -1,0 +1,31 @@
+apiVersion: v1
+baseDomain: drkspace.fr
+compute:
+- architecture: amd64
+  hyperthreading: Enabled
+  name: worker
+  replicas: 0
+controlPlane:
+  architecture: amd64
+  hyperthreading: Enabled
+  name: master
+  replicas: 1
+metadata:
+  name: ocp 
+networking:
+  clusterNetwork:
+  - cidr: 10.144.0.0/14
+    hostPrefix: 23
+  machineNetwork:
+  - cidr: 135.181.21.64/26
+  networkType: OVNKubernetes 
+  serviceNetwork:
+  - 172.34.0.0/16
+platform:
+  baremetal:
+    apiVIPs:
+    - 135.181.21.110
+    ingressVIPs:
+    - 135.181.21.110
+pullSecret: '<pull_secret>' 
+sshKey: '<ssh_pub_key>' 
