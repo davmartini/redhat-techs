@@ -15,5 +15,32 @@ spec:
       name: thanos-object-storage
     receiveStorageSize: 20Gi
     ruleStorageSize: 1Gi
-    storageClass: odf-lvm-vg1
+    storageClass: lvms-vg1
     storeStorageSize: 10Gi
+  advanced:
+    retentionConfig:
+      retentionResolutionRaw: 365d
+      retentionResolution5m: 365d
+      retentionResolution1h: 365d
+    receive: 
+      replicas: 1
+    alertmanager: 
+      replicas: 1
+    observatoriumAPI:
+      replicas: 1
+    queryFrontend:
+      replicas: 1
+    query:
+      replicas: 1
+    rule:
+      replicas: 1
+    store:
+      replicas: 1
+    CompactSpec:
+      replicas: 1
+    storeMemcached:
+      replicas: 1
+    queryFrontendMemcached:
+      replicas: 1
+
+
