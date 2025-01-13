@@ -3,6 +3,8 @@ kind: NMStateConfig
 metadata:
   name: worker01-nmstate
   namespace: hpe-cic-geneva
+  labels:
+    infraenvs.agent-install.openshift.io: hpe-cic-geneva-static-ips
 spec:
   config:
     interfaces:
@@ -36,6 +38,8 @@ kind: NMStateConfig
 metadata:
   name: worker02-nmstate
   namespace: hpe-cic-geneva
+  labels:
+    infraenvs.agent-install.openshift.io: hpe-cic-geneva-static-ips
 spec:
   config:
     interfaces:
@@ -69,6 +73,8 @@ kind: NMStateConfig
 metadata:
   name: worker03-nmstate
   namespace: hpe-cic-geneva
+  labels:
+    infraenvs.agent-install.openshift.io: hpe-cic-geneva-static-ips
 spec:
   config:
     interfaces:
