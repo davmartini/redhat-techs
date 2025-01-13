@@ -2,7 +2,7 @@ apiVersion: agent-install.openshift.io/v1beta1
 kind: NMStateConfig
 metadata:
   name: worker01-nmstate
-  namespace: hpe-cic-geneva
+  namespace: hpe-cic-geneva-static-ips
   labels:
     infraenvs.agent-install.openshift.io: hpe-cic-geneva-static-ips
 spec:
@@ -37,7 +37,7 @@ apiVersion: agent-install.openshift.io/v1beta1
 kind: NMStateConfig
 metadata:
   name: worker02-nmstate
-  namespace: hpe-cic-geneva
+  namespace: hpe-cic-geneva-static-ips
   labels:
     infraenvs.agent-install.openshift.io: hpe-cic-geneva-static-ips
 spec:
@@ -72,7 +72,7 @@ apiVersion: agent-install.openshift.io/v1beta1
 kind: NMStateConfig
 metadata:
   name: worker03-nmstate
-  namespace: hpe-cic-geneva
+  namespace: hpe-cic-geneva-static-ips
   labels:
     infraenvs.agent-install.openshift.io: hpe-cic-geneva-static-ips
 spec:
