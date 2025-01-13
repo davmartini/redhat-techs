@@ -1,0 +1,98 @@
+apiVersion: agent-install.openshift.io/v1beta1
+kind: NMStateConfig
+metadata:
+  name: worker01-nmstate
+  namespace: hpe-cic-geneva
+spec:
+  config:
+    interfaces:
+      - name: eth0
+        type: ethernet
+        state: up
+        mac-address: 02:f5:be:00:00:02
+        ipv4:
+          enabled: true
+          address:
+            - ip: 10.6.82.41
+              prefix-length: 24
+          dhcp: false
+    dns-resolver:
+      config:
+        server:
+          - 8.8.8.8
+          - 1.1.1.1
+    routes:
+      config:
+        - destination: 0.0.0.0/0
+          next-hop-address: 10.6.82.1
+          next-hop-interface: eth0
+          table-id: 254
+  interfaces:
+    - name: "eth0"
+      macAddress: "02:f5:be:00:00:02"
+---
+apiVersion: agent-install.openshift.io/v1beta1
+kind: NMStateConfig
+metadata:
+  name: worker02-nmstate
+  namespace: hpe-cic-geneva
+spec:
+  config:
+    interfaces:
+      - name: eth0
+        type: ethernet
+        state: up
+        mac-address: 02:f5:be:00:00:03
+        ipv4:
+          enabled: true
+          address:
+            - ip: 10.6.82.42
+              prefix-length: 24
+          dhcp: false
+    dns-resolver:
+      config:
+        server:
+          - 8.8.8.8
+          - 1.1.1.1
+    routes:
+      config:
+        - destination: 0.0.0.0/0
+          next-hop-address: 10.6.82.1
+          next-hop-interface: eth0
+          table-id: 254
+  interfaces:
+    - name: "eth0"
+      macAddress: "02:f5:be:00:00:03"
+---
+apiVersion: agent-install.openshift.io/v1beta1
+kind: NMStateConfig
+metadata:
+  name: worker03-nmstate
+  namespace: hpe-cic-geneva
+spec:
+  config:
+    interfaces:
+      - name: eth0
+        type: ethernet
+        state: up
+        mac-address: 02:f5:be:00:00:04
+        ipv4:
+          enabled: true
+          address:
+            - ip: 10.6.82.43
+              prefix-length: 24
+          dhcp: false
+    dns-resolver:
+      config:
+        server:
+          - 8.8.8.8
+          - 1.1.1.1
+    routes:
+      config:
+        - destination: 0.0.0.0/0
+          next-hop-address: 10.6.82.1
+          next-hop-interface: eth0
+          table-id: 254
+  interfaces:
+    - name: "eth0"
+      macAddress: "02:f5:be:00:00:04"
