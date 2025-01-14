@@ -105,3 +105,111 @@ spec:
   interfaces:
     - name: "eth0"
       macAddress: "02:f5:be:00:00:04"
+---
+apiVersion: agent-install.openshift.io/v1beta1
+kind: NMStateConfig
+metadata:
+  name: worker04-nmstate
+  namespace: hpe-cic-geneva-static-ips
+  labels:
+    infraenvs.agent-install.openshift.io: hpe-cic-geneva-static-ips
+spec:
+  config:
+    interfaces:
+      - name: eth0
+        type: ethernet
+        state: up
+        mac-address: 02:f5:be:00:00:05
+        ipv4:
+          enabled: true
+          address:
+            - ip: 10.6.82.44
+              prefix-length: 24
+          dhcp: false
+    dns-resolver:
+      config:
+        server:
+          - 10.6.82.35
+          - 10.6.82.91
+          - 10.11.0.14
+    routes:
+      config:
+        - destination: 0.0.0.0/0
+          next-hop-address: 10.6.82.1
+          next-hop-interface: eth0
+          table-id: 254
+  interfaces:
+    - name: "eth0"
+      macAddress: "02:f5:be:00:00:05"
+---
+apiVersion: agent-install.openshift.io/v1beta1
+kind: NMStateConfig
+metadata:
+  name: worker05-nmstate
+  namespace: hpe-cic-geneva-static-ips
+  labels:
+    infraenvs.agent-install.openshift.io: hpe-cic-geneva-static-ips
+spec:
+  config:
+    interfaces:
+      - name: eth0
+        type: ethernet
+        state: up
+        mac-address: 02:f5:be:00:00:07
+        ipv4:
+          enabled: true
+          address:
+            - ip: 10.6.82.45
+              prefix-length: 24
+          dhcp: false
+    dns-resolver:
+      config:
+        server:
+          - 10.6.82.35
+          - 10.6.82.91
+          - 10.11.0.14
+    routes:
+      config:
+        - destination: 0.0.0.0/0
+          next-hop-address: 10.6.82.1
+          next-hop-interface: eth0
+          table-id: 254
+  interfaces:
+    - name: "eth0"
+      macAddress: "02:f5:be:00:00:07"
+---
+apiVersion: agent-install.openshift.io/v1beta1
+kind: NMStateConfig
+metadata:
+  name: worker06-nmstate
+  namespace: hpe-cic-geneva-static-ips
+  labels:
+    infraenvs.agent-install.openshift.io: hpe-cic-geneva-static-ips
+spec:
+  config:
+    interfaces:
+      - name: eth0
+        type: ethernet
+        state: up
+        mac-address: 02:f5:be:00:00:08
+        ipv4:
+          enabled: true
+          address:
+            - ip: 10.6.82.46
+              prefix-length: 24
+          dhcp: false
+    dns-resolver:
+      config:
+        server:
+          - 10.6.82.35
+          - 10.6.82.91
+          - 10.11.0.14
+    routes:
+      config:
+        - destination: 0.0.0.0/0
+          next-hop-address: 10.6.82.1
+          next-hop-interface: eth0
+          table-id: 254
+  interfaces:
+    - name: "eth0"
+      macAddress: "02:f5:be:00:00:08"
