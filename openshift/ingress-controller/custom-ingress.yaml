@@ -1,0 +1,13 @@
+apiVersion: operator.openshift.io/v1
+kind: IngressController
+metadata:
+    name: l2-ingress
+    namespace: openshift-ingress-operator
+spec:
+    replicas: 4
+    endpointPublishingStrategy:
+      type: LoadBalancerService
+    domain: apps-l2.ocp.drkspace.fr
+    namespaceSelector:
+      matchlabels:
+        l2: true
