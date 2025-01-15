@@ -12,9 +12,14 @@ metadata:
     name: l2-ingress
     namespace: openshift-ingress-operator
 spec:
-    replicas: 4
+    replicas: 1
     endpointPublishingStrategy:
       type: LoadBalancerService
+      loadBalancer:
+        scope: External
+        allowedSourceRangesallowedSourceRanges:
+          - 192.168.1.0/24
+          - 192.168.2.0/24
     domain: apps-l2.ocp.drkspace.fr
     namespaceSelector:
         matchExpressions:
@@ -52,9 +57,13 @@ kind: Namespace
 apiVersion: v1
 metadata:
   name: dev-l2
+  labels:
+    name: dev-l2
 ---
 kind: Namespace
 apiVersion: v1
 metadata:
   name: ops-l2
+  labels:
+    name: ops-l2
 ```
