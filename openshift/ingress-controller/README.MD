@@ -24,3 +24,37 @@ spec:
             - dev-l2
             - ops-l2
 ```
+
+## 2. Modify default ingress
+
+You have to modify default ingress to indicate him to not serve specific namespace's routes serve by our new ingress
+
+```
+apiVersion: operator.openshift.io/v1
+kind: IngressController
+metadata:
+  name: default
+  namespace: openshift-ingress-operator
+spec:
+  namespaceSelector: <<-- Add this part
+    matchExpressions:
+      - key: name
+        operator: NotIn
+        values:
+          - dev-l2
+          - ops-l2
+```
+
+## 3. Create new namespace with defined names
+
+```
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: dev-l2
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: ops-l2
+```
