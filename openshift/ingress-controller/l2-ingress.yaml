@@ -9,5 +9,9 @@ spec:
       type: LoadBalancerService
     domain: apps-l2.ocp.drkspace.fr
     namespaceSelector:
-      matchlabels:
-        l2: true
+        matchExpressions:
+        - key: name
+          operator: In
+          values:
+            - dev-l2
+            - ops-l2

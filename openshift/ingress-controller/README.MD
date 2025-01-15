@@ -19,8 +19,8 @@ spec:
     namespaceSelector:
         matchExpressions:
         - key: name
-            operator: In
-            values:
+          operator: In
+          values:
             - dev-l2
             - ops-l2
 ```
