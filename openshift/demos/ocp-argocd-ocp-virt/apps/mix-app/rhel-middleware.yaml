@@ -33,8 +33,6 @@ spec:
           resources:
             requests:
               storage: '12023671467'
-          storageClassName: odf-lvm-vg1
-          volumeMode: Filesystem
   running: true
   template:
     metadata:
