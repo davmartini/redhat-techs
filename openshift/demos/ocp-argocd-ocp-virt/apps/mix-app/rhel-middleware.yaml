@@ -23,16 +23,14 @@ spec:
         creationTimestamp: null
         name: rhel-middleware01
       spec:
-        source:
-          pvc:
-            name: rhel9
-            namespace: openshift-virtualization-os-images
+        sourceRef:
+          kind: DataSource
+          name: rhel9
+          namespace: openshift-virtualization-os-images
         storage:
-          accessModes:
-            - ReadWriteOnce
           resources:
             requests:
-              storage: '12023671467'
+              storage: 30Gi
   running: true
   template:
     metadata:
