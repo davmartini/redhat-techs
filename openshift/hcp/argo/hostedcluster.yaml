@@ -1,7 +1,7 @@
 apiVersion: hypershift.openshift.io/v1beta1
 kind: HostedCluster
 metadata:
-  name: hcp05
+  name: bm5
   namespace: clusters
 spec:
   controllerAvailabilityPolicy: HighlyAvailable

@@ -1,11 +1,11 @@
 apiVersion: hypershift.openshift.io/v1beta1
 kind: NodePool
 metadata:
-  name: hcp05-nodepool-01
+  name: bm5-nodepool-01
   namespace: clusters
 spec:
   arch: amd64
-  clusterName: hcp05
+  clusterName: bm5
   management:
     autoRepair: true
     replace:
@@ -19,7 +19,7 @@ spec:
   platform:
     kubevirt:
       additionalNetworks:
-        - name: clusters-hcp05/vlan82
+        - name: clusters-bm5/vlan82
       attachDefaultNetwork: false
       compute:
         cores: 4

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: bm5
+  name: bm5-apps
+  namespace: clusters-bm5
+spec:
+  ports:
+  - name: https-443
+    port: 443
+    protocol: TCP
+    targetPort: 32001
+  - name: http-80
+    port: 80
+    protocol: TCP
+    targetPort: 32001
+  selector:
+    kubevirt.io: virt-launcher
+  type: LoadBalancer

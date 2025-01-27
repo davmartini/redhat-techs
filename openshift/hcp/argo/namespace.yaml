@@ -1,11 +1,11 @@
 kind: Namespace
 apiVersion: v1
 metadata:
-  name: clusters-hcp05
+  name: clusters-bm5
   labels:
     hypershift.openshift.io/hosted-control-plane: 'true'
     hypershift.openshift.io/monitoring: 'true'
-    kubernetes.io/metadata.name: clusters-hcp05
+    kubernetes.io/metadata.name: clusters-bm5
     pod-security.kubernetes.io/audit: restricted
     pod-security.kubernetes.io/enforce: restricted
     pod-security.kubernetes.io/warn: restricted
