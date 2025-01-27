@@ -18,9 +18,7 @@ spec:
   nodeVolumeDetachTimeout: 0s
   platform:
     kubevirt:
-      additionalNetworks:
-        - name: clusters-bm5/vlan82
-      attachDefaultNetwork: false
+      attachDefaultNetwork: true
       compute:
         cores: 4
         memory: 16Gi
