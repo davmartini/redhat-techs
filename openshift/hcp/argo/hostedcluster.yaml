@@ -1,0 +1,47 @@
+apiVersion: hypershift.openshift.io/v1beta1
+kind: HostedCluster
+metadata:
+  name: hcp05
+  namespace: clusters
+spec:
+  controllerAvailabilityPolicy: HighlyAvailable
+  dns:
+    baseDomain: redhat.hpecic.net
+  etcd:
+    managed:
+      storage:
+        persistentVolume:
+          size: 8Gi
+          storageClassName: ocs-storagecluster-ceph-rbd
+        type: PersistentVolume
+    managementType: Managed
+  fips: false
+  infrastructureAvailabilityPolicy: HighlyAvailable
+  networking:
+    clusterNetwork:
+      - cidr: 10.136.0.0/14
+    networkType: OVNKubernetes
+    serviceNetwork:
+      - cidr: 172.31.0.0/16
+  olmCatalogPlacement: management
+  platform:
+    type: KubeVirt
+  pullSecret:
+    name: hcp-pull-secret
+  release:
+    image: quay.io/openshift-release-dev/ocp-release:4.17.7-multi
+  services:
+    - service: APIServer
+      servicePublishingStrategy:
+        type: LoadBalancer
+    - service: Ignition
+      servicePublishingStrategy:
+        type: Route
+    - service: Konnectivity
+      servicePublishingStrategy:
+        type: Route
+    - service: OAuthServer
+      servicePublishingStrategy:
+        type: Route
+  sshKey:
+    name: 'hcp-ssh-key'

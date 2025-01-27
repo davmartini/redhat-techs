@@ -138,36 +138,10 @@ Global Flags:
 
 ### HCP cluster with dedicated storageclass and external network 
 
-1. Create namespace for NAD
-```
-kind: Namespace
-apiVersion: v1
-metadata:
-  name: clusters-bm5
-```
-
-2. Add NAD for external VLAN
-```
-apiVersion: k8s.cni.cncf.io/v1
-kind: NetworkAttachmentDefinition
-metadata:
-  name: vlan82
-  namespace: clusters-bm5
-spec:
-  config: |-
-    {
-            "cniVersion": "0.3.1", 
-            "name": "vlan82", 
-            "type": "ovn-k8s-cni-overlay", 
-            "topology": "localnet", 
-            "netAttachDefName": "clusters-bm5/vlan82" 
-    }
-```
-
-3. Create HCP cluster
+1. Create HCP cluster
 ```
 hcp create cluster kubevirt \
-  --name bm5 \
+  --name hcp04 \
   --pull-secret pull-secret \
   --memory 16Gi \
   --cores 4 \
@@ -177,8 +151,9 @@ hcp create cluster kubevirt \
   --root-volume-access-modes ReadWriteMany \
   --root-volume-volume-mode Block \
   --qos-class Guaranteed \
-  --additional-network name:clusters-bm5/vlan82 \
-  --external-dns-domain redhat.hpecic.net \
+  --attach-default-network false \
+  --additional-network name:clusters-hcp04/vlan82 \
+  --base-domain redhat.hpecic.net \
   --cluster-cidr 10.136.0.0/14 \
   --service-cidr 172.31.0.0/16 \
   --control-plane-availability-policy HighlyAvailable \
@@ -187,4 +162,22 @@ hcp create cluster kubevirt \
   --node-upgrade-type Replace \
   --auto-repair \
   --release-image quay.io/openshift-release-dev/ocp-release:4.17.7-multi
+```
+
+2. Add NAD for external VLAN
+```
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: vlan82
+  namespace: clusters-hcp04
+spec:
+  config: |-
+    {
+            "cniVersion": "0.3.1", 
+            "name": "vlan82", 
+            "type": "ovn-k8s-cni-overlay", 
+            "topology": "localnet", 
+            "netAttachDefName": "clusters-hcp04/vlan82" 
+    }
 ```

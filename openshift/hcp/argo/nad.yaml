@@ -1,0 +1,14 @@
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: vlan82
+  namespace: clusters-hcp05
+spec:
+  config: |-
+    {
+            "cniVersion": "0.3.1", 
+            "name": "vlan82", 
+            "type": "ovn-k8s-cni-overlay", 
+            "topology": "localnet", 
+            "netAttachDefName": "clusters-hcp05/vlan82" 
+    }

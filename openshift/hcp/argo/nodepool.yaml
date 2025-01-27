@@ -1,0 +1,39 @@
+apiVersion: hypershift.openshift.io/v1beta1
+kind: NodePool
+metadata:
+  name: hcp05-nodepool-01
+spec:
+  arch: amd64
+  clusterName: hcp05
+  management:
+    autoRepair: true
+    replace:
+      rollingUpdate:
+        maxSurge: 1
+        maxUnavailable: 0
+      strategy: RollingUpdate
+    upgradeType: Replace
+  nodeDrainTimeout: 0s
+  nodeVolumeDetachTimeout: 0s
+  platform:
+    kubevirt:
+      additionalNetworks:
+        - name: clusters-hcp04/vlan82
+      attachDefaultNetwork: true
+      compute:
+        cores: 4
+        memory: 16Gi
+        qosClass: Guaranteed
+      networkInterfaceMultiqueue: Enable
+      rootVolume:
+        persistent:
+          accessModes:
+            - ReadWriteMany
+          size: 50Gi
+          storageClass: ocs-storagecluster-ceph-rbd-virtualization
+          volumeMode: Block
+        type: Persistent
+    type: KubeVirt
+  release:
+    image: 'quay.io/openshift-release-dev/ocp-release:4.17.7-multi'
+  replicas: 3
