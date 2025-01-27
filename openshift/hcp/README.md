@@ -137,13 +137,54 @@ Global Flags:
 
 
 ### HCP cluster with dedicated storageclass and external network 
+
+1. Create namespace for NAD
+```
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: clusters-bm5
+```
+
+2. Add NAD for external VLAN
+```
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: vlan82
+  namespace: clusters-bm5
+spec:
+  config: |-
+    {
+            "cniVersion": "0.3.1", 
+            "name": "vlan82", 
+            "type": "ovn-k8s-cni-overlay", 
+            "topology": "localnet", 
+            "netAttachDefName": "clusters-bm5/vlan82" 
+    }
+```
+
+3. Create HCP cluster
 ```
 hcp create cluster kubevirt \
-  --name hcp01 \
-  --node-pool-replicas 3 \
-  --pull-secret pull.txt \
+  --name bm5 \
+  --pull-secret pull-secret \
   --memory 16Gi \
   --cores 4 \
-  --etcd-storage-class=ocs-storagecluster-ceph-rbd
-
+  --etcd-storage-class ocs-storagecluster-ceph-rbd \
+  --root-volume-storage-class ocs-storagecluster-ceph-rbd-virtualization \
+  --root-volume-size 50 \
+  --root-volume-access-modes ReadWriteMany \
+  --root-volume-volume-mode Block \
+  --qos-class Guaranteed \
+  --additional-network name:clusters-bm5/vlan82 \
+  --external-dns-domain redhat.hpecic.net \
+  --cluster-cidr 10.136.0.0/14 \
+  --service-cidr 172.31.0.0/16 \
+  --control-plane-availability-policy HighlyAvailable \
+  --infra-availability-policy HighlyAvailable \
+  --node-pool-replicas 3 \
+  --node-upgrade-type Replace \
+  --auto-repair \
+  --release-image quay.io/openshift-release-dev/ocp-release:4.17.7-multi
 ```
