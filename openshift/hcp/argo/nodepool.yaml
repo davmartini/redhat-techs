@@ -20,7 +20,7 @@ spec:
     kubevirt:
       additionalNetworks:
         - name: clusters-hcp05/vlan82
-      attachDefaultNetwork: true
+      attachDefaultNetwork: false
       compute:
         cores: 4
         memory: 16Gi
