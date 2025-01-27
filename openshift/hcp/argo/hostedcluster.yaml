@@ -34,7 +34,6 @@ spec:
     - service: APIServer
       servicePublishingStrategy:
         type: LoadBalancer
-          address: 10.6.82.113
     - service: Ignition
       servicePublishingStrategy:
         type: Route
