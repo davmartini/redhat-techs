@@ -2,6 +2,7 @@ apiVersion: hypershift.openshift.io/v1beta1
 kind: NodePool
 metadata:
   name: hcp05-nodepool-01
+  namespace: clusters
 spec:
   arch: amd64
   clusterName: hcp05
