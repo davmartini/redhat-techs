@@ -1,0 +1,23 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mix-app
+  name: mix-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mix-app
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: mix-app
+    spec:
+      containers:
+      - image: quay.io/redhattraining/hello-world-nginx
+        name: web
+        resources: {}
