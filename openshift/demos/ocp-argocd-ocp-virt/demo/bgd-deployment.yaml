@@ -3,22 +3,26 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: mix-app
-  name: mix-app
+    app: bgd
+  name: bgd
   namespace: tech-talks-ocp-v
 spec:
-  replicas: 2
+  replicas: 4
   selector:
     matchLabels:
-      app: mix-app
+      app: bgd
   strategy: {}
   template:
     metadata:
       creationTimestamp: null
       labels:
-        app: mix-app
+        app: bgd
     spec:
       containers:
-      - image: quay.io/david_martini/serverless:rev01
-        name: web
+      - image: quay.io/rhdevelopers/bgd:1.0.0
+        name: bgd
+        env:
+        - name: COLOR
+          value: "red"
         resources: {}
+---
