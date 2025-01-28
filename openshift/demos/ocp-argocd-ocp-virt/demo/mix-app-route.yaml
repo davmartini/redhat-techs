@@ -1,5 +1,6 @@
 apiVersion: route.openshift.io/v1
 kind: Route
+namespace: tech-talks-ocp-v
 metadata:
   labels:
     app: mix-app

@@ -1,6 +1,7 @@
 ---
 apiVersion: v1
 kind: Service
+namespace: tech-talks-ocp-v
 metadata:
   labels:
     app: mix-app
