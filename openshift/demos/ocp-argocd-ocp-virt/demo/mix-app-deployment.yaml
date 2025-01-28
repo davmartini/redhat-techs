@@ -1,11 +1,11 @@
 ---
 apiVersion: apps/v1
 kind: Deployment
-namespace: tech-talks-ocp-v
 metadata:
   labels:
     app: mix-app
   name: mix-app
+  namespace: tech-talks-ocp-v
 spec:
   replicas: 2
   selector:

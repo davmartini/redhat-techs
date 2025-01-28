@@ -1,10 +1,10 @@
 apiVersion: route.openshift.io/v1
 kind: Route
-namespace: tech-talks-ocp-v
 metadata:
   labels:
     app: mix-app
   name: mix-app
+  namespace: tech-talks-ocp-v
 spec:
   port:
     targetPort: 8080
