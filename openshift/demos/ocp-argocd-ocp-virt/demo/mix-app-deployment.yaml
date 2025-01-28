@@ -19,6 +19,6 @@ spec:
         app: mix-app
     spec:
       containers:
-      - image: quay.io/redhattraining/hello-world-nginx
+      - image: quay.io/david_martini/serverless:rev01
         name: web
         resources: {}
