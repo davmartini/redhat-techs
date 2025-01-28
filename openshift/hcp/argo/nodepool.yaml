@@ -19,7 +19,7 @@ spec:
   platform:
     kubevirt:
       additionalNetworks:
-        - name: clusters-hcp05/vlan82
+        - name: clusters-bm5/vlan82
       attachDefaultNetwork: true
       compute:
         cores: 4
