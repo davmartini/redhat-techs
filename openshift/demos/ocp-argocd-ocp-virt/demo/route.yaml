@@ -4,6 +4,7 @@ metadata:
   labels:
     app: spring-petclinic
   name: spring-petclinic
+  namespace: tech-talks-ocp-v
 spec:
   port:
     targetPort: 8080-tcp

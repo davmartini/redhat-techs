@@ -10,6 +10,7 @@ metadata:
     app.kubernetes.io/part-of: spring-petclinic
     app.openshift.io/runtime: java
   name: spring-petclinic
+  namespace: tech-talks-ocp-v
 spec:
   replicas: 1
   selector:
