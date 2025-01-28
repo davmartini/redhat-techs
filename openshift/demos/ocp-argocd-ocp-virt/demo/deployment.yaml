@@ -12,7 +12,7 @@ metadata:
   name: spring-petclinic
   namespace: tech-talks-ocp-v
 spec:
-  replicas: 1
+  replicas: 4
   selector:
     matchLabels:
       app: spring-petclinic
