@@ -21,4 +21,3 @@ spec:
       - image: quay.io/redhattraining/hello-world-nginx
         name: web
         resources: {}
----
