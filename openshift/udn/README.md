@@ -58,8 +58,11 @@ spec:
 ## Result L2
 
 VM1
+
 ![vm1-l2](images/vm1-l2.png)
+
 ![vm1-l2](images/vm1-l2-cli.png)
 
 VM2
+
 ![vm2-l2](images/vm2-l2.png)
