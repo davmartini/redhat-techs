@@ -66,3 +66,17 @@ spec:
 **VM2:**
 
 ![vm2-l2](images/vm2-l2.png)
+
+## Result L3
+
+**VM1:**
+
+![vm1-l3](images/vm1-l3.png)
+
+**VM2:**
+
+![vm2-l3](images/vm2-l3.png)
+
+**VM3:**
+
+![vm3-l3](images/vm3-l3.png)
