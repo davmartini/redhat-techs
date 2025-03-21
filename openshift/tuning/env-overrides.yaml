@@ -1,0 +1,15 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: env-overrides
+  namespace: openshift-ovn-kubernetes
+data:
+  ocp-bm2-master01: | 
+    OVN_KUBE_LOG_LEVEL=2
+  ocp-bm2-master02: | 
+    OVN_KUBE_LOG_LEVEL=2
+  ocp-bm2-master03: | 
+    OVN_KUBE_LOG_LEVEL=2
+  _master: | 
+    OVN_KUBE_LOG_LEVEL=2
+    OVN_LOG_LEVEL=err
