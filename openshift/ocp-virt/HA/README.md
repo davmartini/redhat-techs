@@ -61,4 +61,21 @@ spec:
 
 * Install **Kube Descheduler Operator**
 
-3. Create a **KubeDescheduler** CRD in **automatic** mode and **LongLifecycle** profile 
+3. Create a **KubeDescheduler** CRD in **automatic** mode and **LongLifecycle** profile
+```
+apiVersion: operator.openshift.io/v1
+kind: KubeDescheduler
+metadata:
+  name: cluster
+  namespace: openshift-kube-descheduler-operator
+spec:
+  profileCustomizations:
+    devEnableEvictionsInBackground: true
+  logLevel: Normal
+  mode: Automatic
+  operatorLogLevel: Normal
+  profiles:
+    - LongLifecycle
+  deschedulingIntervalSeconds: 60
+  managementState: Managed
+```
