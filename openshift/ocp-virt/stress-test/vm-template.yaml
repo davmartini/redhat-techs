@@ -15,7 +15,7 @@ metadata:
         }
       ]
   name: rhel9-vmID
-  namespace: vms
+  namespace: vms-demo
   finalizers:
     - kubevirt.io/virtualMachineControllerFinalize
   labels:
