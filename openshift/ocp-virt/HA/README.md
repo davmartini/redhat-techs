@@ -55,6 +55,8 @@ spec:
 
 ## VMs Balancing
 
+**Blog post :** https://xphyr.net/post/openshift_virt_and_k8s_descheduler/
+
 1. Create dedicated namespace **openshift-kube-descheduler-operator**
 
 2. Install Operator
