@@ -151,7 +151,7 @@ hcp create cluster kubevirt \
   --root-volume-access-modes ReadWriteMany \
   --root-volume-volume-mode Block \
   --qos-class Guaranteed \
-  --attach-default-network=false \
+  --attach-default-network=true \
   --additional-network name:clusters-hcp04/vlan82 \
   --base-domain redhat.hpecic.net \
   --cluster-cidr 10.136.0.0/14 \
@@ -226,7 +226,7 @@ hcp create cluster kubevirt \
   --root-volume-access-modes ReadWriteMany \
   --root-volume-volume-mode Block \
   --qos-class Guaranteed \
-  --attach-default-network=false \
+  --attach-default-network=true \
   --additional-network name:clusters-hcp02/udn-l2 \
   --base-domain redhat.hpecic.net \
   --cluster-cidr 10.136.0.0/14 \
