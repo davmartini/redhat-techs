@@ -30,7 +30,7 @@ oc apply -f dedicated-lb.yaml
 
 
 
-# HCP + External OCP-V
+# HCP + OCP-V + VLAN
 
 **Source :** https://docs.redhat.com/en/documentation/openshift_container_platform/4.17/html/hosted_control_planes/deploying-hosted-control-planes#hcp-virt-create-hc-ext-infra_hcp-deploy-virt
 
@@ -151,7 +151,7 @@ hcp create cluster kubevirt \
   --root-volume-access-modes ReadWriteMany \
   --root-volume-volume-mode Block \
   --qos-class Guaranteed \
-  --attach-default-network false \
+  --attach-default-network=false \
   --additional-network name:clusters-hcp04/vlan82 \
   --base-domain redhat.hpecic.net \
   --cluster-cidr 10.136.0.0/14 \
@@ -180,4 +180,61 @@ spec:
             "topology": "localnet", 
             "netAttachDefName": "clusters-hcp04/vlan82" 
     }
+```
+
+
+
+# HCP + OCP-V + UDN
+
+1. Create Namespace
+```
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: clusters-hcp02
+  labels:
+    k8s.ovn.org/primary-user-defined-network: ""
+```
+
+2. Create UDN
+```
+apiVersion: k8s.ovn.org/v1
+kind: UserDefinedNetwork
+metadata:
+  name: udn-l2
+  namespace: clusters-hcp02
+spec:
+  topology: Layer2
+  layer2:
+    role: Primary
+    subnets:
+      - "192.168.1.0/24"
+    ipam:
+      lifecycle: Persistent
+```
+
+3. Create HCP cluster
+```
+hcp create cluster kubevirt \
+  --name hcp02 \
+  --pull-secret pull-secret \
+  --memory 8Gi \
+  --cores 2 \
+  --etcd-storage-class ocs-storagecluster-ceph-rbd \
+  --root-volume-storage-class ocs-storagecluster-ceph-rbd-virtualization \
+  --root-volume-size 50 \
+  --root-volume-access-modes ReadWriteMany \
+  --root-volume-volume-mode Block \
+  --qos-class Guaranteed \
+  --attach-default-network=false \
+  --additional-network name:clusters-hcp02/udn-l2 \
+  --base-domain redhat.hpecic.net \
+  --cluster-cidr 10.136.0.0/14 \
+  --service-cidr 172.31.0.0/16 \
+  --control-plane-availability-policy HighlyAvailable \
+  --infra-availability-policy HighlyAvailable \
+  --node-pool-replicas 3 \
+  --node-upgrade-type Replace \
+  --auto-repair \
+  --release-image quay.io/openshift-release-dev/ocp-release:4.17.7-multi
 ```
