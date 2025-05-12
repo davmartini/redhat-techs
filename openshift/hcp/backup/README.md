@@ -144,6 +144,13 @@ spec:
             - resource: services
             - resource: routes
             - resource: serviceaccounts
+          excludeResources:
+            - resource: persistentvolumeclaims
+              matchExpressions:
+                - key: hypershift.openshift.io/is-kubevirt-rhcos
+                  operator: In
+                  values:
+                    - "true"
         profile:
           name: backup-bm1
           namespace: kasten-io
