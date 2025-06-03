@@ -10,6 +10,17 @@
 
 ### Schema
 
+AZ1
+master01
+master02
+worker01
+worker02
+
+AZ2
+master03
+master04
+worker03
+worker04
 
 ### Deployment
 
@@ -25,3 +36,37 @@
 ![deployment2](images/deployment2.png)
 
 ![deployment3](images/deployment3.png)
+
+### Stop AZ1 and peform PRA
+
+**1. Stop all servers in AZ1**
+
+**2. Connect on a survive master node**
+```
+ssh -i .ssh/pub_key core@master4-ip
+```
+
+**3. Use quorum restore script**
+```
+[core@master04 ~]$ sudo -E /usr/local/bin/quorum-restore.sh
+...stopping etcd-pod.yaml
+Waiting for container etcd to stop
+...........................complete
+Waiting for container etcdctl to stop
+...complete
+Waiting for container etcd-metrics to stop
+complete
+Waiting for container etcd-readyz to stop
+complete
+Waiting for container etcd-rev to stop
+complete
+Waiting for container etcd-backup-server to stop
+complete
+starting restore-etcd static pod
+```
+
+**4. Wait 10 min to have access to your cluster**
+
+**5. Pods and VMs are automatically recovered**
+* Pods with K8S scheduling
+* VMs via Self Remediation and Node Health Check
