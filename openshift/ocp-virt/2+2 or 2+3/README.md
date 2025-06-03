@@ -70,3 +70,11 @@ starting restore-etcd static pod
 **5. Pods and VMs are automatically recovered**
 * Pods with K8S scheduling
 * VMs via Self Remediation and Node Health Check
+
+**6. Delete shutdown master nodes**
+``
+oc delete machine -n openshift-machine-api ocp02-master01
+oc delete machine -n openshift-machine-api ocp02-master02
+``
+
+PS: Deleted master nodes will be created automatically at reboot.
