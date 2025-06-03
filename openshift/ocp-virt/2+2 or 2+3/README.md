@@ -13,13 +13,13 @@
 
 ### Deployment
 
-1. Host inventory via ACM
+**1. Host inventory via ACM**
 ![inventory](images/inventory.png)
 
-2. Select a 2+2 or 2+3 control plane
+**2. Select a 2+2 or 2+3 control plane**
 ![cp](images/cp.png)
 
-3. Cluster deployement
+**3. Cluster deployement**
 ![deployment](images/deployment.png)
 
 ![deployment2](images/deployment2.png)
