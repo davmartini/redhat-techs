@@ -24,4 +24,4 @@
 
 ![deployment2](images/deployment2.png)
 
-![deployment3](images/deployment2.png)
+![deployment3](images/deployment3.png)
