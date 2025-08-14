@@ -1,0 +1,24 @@
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: admin-group
+  uid: 4c864c80-2861-4cbd-b9ec-d64deceebccf
+  resourceVersion: '56427'
+  creationTimestamp: '2025-06-23T18:42:36Z'
+  managedFields:
+    - manager: Mozilla
+      operation: Update
+      apiVersion: rbac.authorization.k8s.io/v1
+      time: '2025-06-23T18:42:36Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:roleRef': {}
+        'f:subjects': {}
+subjects:
+  - kind: Group
+    apiGroup: rbac.authorization.k8s.io
+    name: admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin

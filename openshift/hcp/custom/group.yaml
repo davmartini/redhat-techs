@@ -1,0 +1,20 @@
+kind: Group
+apiVersion: user.openshift.io/v1
+metadata:
+  name: admin
+  uid: ae473471-c53c-40d8-8729-66ac3aeb2be5
+  resourceVersion: '56369'
+  creationTimestamp: '2025-06-23T18:42:24Z'
+  managedFields:
+    - manager: Mozilla
+      operation: Update
+      apiVersion: user.openshift.io/v1
+      time: '2025-06-23T18:42:24Z'
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:users': {}
+users:
+  - norand
+  - epietryk
+  - mschreie
+  - dmartini
