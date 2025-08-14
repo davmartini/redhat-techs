@@ -1,0 +1,9 @@
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  namespace: metallb
+  name: ingress-pool
+spec:
+  addresses:
+    - 10.6.187.231/32
+  autoAssign: false
