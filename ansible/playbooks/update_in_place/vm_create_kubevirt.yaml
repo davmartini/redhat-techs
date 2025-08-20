@@ -40,11 +40,10 @@
                 namespace: openshift-virtualization-os-images
             storage:
               accessModes:
-                - ReadWriteOnce
+                - ReadWriteMany
               resources:
                 requests:
                   storage: 30Gi
-              storageClassName: lvms-vg1
       spec:
         domain:
           devices: {}
@@ -94,11 +93,10 @@
               namespace: openshift-virtualization-os-images
             storage:
               accessModes:
-                - ReadWriteOnce
+                - ReadWriteMany
               resources:
                 requests:
                   storage: 30Gi
-              storageClassName: lvms-vg1
       spec:
         domain:
           devices: {}
@@ -106,7 +104,7 @@
         - sshPublicKey:
             source:
               secret:
-                secretName: my-pub-key
+                secretName: dm-ssh-key
             propagationMethod:
               configDrive: {}
         volumes:
