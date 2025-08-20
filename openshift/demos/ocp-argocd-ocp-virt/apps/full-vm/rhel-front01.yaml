@@ -29,12 +29,11 @@ spec:
           namespace: openshift-virtualization-os-images
         storage:
           accessModes:
-            - ReadWriteOnce
+            - ReadWriteMany
           resources:
             requests:
               storage: '30Gi'
-          storageClassName: lvms-vg1
-          volumeMode: Filesystem
+          volumeMode: Block
   running: true
   template:
     metadata:
