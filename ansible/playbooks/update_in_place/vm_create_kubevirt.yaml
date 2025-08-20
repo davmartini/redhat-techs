@@ -52,7 +52,7 @@
         - sshPublicKey:
             source:
               secret:
-                secretName: my-pub-key
+                secretName: dm-ssh-key
             propagationMethod:
               configDrive: {}
         volumes:
