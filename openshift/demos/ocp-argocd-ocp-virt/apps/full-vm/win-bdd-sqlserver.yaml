@@ -28,6 +28,8 @@ spec:
           name: win2k22
           namespace: openshift-virtualization-os-images
         storage:
+          accessModes:
+            - ReadWriteMany
           resources:
             requests:
               storage: 60Gi
