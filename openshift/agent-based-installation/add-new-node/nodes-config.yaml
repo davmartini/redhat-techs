@@ -1,0 +1,37 @@
+hosts:
+- hostname: master-1.rh.hpecic.net
+  rootDeviceHints:
+   deviceName: /dev/sda
+  interfaces:
+   - macAddress: E0:07:1B:70:57:40
+     name: eno49
+  networkConfig:
+   interfaces:
+     - name: eno49
+       type: ethernet
+       state: up
+       mac-address: E0:07:1B:70:57:40
+       ipv4:
+         enabled: true
+         address:
+           - ip: 10.6.187.11
+             prefix-length: 23
+         dhcp: false
+- hostname: master-2.rh.hpecic.net
+  rootDeviceHints:
+   deviceName: /dev/sda
+  interfaces:
+   - macAddress: E0:07:1B:70:57:30
+     name: eno49
+  networkConfig:
+   interfaces:
+     - name: eno49
+       type: ethernet
+       state: up
+       mac-address: E0:07:1B:70:57:30
+       ipv4:
+         enabled: true
+         address:
+           - ip: 10.6.187.12
+             prefix-length: 23
+         dhcp: false
