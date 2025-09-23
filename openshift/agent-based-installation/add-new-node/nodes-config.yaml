@@ -35,3 +35,4 @@ hosts:
            - ip: 10.6.187.12
              prefix-length: 23
          dhcp: false
+sshKey: new-hpe-cic.pub
