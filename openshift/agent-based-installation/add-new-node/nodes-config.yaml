@@ -1,12 +1,12 @@
 hosts:
 - hostname: master-1.rh.hpecic.net
   rootDeviceHints:
-   deviceName: /dev/sda
+   deviceName: /dev/sdo
   interfaces:
    - macAddress: E0:07:1B:70:57:40
      name: eno49
   networkConfig:
-   interfaces:
+    interfaces:
      - name: eno49
        type: ethernet
        state: up
@@ -17,22 +17,16 @@ hosts:
            - ip: 10.6.187.11
              prefix-length: 23
          dhcp: false
-- hostname: master-2.rh.hpecic.net
-  rootDeviceHints:
-   deviceName: /dev/sda
-  interfaces:
-   - macAddress: E0:07:1B:70:57:30
-     name: eno49
-  networkConfig:
-   interfaces:
-     - name: eno49
-       type: ethernet
-       state: up
-       mac-address: E0:07:1B:70:57:30
-       ipv4:
-         enabled: true
-         address:
-           - ip: 10.6.187.12
-             prefix-length: 23
-         dhcp: false
-sshKey: new-hpe-cic.pub
+    dns-resolver:
+      config:
+        server:
+          - 10.6.186.5
+          - 10.11.0.14
+          - 10.11.0.13
+    routes:
+      config:
+        - destination: 0.0.0.0/0
+          next-hop-address: 10.6.187.1
+          next-hop-interface: eno49
+          table-id: 254
+sshKey: "key"
