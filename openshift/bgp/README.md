@@ -73,6 +73,9 @@ spec:
         toReceive:
           allowed:
             mode: all
+  nodeSelector:
+    matchLabels:
+      node-role.kubernetes.io/worker: ''
 ```
 
 5. Create RouteAdvertisements CR
