@@ -165,3 +165,62 @@ spec:
 
     }
 ```
+
+
+## Multi-tenantcy with UDN and MetalLB
+
+1. Create 2 namespace
+```
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: tenant-customer01
+  labels:
+    customer: customer01
+    k8s.ovn.org/primary-user-defined-network: ''
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: tenant-customer02
+  labels:
+    customer: customer02
+    k8s.ovn.org/primary-user-defined-network: ''
+```
+
+2. Create 2 CUDNs
+```
+apiVersion: k8s.ovn.org/v1
+kind: ClusterUserDefinedNetwork
+metadata:
+  name: cudn-customer01
+spec:
+  namespaceSelector:
+    matchLabels:
+      customer: customer01
+  network:
+    layer2:
+      ipam:
+        lifecycle: Persistent
+      role: Primary
+      subnets:
+        - 192.168.11.0/24
+    topology: Layer2
+---
+apiVersion: k8s.ovn.org/v1
+kind: ClusterUserDefinedNetwork
+metadata:
+  name: cudn-customer02
+spec:
+  namespaceSelector:
+    matchLabels:
+      customer: customer02
+  network:
+    layer2:
+      ipam:
+        lifecycle: Persistent
+      role: Primary
+      subnets:
+        - 192.168.12.0/24
+    topology: Layer2
+```
