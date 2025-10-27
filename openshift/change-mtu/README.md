@@ -1,5 +1,8 @@
 # Change cluster MTU for HCP on OCP-V
 
+**Official Doc:** https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/advanced_networking/changing-cluster-network-mtu#nw-cluster-mtu-change_changing-cluster-network-mtu
+
+
 1. Show wich interface you need to change
 ```
 oc debug node/<node_name> -- chroot /host nmcli -g connection.interface-name c show ovs-if-phys0
@@ -53,3 +56,27 @@ done
 
 > [!WARNING]  
 > Do not apply new MachineConfig right now
+
+
+6. Begin the migration process
+```
+oc patch Network.operator.openshift.io cluster --type=merge --patch \
+  '{"spec": { "migration": { "mtu": { "network": { "from": 1400, "to": 9000 } , "machine": { "to" : 9100 } } } } }'
+```
+> [!WARNING]  
+> Wait all nodes are totaly updated
+
+7. Apply MachineConfig files
+```
+for manifest in control-plane-interface worker-interface; do
+    oc create -f $manifest.yaml
+  done
+```
+> [!WARNING]  
+> Wait all nodes are totaly updated
+
+8. Finalize migration porcess
+```
+oc patch Network.operator.openshift.io cluster --type=merge --patch \
+  '{"spec": { "migration": null, "defaultNetwork":{ "ovnKubernetesConfig": { "mtu": 9000 }}}}'
+```
