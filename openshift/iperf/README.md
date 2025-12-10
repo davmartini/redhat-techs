@@ -70,6 +70,14 @@ Accepted connection from 10.128.4.81, port 34966
 [  5]  15.00-20.00  sec  4.41 GBytes  7.58 Gbits/sec                  
 [  5]  20.00-25.00  sec  4.41 GBytes  7.58 Gbits/sec                  
 [  5]  25.00-30.00  sec  4.19 GBytes  7.20 Gbits/sec                  
-[  5]  30.00-35.00  sec  4.51 GBytes  7.74 Gbits/sec  
-...
+[  5]  30.00-35.00  sec  4.51 GBytes  7.74 Gbits/sec                  
+[  5]  35.00-40.00  sec  4.35 GBytes  7.47 Gbits/sec                  
+[  5]  40.00-45.00  sec  4.40 GBytes  7.56 Gbits/sec                  
+[  5]  45.00-50.00  sec  4.43 GBytes  7.61 Gbits/sec                  
+[  5]  50.00-55.00  sec  4.46 GBytes  7.67 Gbits/sec                  
+[  5]  55.00-60.00  sec  4.37 GBytes  7.51 Gbits/sec                  
+[  5]  60.00-60.04  sec  35.5 MBytes  7.61 Gbits/sec                  
+- - - - - - - - - - - - - - - - - - - - - - - - -
+[ ID] Interval           Transfer     Bitrate
+[  5]   0.00-60.04  sec  52.5 GBytes  7.51 Gbits/sec                  receiver
 ```
