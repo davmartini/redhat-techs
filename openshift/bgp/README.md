@@ -107,6 +107,8 @@ spec:
 ```
 configure
 set interfaces ethernet eth0 address 10.6.187.9/24
+set system time-zone Europe/Paris
+set service ntp server 10.11.0.10
 set service ssh port 22
 commit
 save
