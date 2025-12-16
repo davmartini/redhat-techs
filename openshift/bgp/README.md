@@ -71,6 +71,7 @@ spec:
       neighbors:
       - address: 10.6.187.9
         asn: 64512
+        disableMP: true
         toReceive:
           allowed:
             mode: all
