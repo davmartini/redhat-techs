@@ -2,8 +2,8 @@ apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
   namespace: metallb-system
-  name: pool-hcp01
+  name: pool-hcp02
 spec:
   addresses:
-    - 10.6.187.231-10.6.187.240
+    - 10.6.187.241-10.6.187.250
   autoAssign: true

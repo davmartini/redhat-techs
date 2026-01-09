@@ -1,8 +1,8 @@
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
 metadata:
-  name: l2-ingress 
-  namespace: metallb
+  name: hcp01
+  namespace: metallb-system
 spec:
   ipAddressPools:
-   - ingress-pool
+   - pool-hcp01
