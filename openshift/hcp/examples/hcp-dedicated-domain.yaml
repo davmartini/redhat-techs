@@ -1,0 +1,146 @@
+apiVersion: project.openshift.io/v1
+kind: Project
+metadata:
+  name: 'clusters'
+---
+apiVersion: hypershift.openshift.io/v1beta1
+kind: HostedCluster
+metadata:
+  name: 'hcp01'
+  namespace: 'clusters'
+  labels:
+    "cluster.open-cluster-management.io/clusterset": 'managed-clusters'
+spec:
+  dns:
+    baseDomain: rh.hpecic.net
+  channel: stable-4.21
+  etcd:
+    managed:
+      storage:
+        persistentVolume:
+          size: 8Gi
+          storageClassName: ocs-storagecluster-ceph-rbd
+        type: PersistentVolume
+    managementType: Managed
+  release:
+    image: quay.io/openshift-release-dev/ocp-release:4.21.5-multi
+  pullSecret:
+    name: pullsecret-cluster-hcp01
+  sshKey:
+    name: sshkey-cluster-hcp01
+  networking:
+    clusterNetwork:
+      - cidr: 10.132.0.0/14
+    serviceNetwork:
+      - cidr: 172.31.0.0/16
+    networkType: OVNKubernetes
+  controllerAvailabilityPolicy: HighlyAvailable
+  infrastructureAvailabilityPolicy: HighlyAvailable
+  platform:
+    type: KubeVirt
+    kubevirt:
+      baseDomainPassthrough: true
+      storageDriver:
+        type: Manual
+        manual:
+          storageClassMapping:
+            - infraStorageClassName: ocs-storagecluster-ceph-rbd
+              guestStorageClassName: ocp-virt-rbd
+  infraID: 'hcp01'
+  services:
+    - service: OAuthServer
+      servicePublishingStrategy:
+        type: Route
+    - service: OIDC
+      servicePublishingStrategy:
+        type: Route
+    - service: Konnectivity
+      servicePublishingStrategy:
+        type: Route
+    - service: Ignition
+      servicePublishingStrategy:
+        type: Route
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pullsecret-cluster-hcp01
+  namespace: 'clusters'
+stringData:
+  '.dockerconfigjson': #injected on create
+type: kubernetes.io/dockerconfigjson
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: sshkey-cluster-hcp01
+  namespace: 'clusters'
+stringData:
+  'id_rsa.pub': #injected on create
+---
+apiVersion: hypershift.openshift.io/v1beta1
+kind: NodePool
+metadata:
+  name: 'hcp01-nodepool01'
+  namespace: 'clusters'
+spec:
+  arch: amd64
+  clusterName: 'hcp01'
+  replicas: 3
+  management:
+    autoRepair: false
+    upgradeType: Replace
+  platform:
+    type: KubeVirt
+    kubevirt:
+      compute:
+        cores: 4
+        memory: 12Gi
+      rootVolume:
+        type: Persistent
+        persistent:
+          size: 32Gi
+          accessModes:
+            - ReadWriteMany
+          storageClass: ocs-storagecluster-ceph-rbd-virtualization
+      additionalNetworks:
+      - name: default/localnet-vlan1187
+      attachDefaultNetwork: false
+  release:
+    image: quay.io/openshift-release-dev/ocp-release:4.21.5-multi
+---
+apiVersion: cluster.open-cluster-management.io/v1
+kind: ManagedCluster
+metadata:
+  annotations:
+    import.open-cluster-management.io/hosting-cluster-name: local-cluster 
+    import.open-cluster-management.io/klusterlet-deploy-mode: Hosted
+    open-cluster-management/created-via: hypershift
+  labels:
+    cloud: BareMetal
+    vendor: OpenShift
+    name: 'hcp01'
+    cluster.open-cluster-management.io/clusterset: 'managed-clusters'
+  name: 'hcp01'
+spec:
+  hubAcceptsClient: true
+---
+apiVersion: agent.open-cluster-management.io/v1
+kind: KlusterletAddonConfig
+metadata:
+  name: 'hcp01'
+  namespace: 'hcp01'
+spec:
+  clusterName: 'hcp01'
+  clusterNamespace: 'hcp01'
+  clusterLabels:
+    cloud: BareMetal
+    vendor: OpenShift
+  applicationManager:
+    enabled: true
+  policyController:
+    enabled: true
+  searchCollector:
+    enabled: true
+  certPolicyController:
+    enabled: true
