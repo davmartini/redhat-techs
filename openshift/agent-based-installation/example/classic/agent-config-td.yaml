@@ -1,0 +1,140 @@
+apiVersion: v1alpha1
+kind: AgentConfig
+metadata:
+  name: ocppoc
+rendezvousIP: 172.19.0.202
+hosts:
+  - hostname: ocppoc-master01
+    role: master
+    rootDeviceHints:
+      deviceName: "/dev/sda"
+    interfaces:
+      - name: eno1
+        macAddress: C4:CB:E1:EB:C7:B0
+      - name: eno2
+        macAddress: C4:CB:E1:EB:C7:B1 
+    networkConfig:
+      interfaces:
+        - name: bond0.300 
+          type: vlan 
+          state: up
+          vlan:
+            base-iface: bond0
+            id: 319
+          ipv4:
+            enabled: true
+            address:
+              - ip: 172.19.0.202
+                prefix-length: 16
+            dhcp: false
+        - name: bond0 
+          type: bond
+          state: up
+          mac-address: C4:CB:E1:EB:C7:B0
+          ipv4:
+            enabled: false
+          ipv6:
+            enabled: false
+          link-aggregation:
+            mode: 802.3ad
+            options:
+              miimon: "150"
+            port:
+             - eno1
+             - eno2
+      dns-resolver:
+        config:
+          server:
+            - 192.168.100.1
+      routes:
+        config:
+          - destination: 0.0.0.0/0
+            next-hop-address: 172.19.255.254
+            next-hop-interface: bond0.300
+            table-id: 254
+  - hostname: ocppoc-master02
+    role: master
+    rootDeviceHints:
+      deviceName: "/dev/sda"
+    interfaces:
+      - name: eno1
+        macAddress: C4:CB:E1:EB:A0:1C
+      - name: eno2
+        macAddress: C4:CB:E1:EB:A0:1D 
+    networkConfig:
+      interfaces:
+        - name: bond0.300 
+          type: vlan 
+          state: up
+          vlan:
+            base-iface: bond0
+            id: 319
+          ipv4:
+            enabled: true
+            address:
+              - ip: 172.19.0.203
+                prefix-length: 16
+            dhcp: false
+        - name: bond0 
+          type: bond
+          state: up
+          mac-address: C4:CB:E1:EB:C7:B0
+          ipv4:
+            enabled: false
+          ipv6:
+            enabled: false
+          link-aggregation:
+            mode: 802.3ad
+            options:
+              miimon: "150"
+            port:
+             - eno1
+             - eno2
+      dns-resolver:
+        config:
+          server:
+            - 192.168.100.1
+      routes:
+        config:
+          - destination: 0.0.0.0/0
+            next-hop-address: 172.19.255.254
+            next-hop-interface: bond0.300
+            table-id: 254
+  - hostname: ocppoc-master03
+    role: master
+    rootDeviceHints:
+      deviceName: "/dev/sda"
+    interfaces:
+      - name: eno1
+        macAddress: B8:E9:24:E6:35:16
+    networkConfig:
+      interfaces:
+        - name: eno1.300 
+          type: vlan 
+          state: up
+          vlan:
+            base-iface: eno1
+            id: 319
+          ipv4:
+            enabled: true
+            address:
+              - ip: 172.19.0.204
+                prefix-length: 16
+            dhcp: false
+        - name: eno1
+          type: ethernet
+          state: up
+          mac-address: B8:E9:24:E6:35:16
+          ipv4:
+            enabled: false
+            dhcp: false
+      dns-resolver:
+        config:
+          server:
+            - 192.168.100.1
+      routes:
+        config:
+          - destination: 0.0.0.0/0
+            next-hop-address: 172.19.255.254
+            next-hop-interface: eno1
+            table-id: 254

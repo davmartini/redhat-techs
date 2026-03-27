@@ -1,0 +1,31 @@
+apiVersion: v1
+baseDomain: bsctdas.local
+compute:
+- architecture: amd64
+  hyperthreading: Enabled
+  name: worker
+  replicas: 0
+controlPlane:
+  architecture: amd64
+  hyperthreading: Enabled
+  name: master
+  replicas: 3
+metadata:
+  name: ocppoc
+networking:
+  clusterNetwork:
+  - cidr: 10.144.0.0/14
+    hostPrefix: 23
+  machineNetwork:
+  - cidr: 172.19.0.0/16
+  networkType: OVNKubernetes 
+  serviceNetwork:
+  - 172.34.0.0/16
+platform:
+  baremetal:
+    apiVIPs:
+    - 172.19.0.200
+    ingressVIPs:
+    - 172.19.0.201
+pullSecret: '<pull_secret>' 
+sshKey: '<ssh_pub_key>' 
