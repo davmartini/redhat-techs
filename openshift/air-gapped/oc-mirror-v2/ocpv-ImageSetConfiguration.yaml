@@ -1,0 +1,25 @@
+kind: ImageSetConfiguration
+apiVersion: mirror.openshift.io/v2alpha1
+mirror:
+  platform:
+    channels:
+    - name: stable-4.21
+      minVersion: 4.21.13
+      maxVersion: 4.21.13
+    graph: false
+    kubeVirtContainer: true
+  operators:
+    - catalog: registry.redhat.io/redhat/redhat-operator-index:v4.21
+      packages: 
+       - name: metallb-operator
+       - name: kubevirt-hyperconverged
+       - name: mtv-operator
+       - name: web-terminal
+       - name: kubernetes-nmstate-operator
+       - name: node-healthcheck-operator
+       - name: fence-agents-remediation-operator
+       - name: node-maintenance-operator
+       - name: cluster-descheduler-operator
+  additionalImages: 
+   - name: registry.redhat.io/ubi8/ubi:latest
+   - name: registry.redhat.io/ubi9/ubi:latest
