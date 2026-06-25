@@ -180,3 +180,17 @@ RPKI validation codes: V valid, I invalid, N Not found
  *=i                 10.6.187.14              0    100      0 i
  *>i                 10.6.187.16              0    100      0 i
 ```
+
+3. Enable BFD if needed
+
+```
+set protocols bfd profile OPENSHIFT-BFD interval multiplier '3'
+set protocols bfd profile OPENSHIFT-BFD interval receive '100'
+set protocols bfd profile OPENSHIFT-BFD interval transmit '100'
+
+
+set protocols bgp neighbor 10.6.187.14 bfd profile 'OPENSHIFT-BFD'
+set protocols bgp neighbor 10.6.187.15 bfd profile 'OPENSHIFT-BFD'
+set protocols bgp neighbor 10.6.187.16 bfd profile 'OPENSHIFT-BFD'
+set protocols bgp neighbor 10.6.187.17 bfd profile 'OPENSHIFT-BFD'
+```
