@@ -62,19 +62,31 @@ kind: FRRConfiguration
 metadata:
   name: receive-all
   namespace: openshift-frr-k8s
-  labels:
-    routeAdvertisements: receive-all
 spec:
   bgp:
+    bfdProfiles:
+      - name: defaultprofile
     routers:
-    - asn: 64512
-      neighbors:
-      - address: 10.6.187.9
-        asn: 64512
-        disableMP: true
-        toReceive:
-          allowed:
-            mode: all
+      - asn: 64512
+        neighbors:
+          - address: 10.6.187.250
+            asn: 64512
+            bfdProfile: defaultprofile
+            disableMP: false
+            dualStackAddressFamily: false
+            toReceive:
+              allowed:
+                mode: all
+      - asn: 64512
+        neighbors:
+          - address: 10.6.187.251
+            asn: 64512
+            bfdProfile: defaultprofile
+            disableMP: false
+            dualStackAddressFamily: false
+            toReceive:
+              allowed:
+                mode: all
   nodeSelector:
     matchLabels:
       node-role.kubernetes.io/worker: ''
@@ -89,7 +101,6 @@ metadata:
 spec:
   advertisements:
   - PodNetwork
-  - EgressIP
   networkSelectors:
   - networkSelectionType: ClusterUserDefinedNetworks
     clusterUserDefinedNetworkSelector:
@@ -117,7 +128,41 @@ commit
 save
 ```
 
-2. Configure BGP
+2. Configure HA / VRRP
+```
+## On router01
+configure
+set high-availability vrrp group LAN_CLUSTER interface eth0
+set high-availability vrrp group LAN_CLUSTER vrid 10
+set high-availability vrrp group LAN_CLUSTER priority 200
+set high-availability vrrp group LAN_CLUSTER address 10.6.187.252/24
+
+# Optionnel mais recommandé : Authentification entre les routeurs
+set high-availability vrrp group LAN_CLUSTER authentication type plaintext-password
+set high-availability vrrp group LAN_CLUSTER authentication password "MonMotDePasseSecret"
+commit
+save
+exit
+
+
+## On router02
+configure
+set high-availability vrrp group LAN_CLUSTER interface eth0
+set high-availability vrrp group LAN_CLUSTER vrid 10
+set high-availability vrrp group LAN_CLUSTER priority 100
+set high-availability vrrp group LAN_CLUSTER address 10.6.187.252/24
+
+# L'authentification doit être identique au Routeur 1
+set high-availability vrrp group LAN_CLUSTER authentication type plaintext-password
+set high-availability vrrp group LAN_CLUSTER authentication password "MonMotDePasseSecret"
+commit
+save
+exit
+```
+
+
+
+3. Configure BGP
 ```
 configure
 set protocols bgp system-as 64512
@@ -146,7 +191,7 @@ save
 ```
 
 
-1. show ip bgp summary
+4. show ip bgp summary
 ```
 vyos@vmroute01:~$ show ip bgp summary 
 
@@ -163,7 +208,7 @@ Neighbor        V         AS   MsgRcvd   MsgSent   TblVer  InQ OutQ  Up/Down Sta
 10.6.187.17     4      64512     70610     70596       26    0    0 01w3d00h            1        0 worker-4.rh.hpecic.n
 ```
 
-2. show ip bgp
+5. show ip bgp
 ```
 vyos@vmroute01:~$ show ip bgp
 BGP table version is 26, local router ID is 10.6.187.9, vrf id 0
@@ -181,7 +226,7 @@ RPKI validation codes: V valid, I invalid, N Not found
  *>i                 10.6.187.16              0    100      0 i
 ```
 
-3. Enable BFD if needed
+6. Enable BFD if needed
 
 ```
 set protocols bfd profile OPENSHIFT-BFD interval multiplier '3'
