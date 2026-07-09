@@ -1,0 +1,48 @@
+kind: StorageCluster
+apiVersion: core.libopenstorage.org/v1
+metadata:
+  name: px-ocp01
+  namespace: portworx
+  annotations:
+    portworx.io/is-openshift: "true"
+    portworx.io/misc-args: " -T px-storev2 "
+spec:
+  deleteStrategy:
+    type: UninstallAndWipe
+  image: docker.io/portworx/oci-monitor:3.6.1.1
+  imagePullPolicy: Always
+  kvdb:
+    internal: true
+    enableTLS: true
+  storage:
+    useAll: true
+  nodes:
+  - selector:
+      nodename: node01
+    storage:
+      systemMetadataDevice: /dev/sda
+  - selector:
+      nodename: node02
+    storage:
+      systemMetadataDevice: /dev/sda
+  - selector:
+      nodename: node03
+    storage:
+      systemMetadataDevice: /dev/sda
+  secretsProvider: k8s
+  startPort: 17001
+  stork:
+    enabled: true
+    args:
+      webhook-controller: "true"
+  runtimeOptions:
+    default-io-profile: "6"
+  csi:
+    enabled: true
+  monitoring:
+    telemetry:
+      enabled: false
+    prometheus:
+      exportMetrics: true
+  certManager:
+    enabled: true
