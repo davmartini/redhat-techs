@@ -14,21 +14,25 @@ spec:
   kvdb:
     internal: true
     enableTLS: true
-  storage:
-    useAll: true
   nodes:
   - selector:
-      nodename: node01
+      nodeName: node01
     storage:
       systemMetadataDevice: /dev/sda
+      devices:
+        - /dev/sdb
   - selector:
-      nodename: node02
+      nodeName: node02
     storage:
       systemMetadataDevice: /dev/sda
+      devices:
+        - /dev/sdb
   - selector:
-      nodename: node03
+      nodeName: node03
     storage:
       systemMetadataDevice: /dev/sda
+      devices:
+        - /dev/sdb
   secretsProvider: k8s
   startPort: 17001
   stork:
