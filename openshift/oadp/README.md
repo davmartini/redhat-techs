@@ -20,6 +20,7 @@ metadata:
 spec:
   configuration:
     velero:
+      concurrentBackups: 10
       defaultPlugins:
         - aws
         - kubevirt
