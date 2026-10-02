@@ -48,12 +48,19 @@ spec:
         credential:
           key: cloud
           name: cloud-credentials
-  snapshotLocations: []
+  snapshotLocations:
+    - velero:
+        config:
+          region: minio
+          profile: "default"
+        provider: aws
+  vmFileRestore:
+    enable: true
 ```
 
 ![dpa](images/dpa.png)
 
-3. Create a VM with the lable backup=true
+3. Create a VM
 ```
 apiVersion: kubevirt.io/v1
 kind: VirtualMachine
@@ -65,7 +72,6 @@ metadata:
     - kubevirt.io/virtualMachineControllerFinalize
   labels:
     app: testvm
-    backup: 'true'
     velero.io/restore-name: restore-testvm
     vm.kubevirt.io/template: rhel9-server-small
     kubevirt.io/dynamic-credentials-support: 'true'
@@ -163,7 +169,7 @@ spec:
           name: cloudinitdisk
 ```
 
-4. Create a backup based on label
+4. Create a single VM backup
 ```
 apiVersion: velero.io/v1
 kind: Backup
@@ -171,33 +177,46 @@ metadata:
   name: testvm
   namespace: openshift-adp
 spec:
-  includedNamespaces:
-    - vms
-  orLabelSelectors:
-    - matchLabels:
-        backup: "true"
   snapshotMoveData: true
+  includedNamespaces:
+  - vms
+  labelSelector:
+    matchLabels:
+      app: testvm
   storageLocation: default
-  ttl: 720h0m0s
+```
+
+5. Create a multiple VM backup
+```
+apiVersion: velero.io/v1
+kind: Backup
+metadata:
+  name: testvm-2
+  namespace: openshift-adp
+spec:
+  snapshotMoveData: true
+  includedNamespaces:
+  - vms-demo
+  storageLocation: default
 ```
 
 ![backup](images/backup.png)
 
 5. Delete the VM
 
-6. Restore the backup
+6. Restore a single VM from a multiple VM backup
 ```
 apiVersion: velero.io/v1
 kind: Restore
 metadata:
-  name: restore-testvm
+  name: test-vm-restore
   namespace: openshift-adp
 spec:
-  # Nom de la sauvegarde à utiliser
-  backupName: testvm
-  # Restreindre uniquement au namespace vms
-  includedNamespaces:
-    - vms
+  backupName: testvm-2
+  restorePVs: true
+  orLabelSelectors:
+    - matchLabels:
+        app: rhel9-vm1
 ```
 
 ![restore](images/restore.png)
