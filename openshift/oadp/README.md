@@ -220,3 +220,69 @@ spec:
 ```
 
 ![restore](images/restore.png)
+
+## Backup a single file inside a VM
+
+1. Create a bacup discovery
+```
+apiVersion: oadp.openshift.io/v1alpha1
+kind: VirtualMachineBackupsDiscovery
+metadata:
+  name: find-my-vm-backups
+  namespace: openshift-adp
+spec:
+  virtualMachineName: "testvm"
+  virtualMachineNamespace: "vms"
+```
+
+2. Result
+```
+apiVersion: oadp.openshift.io/v1alpha1
+kind: VirtualMachineBackupsDiscovery
+...
+status:
+  backupDiscoveryProgress:
+    - createdAt: '2026-10-02T08:44:17Z'
+      lastUpdated: '2026-10-02T08:45:29Z'
+      message: VM found in backup
+      name: testvm
+      namespace: openshift-adp
+      status: Completed
+  conditions:
+    - lastTransitionTime: '2026-10-02T08:45:29Z'
+      message: Successfully discovered 1 valid backups
+      reason: DiscoverySuccessful
+      status: 'True'
+      type: Ready
+  discoveryStats:
+    completed: 1
+    completionTime: '2026-10-02T08:45:29Z'
+    failed: 0
+    inProgress: 0
+    pending: 0
+    skipped: 0
+    startTime: '2026-10-02T08:45:29Z'
+    totalCandidates: 1
+  observedGeneration: 1
+  phase: Completed
+  validBackups:
+    - createdAt: '2026-10-02T08:44:17Z'
+      name: testvm
+      namespace: openshift-adp
+```
+
+3. Create a VirtualMachineFileRestore
+```
+apiVersion: oadp.openshift.io/v1alpha1
+kind: VirtualMachineFileRestore
+metadata:
+  name: restore-config-files
+  namespace: openshift-adp
+spec:
+  backupsDiscoveryRef: find-my-vm-backups
+  fileAccess:
+    fileBrowser:
+      credentialsSecretRef:
+        name: vmfr-credentials
+      exposeExternally: true
+```
